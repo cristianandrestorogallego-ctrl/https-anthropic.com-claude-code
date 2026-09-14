@@ -182,7 +182,7 @@ table{ border-collapse:collapse; }
   max-width:var(--container-w); margin-inline:auto;
 }
 .logo{ display:flex; align-items:center; gap:10px; flex:none; order:1; }
-.logo-mark{ width:38px; height:38px; flex:none; }
+.logo-mark{ width:38px; height:38px; flex:none; display:flex; align-items:center; justify-content:center; border-radius:50%; overflow:hidden; }
 .logo-text{ font-family:var(--font-display); font-weight:800; font-size:1.35rem; line-height:1; letter-spacing:-.01em; color:var(--on-deep); }
 .logo-descriptor{ font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--gold-bright); display:block; margin-top:2px; }
 

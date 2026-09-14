@@ -64,7 +64,14 @@ function heroGlyphSvg(key){
 }
 
 function logoMark(){
-  return '<span class="logo-mark tile-brand" style="border-radius:50%;display:flex;align-items:center;justify-content:center">' + glyphSvg('fruit') + '</span>';
+  return '<span class="logo-mark">' +
+    '<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true">' +
+    '<defs><linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">' +
+    '<stop offset="0" stop-color="#F7B84B"/><stop offset="1" stop-color="#D8481A"/>' +
+    '</linearGradient></defs>' +
+    '<circle cx="24" cy="24" r="24" fill="url(#logoGrad)"/>' +
+    '<circle cx="24" cy="24" r="9" fill="#FFFFFF"/>' +
+    '</svg></span>';
 }
 
 function seedRing(cx, cy, r){
