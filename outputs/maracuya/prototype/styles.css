@@ -193,11 +193,6 @@ table{ border-collapse:collapse; }
 .search-box svg{ flex:none; opacity:.7; }
 
 .header-actions{ display:flex; align-items:center; gap:4px; flex:none; order:3; }
-.recetas-tab{
-  display:none; align-items:center; gap:6px; padding:10px 16px; border-radius:var(--radius-btn);
-  font-weight:700; font-size:.9rem; color:var(--primary); border:1.5px solid var(--primary);
-}
-.recetas-tab:hover{ background:var(--primary-100); }
 .cart-btn{ position:relative; }
 .cart-count{
   position:absolute; top:0; right:0; min-width:18px; height:18px; padding:0 4px;
@@ -210,19 +205,16 @@ table{ border-collapse:collapse; }
 .menu-btn .bars{ display:flex; flex-direction:column; gap:3px; width:16px; }
 .menu-btn .bars span{ height:2px; background:var(--ink); border-radius:2px; }
 
-.quick-nav{ background:var(--surface-alt); border-top:1px solid var(--border); border-bottom:1px solid var(--border); overflow-x:auto; scrollbar-width:none; }
+.quick-nav{ background:var(--surface); border-bottom:3px solid var(--accent); overflow-x:auto; scrollbar-width:none; }
 .quick-nav::-webkit-scrollbar{ display:none; }
-.quick-nav-inner{ display:flex; gap:8px; padding:10px var(--sp-4); max-width:var(--container-w); margin-inline:auto; }
+.quick-nav-inner{ display:flex; align-items:center; gap:28px; padding:12px var(--sp-4); max-width:var(--container-w); margin-inline:auto; }
 .quick-pill{
-  flex:none; display:inline-flex; align-items:center; gap:6px; padding:7px 14px; border-radius:var(--radius-sm);
-  background:var(--surface); border:1px solid var(--border); color:var(--ink); font-size:.82rem; font-weight:600; white-space:nowrap;
+  flex:none; display:inline-flex; align-items:center; gap:4px; padding:4px 2px; border-bottom:2px solid transparent;
+  background:none; color:var(--ink); font-size:.82rem; font-weight:700; letter-spacing:.04em; text-transform:uppercase; white-space:nowrap;
 }
-.quick-pill:hover{ border-color:var(--primary); }
-.quick-pill.is-active{ background:var(--primary); border-color:var(--primary); color:var(--on-primary); }
+.quick-pill:hover{ color:var(--primary); }
+.quick-pill.is-active{ color:var(--primary); border-bottom-color:var(--accent); }
 
-@media (min-width:760px){
-  .recetas-tab{ display:inline-flex; }
-}
 @media (min-width:900px){
   .header-row{ padding:14px var(--sp-6); gap:var(--sp-6); }
   .logo-img{ height:38px; }

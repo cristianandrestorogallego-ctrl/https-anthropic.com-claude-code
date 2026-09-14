@@ -157,18 +157,16 @@ function renderHeader(){
     '<input type="text" id="global-search-input" placeholder="Busca café, arepas, mole…" value="' + esc(state.headerSearchDraft) + '" autocomplete="off"/>' +
     '</div></form>' +
     '<div class="header-actions">' +
-    '<a class="recetas-tab" href="#/recetas">' + icon('leaf', 16) + ' Recetas</a>' +
     '<button class="btn-icon cart-btn" id="cart-toggle-btn" data-action="open-cart" aria-haspopup="dialog" aria-controls="cart-drawer" aria-expanded="false" aria-label="Abrir carrito' + (count ? ', ' + count + ' productos' : '') + '">' +
     icon('cart', 22) + (count ? '<span class="cart-count" aria-hidden="true">' + count + '</span>' : '') + '</button>' +
     '<button class="menu-btn" id="menu-toggle-btn" data-action="open-menu" aria-haspopup="dialog" aria-controls="mega-menu" aria-expanded="false">' +
     '<span class="bars"><span></span><span></span><span></span></span> Menú</button>' +
     '</div></div>' +
-    '<nav class="quick-nav" aria-label="Accesos rápidos"><div class="quick-nav-inner">' +
-    '<a class="quick-pill' + (activeRoute === 'catalogo' ? ' is-active' : '') + '" href="#/catalogo">' + icon('tag', 14) + ' Ver todo</a>' +
-    '<a class="quick-pill' + (activeRoute === 'ofertas' ? ' is-active' : '') + '" href="#/ofertas">🔥 Ofertas del día</a>' +
-    '<a class="quick-pill' + (activeRoute === 'recetas' ? ' is-active' : '') + '" href="#/recetas">' + icon('leaf', 14) + ' Recetas</a>' +
-    '<a class="quick-pill" href="#/catalogo" data-action="goto-category" data-cat="despensa">Despensa</a>' +
-    '<a class="quick-pill" href="#/contacto">' + icon('headset', 14) + ' Ayuda</a>' +
+    '<nav class="quick-nav" aria-label="Navegación principal"><div class="quick-nav-inner">' +
+    '<button class="quick-pill" id="nav-productos-btn" data-action="open-menu" aria-haspopup="dialog" aria-controls="mega-menu" aria-expanded="false">Productos ' + icon('chevron-down', 13) + '</button>' +
+    '<a class="quick-pill' + (activeRoute === 'ofertas' ? ' is-active' : '') + '" href="#/ofertas">Ofertas</a>' +
+    '<a class="quick-pill' + (activeRoute === 'recetas' ? ' is-active' : '') + '" href="#/recetas">Recetas</a>' +
+    '<a class="quick-pill' + (activeRoute === 'contacto' ? ' is-active' : '') + '" href="#/contacto">Contacto</a>' +
     '</div></nav></div>';
 }
 

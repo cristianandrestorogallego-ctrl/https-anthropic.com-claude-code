@@ -75,6 +75,8 @@ function syncOverlays(){
   document.getElementById('backdrop').classList.toggle('is-visible', !!state.overlay);
   var menuBtn = document.getElementById('menu-toggle-btn');
   if(menuBtn) menuBtn.setAttribute('aria-expanded', state.overlay === 'menu');
+  var navProductosBtn = document.getElementById('nav-productos-btn');
+  if(navProductosBtn) navProductosBtn.setAttribute('aria-expanded', state.overlay === 'menu');
   var cartBtn = document.getElementById('cart-toggle-btn');
   if(cartBtn) cartBtn.setAttribute('aria-expanded', state.overlay === 'cart');
 }
