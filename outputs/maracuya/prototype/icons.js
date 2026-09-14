@@ -25,6 +25,26 @@ var ICONS = {
   tag: '<path d="M3 12 12 3h7a2 2 0 0 1 2 2v7l-9 9a2 2 0 0 1-2.8 0L3 14.8a2 2 0 0 1 0-2.8z"/><circle cx="16" cy="8" r="1.6"/>'
 };
 
+var FLAGS = {
+  CO: '<rect width="30" height="20" fill="#FCD116"/><rect y="10" width="30" height="5" fill="#003893"/><rect y="15" width="30" height="5" fill="#CE1126"/>',
+  VE: '<rect width="30" height="6.67" fill="#FFCC00"/><rect y="6.67" width="30" height="6.67" fill="#00247D"/><rect y="13.33" width="30" height="6.67" fill="#CF142B"/>',
+  MX: '<rect width="30" height="20" fill="#FFFFFF"/><rect width="10" height="20" fill="#006847"/><rect x="20" width="10" height="20" fill="#CE1126"/>',
+  AR: '<rect width="30" height="20" fill="#74ACDF"/><rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/><circle cx="15" cy="10" r="1.8" fill="#F6B40E" stroke="#85340A" stroke-width=".3"/>',
+  PE: '<rect width="30" height="20" fill="#FFFFFF"/><rect width="10" height="20" fill="#D91023"/><rect x="20" width="10" height="20" fill="#D91023"/>',
+  DO: '<rect width="30" height="20" fill="#FFFFFF"/><rect width="13" height="9" fill="#002D62"/><rect x="17" width="13" height="9" fill="#CE1126"/><rect y="11" width="13" height="9" fill="#CE1126"/><rect x="17" y="11" width="13" height="9" fill="#002D62"/>',
+  CU: '<rect width="30" height="20" fill="#FFFFFF"/><rect width="30" height="4" fill="#002A8F"/><rect y="8" width="30" height="4" fill="#002A8F"/><rect y="16" width="30" height="4" fill="#002A8F"/><path d="M0 0 L13 10 L0 20 Z" fill="#CB1515"/><circle cx="5" cy="10" r="2" fill="#FFFFFF"/>',
+  BR: '<rect width="30" height="20" fill="#009639"/><path d="M15 2 L28 10 L15 18 L2 10 Z" fill="#FEDD00"/><circle cx="15" cy="10" r="4.5" fill="#002776"/>',
+  EC: '<rect width="30" height="20" fill="#FFDD00"/><rect y="10" width="30" height="5" fill="#034EA2"/><rect y="15" width="30" height="5" fill="#ED1C24"/>'
+};
+
+function flagSvg(code, size){
+  var inner = FLAGS[code];
+  if (!inner) return '';
+  size = size || 18;
+  var h = Math.round(size * 2 / 3);
+  return '<svg class="flag-svg" width="' + size + '" height="' + h + '" viewBox="0 0 30 20" aria-hidden="true">' + inner + '</svg>';
+}
+
 function icon(name, size){
   size = size || 20;
   var inner = ICONS[name] || '';

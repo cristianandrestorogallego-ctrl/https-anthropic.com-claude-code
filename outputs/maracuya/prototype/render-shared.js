@@ -103,7 +103,7 @@ function renderProductCard(product, opts){
     '<a href="#/producto/' + product.id + '" class="product-card__media tile-' + product.category + '" aria-label="' + esc(product.name) + '">' +
     '<span class="product-card__badges">' + badges + '</span>' + glyphSvg(product.glyph) + '</a>' +
     '<div class="product-card__body">' +
-    '<span class="product-card__country">' + (country ? country.flag + ' ' + esc(country.name) : '') + '</span>' +
+    '<span class="product-card__country">' + (country ? flagFor(country.code) + ' ' + esc(country.name) : '') + '</span>' +
     '<a href="#/producto/' + product.id + '"><h3 class="product-card__name">' + esc(product.name) + '</h3></a>' +
     '<span class="product-card__brand">' + esc(product.brand) + ' · ' + esc(product.format) + '</span>' +
     '<div class="product-card__price-row"><span class="price">' + formatMoney(pricing.current) + '</span>' +
@@ -137,8 +137,8 @@ function renderCategoryCardHome(cat){
 }
 function renderCountryTile(c){
   var n = MARACUYA.products.filter(function(p){ return p.assocCountry === c.code; }).length;
-  return '<a class="country-tile" href="#/pais/' + c.code + '"><span class="flag">' + c.flag + '</span>' +
-    '<span><span style="display:block">' + esc(c.name) + '</span><small>' + n + ' productos</small></span></a>';
+  return '<a class="country-tile" href="#/pais/' + c.code + '">' + flagSvg(c.code, 26) +
+    '<span><span style="display:block">' + esc(c.name) + '</span><small>' + n + ' producto' + (n === 1 ? '' : 's') + '</small></span></a>';
 }
 
 // ============ Header ============
@@ -180,7 +180,7 @@ function renderMegaMenuContent(){
     return '<li><a href="#/catalogo" data-action="goto-category-close" data-cat="' + c.id + '">' + esc(c.label) + '</a></li>';
   }).join('');
   var countries = MARACUYA.config.countries.filter(function(c){ return MARACUYA.products.some(function(p){ return p.assocCountry === c.code; }); }).map(function(c){
-    return '<li><a href="#/pais/' + c.code + '" data-action="close-overlay">' + c.flag + ' ' + esc(c.name) + '</a></li>';
+    return '<li><a href="#/pais/' + c.code + '" data-action="close-overlay">' + flagFor(c.code) + ' ' + esc(c.name) + '</a></li>';
   }).join('');
   el.innerHTML =
     '<div class="mega-menu__head"><strong>Menú</strong><button class="btn-icon" data-action="close-overlay" aria-label="Cerrar menú">' + icon('close', 20) + '</button></div>' +

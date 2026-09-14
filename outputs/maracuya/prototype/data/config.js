@@ -35,6 +35,8 @@ MARACUYA.config = {
     { code: 'PE', name: 'Perú', flag: '🇵🇪' },
     { code: 'DO', name: 'República Dominicana', flag: '🇩🇴' },
     { code: 'CU', name: 'Cuba', flag: '🇨🇺' },
+    { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
+    { code: 'EC', name: 'Ecuador', flag: '🇪🇨' },
     { code: 'LK', name: 'Sri Lanka', flag: '🇱🇰' }
   ],
 

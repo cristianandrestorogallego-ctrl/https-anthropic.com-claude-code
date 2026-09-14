@@ -87,7 +87,7 @@ function renderCatalogPage(){
     '<div class="filter-field"><label for="f-cat-category">Categoría</label><select class="select" id="f-cat-category" data-action="filter-catalog" data-key="category">' +
     '<option value="all">Todas</option>' + MARACUYA.config.categories.map(function(c){ return '<option value="' + c.id + '" ' + (f.category === c.id ? 'selected' : '') + '>' + esc(c.label) + '</option>'; }).join('') + '</select></div>' +
     '<div class="filter-field"><label for="f-cat-country">País</label><select class="select" id="f-cat-country" data-action="filter-catalog" data-key="country">' +
-    '<option value="all">Todos</option>' + countryOptions.map(function(c){ return '<option value="' + c.code + '" ' + (f.country === c.code ? 'selected' : '') + '>' + c.flag + ' ' + esc(c.name) + '</option>'; }).join('') + '</select></div>' +
+    '<option value="all">Todos</option>' + countryOptions.map(function(c){ return '<option value="' + c.code + '" ' + (f.country === c.code ? 'selected' : '') + '>' + esc(c.name) + '</option>'; }).join('') + '</select></div>' +
     '<div class="filter-field"><label for="f-cat-avail">Disponibilidad</label><select class="select" id="f-cat-avail" data-action="filter-catalog" data-key="availability">' +
     '<option value="all">Todas</option><option value="in" ' + (f.availability === 'in' ? 'selected' : '') + '>Disponibles</option>' +
     '<option value="out" ' + (f.availability === 'out' ? 'selected' : '') + '>Agotados</option></select></div>' +
@@ -138,7 +138,7 @@ function renderCountryPage(code){
   var country = getCountry(code);
   if(!country) return renderNotFound();
   var list = MARACUYA.products.filter(function(p){ return p.assocCountry === code; });
-  return '<div class="page-hero"><div class="container"><h1>' + country.flag + ' Productos de ' + esc(country.name) + '</h1>' +
+  return '<div class="page-hero"><div class="container"><h1 style="display:flex;align-items:center;gap:12px">' + flagSvg(code, 30) + ' Productos de ' + esc(country.name) + '</h1>' +
     '<p>Selección de productos asociados a ' + esc(country.name) + ' en nuestro catálogo de demostración.</p></div></div>' +
   '<div class="container" style="padding-block:var(--sp-7)">' +
     '<p class="filter-results-count">' + list.length + ' producto' + (list.length === 1 ? '' : 's') + '</p>' +

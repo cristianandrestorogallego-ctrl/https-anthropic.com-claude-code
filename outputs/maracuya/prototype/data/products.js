@@ -212,5 +212,25 @@ MARACUYA.products = [
     description: 'Pasta de ají amarillo peruano, base para múltiples preparaciones.',
     ingredientsText: PENDING, allergens: PENDING, conservation: PENDING, nutrition: PENDING,
     usedInRecipes: []
+  },
+  {
+    id: 'p20', name: 'Pão de queijo congelado', brand: 'Cosecha Latina',
+    category: 'despensa', format: 'Paquete 400 g', netQty: 400, netUnit: 'g',
+    originCountry: 'BR', assocCountry: 'BR',
+    basePrice: 4.50, stock: 'in', stockQty: 21,
+    glyph: 'frozen-pack', variants: null,
+    description: 'Bolitas de pan de queso brasileñas, precongeladas y listas para hornear.',
+    ingredientsText: PENDING, allergens: PENDING, conservation: PENDING, nutrition: PENDING,
+    usedInRecipes: []
+  },
+  {
+    id: 'p21', name: 'Cacao en polvo ecuatoriano', brand: 'Cosecha Latina',
+    category: 'despensa', format: '200 g', netQty: 200, netUnit: 'g',
+    originCountry: 'EC', assocCountry: 'EC',
+    basePrice: 4.50, stock: 'in', stockQty: 24,
+    glyph: 'bag', variants: null,
+    description: 'Cacao puro en polvo de origen ecuatoriano, para repostería y bebidas.',
+    ingredientsText: PENDING, allergens: PENDING, conservation: PENDING, nutrition: PENDING,
+    usedInRecipes: []
   }
 ];

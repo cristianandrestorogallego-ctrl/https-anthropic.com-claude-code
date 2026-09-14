@@ -32,7 +32,7 @@ function formatMoney(n){
 function prefersReducedMotion(){
   return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 }
-function flagFor(code){ var c = getCountry(code); return c ? c.flag : ''; }
+function flagFor(code){ return getCountry(code) ? flagSvg(code, 18) : ''; }
 
 // ============ Data lookups ============
 function getProduct(id){ return MARACUYA.products.find(function(p){ return p.id === id; }) || null; }
