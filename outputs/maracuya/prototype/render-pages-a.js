@@ -13,11 +13,11 @@ function renderHome(){
   return '' +
   '<section class="hero"><div class="hero-inner">' +
     '<div class="hero-copy">' +
-    '<span class="hero-eyebrow">' + icon('leaf', 14) + ' Prototipo de tienda — MARACUYA mercado latino</span>' +
-    '<h1>' + esc(MARACUYA.config.brand.tagline) + '</h1>' +
-    '<p>Productos, snacks, salsas y recetas de Latinoamérica pensados para comprarse en minutos. Catálogo de demostración.</p>' +
-    '<div class="hero-ctas"><a class="btn btn-primary" href="#/catalogo">Explorar productos</a><a class="btn btn-secondary" href="#/ofertas">Ver ofertas</a></div>' +
-    '</div><div class="hero-art">' + brandArt() + '</div>' +
+    '<span class="hero-eyebrow">' + esc(MARACUYA.config.brand.heroEyebrow) + '</span>' +
+    '<h1>' + esc(MARACUYA.config.brand.heroTitle) + '</h1>' +
+    '<p>' + esc(MARACUYA.config.brand.heroBody) + '</p>' +
+    '<div class="hero-ctas"><a class="btn btn-primary" href="#/catalogo">' + esc(MARACUYA.config.brand.heroCta) + '</a><a class="btn btn-secondary" href="#/ofertas">Ver ofertas</a></div>' +
+    '</div><div class="hero-art">' + heroIllustrationImg() + '</div>' +
   '</div></section>' +
 
   '<section class="section"><div class="container">' +
@@ -41,7 +41,7 @@ function renderHome(){
   '</div></section>' +
 
   '<section class="section section-deep"><div class="container">' +
-    '<div class="section-header"><div><span class="section-eyebrow">Recetas</span><h2>Cocina con MARACUYA</h2></div>' +
+    '<div class="section-header"><div><span class="section-eyebrow">Recetas</span><h2>Cocina con MARACUYÁ</h2></div>' +
     '<a class="section-link" href="#/recetas">Ver todas las recetas</a></div>' +
     '<div class="card-grid cols-4">' + featuredRecipes.map(renderRecipeCard).join('') + '</div>' +
   '</div></section>' +
@@ -80,7 +80,7 @@ function renderCatalogPage(){
   var active = !!f.q || f.category !== 'all' || f.country !== 'all' || f.availability !== 'all' || f.onSale;
   var countryOptions = MARACUYA.config.countries.filter(function(c){ return MARACUYA.products.some(function(p){ return p.assocCountry === c.code; }); });
 
-  return '<div class="page-hero"><div class="container"><h1>Catálogo</h1><p>Todos los productos de MARACUYA mercado latino. Catálogo de demostración.</p></div></div>' +
+  return '<div class="page-hero"><div class="container"><h1>Catálogo</h1><p>Todos los productos de MARACUYÁ mercado latino. Catálogo de demostración.</p></div></div>' +
   '<div class="container" style="padding-block:var(--sp-7)">' +
     '<div class="filter-bar">' +
     (f.q ? '<span class="filter-toggle is-active">Buscando: "' + esc(f.q) + '" <button data-action="clear-search-only" aria-label="Quitar búsqueda" style="margin-left:6px">' + icon('close', 12) + '</button></span>' : '') +
@@ -184,6 +184,6 @@ function renderContactPage(){
 // ============ Not found ============
 function renderNotFound(){
   return '<div class="container" style="padding-block:var(--sp-10)"><div class="empty-state">' + icon('alert-circle', 40) +
-    '<h3>Página no encontrada</h3><p>Vuelve al inicio para seguir explorando MARACUYA mercado latino.</p>' +
+    '<h3>Página no encontrada</h3><p>Vuelve al inicio para seguir explorando MARACUYÁ mercado latino.</p>' +
     '<a class="btn btn-primary" href="#/">Ir al inicio</a></div></div>';
 }

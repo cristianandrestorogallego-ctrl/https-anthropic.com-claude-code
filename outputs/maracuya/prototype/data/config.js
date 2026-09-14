@@ -2,15 +2,18 @@ window.MARACUYA = window.MARACUYA || {};
 
 MARACUYA.config = {
   brand: {
-    name: 'MARACUYA',
-    descriptor: 'mercado latino',
-    tagline: 'Los sabores de Latinoamérica, a un pedido de distancia',
-    isProvisionalIdentity: true
+    name: 'MARACUYÁ',
+    descriptor: 'Mercado Latino',
+    tagline: 'Raíces latinas. Sabor de casa.',
+    heroEyebrow: 'Mercado Latino',
+    heroTitle: 'Lo de casa, más cerca.',
+    heroBody: 'Descubre tus sabores favoritos de Latinoamérica.',
+    heroCta: 'Explorar productos'
   },
 
   whatsapp: {
     numberE164: '',
-    displayNote: 'Número de WhatsApp pendiente de configurar por el equipo de MARACUYA.'
+    displayNote: 'Número de WhatsApp pendiente de configurar por el equipo de MARACUYÁ.'
   },
 
   contact: {

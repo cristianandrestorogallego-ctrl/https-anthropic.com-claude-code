@@ -180,7 +180,7 @@ function renderRecipeDetail(recipe){
 
   return '<div class="container" style="padding-block:var(--sp-7)">' +
     renderBreadcrumbs([{ label:'Inicio', href:'#/' }, { label:'Recetas', href:'#/recetas' }, { label:recipe.name }]) +
-    '<div class="recipe-hero tile-deep"><div class="recipe-hero__overlay">' +
+    '<div class="recipe-hero tile-recipe"><div class="recipe-hero__overlay">' +
     '<span class="badge badge-demo" style="margin-bottom:8px">Receta de demostración</span>' +
     '<h1 style="font-family:var(--font-display);font-size:clamp(1.6rem,4vw,2.4rem)">' + esc(recipe.name) + '</h1>' +
     '<p>' + flagFor(recipe.countryCode) + ' ' + esc(recipe.countryText) + '</p></div>' + heroGlyphSvg(recipe.heroIcon) + '</div>' +

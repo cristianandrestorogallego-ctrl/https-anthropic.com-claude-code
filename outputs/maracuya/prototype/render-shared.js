@@ -115,7 +115,7 @@ function renderRecipeCard(recipe){
   var pkg = computePackage(recipe, ui);
   var available = isPackageAvailable(recipe);
   return '<article class="recipe-card">' +
-    '<a href="#/receta/' + recipe.id + '" class="recipe-card__media tile-deep">' +
+    '<a href="#/receta/' + recipe.id + '" class="recipe-card__media tile-recipe">' +
     '<span class="recipe-card__badges"><span class="badge badge-demo">Demostración</span>' +
     (available ? '' : '<span class="badge badge-stock-out">Paquete no disponible</span>') + '</span>' +
     heroGlyphSvg(recipe.heroIcon) + '</a>' +
@@ -150,8 +150,7 @@ function renderHeader(){
     '<div class="site-header">' +
     '<div class="promo-strip"><span>' + esc(MARACUYA.config.brand.descriptor.toUpperCase()) + ' · Envíos a España peninsular · Prototipo de demostración</span></div>' +
     '<div class="header-row">' +
-    '<a class="logo" href="#/" aria-label="MARACUYA mercado latino — inicio">' + logoMark() +
-    '<span><span class="logo-text">' + esc(MARACUYA.config.brand.name) + '</span><span class="logo-descriptor">' + esc(MARACUYA.config.brand.descriptor) + '</span></span></a>' +
+    '<a class="logo" href="#/" aria-label="MARACUYÁ mercado latino — inicio">' + headerLogoImg() + '</a>' +
     '<form id="global-search-form" class="search-form" role="search">' +
     '<div class="search-box">' + icon('search', 18) +
     '<label class="visually-hidden" for="global-search-input">Buscar productos</label>' +
@@ -159,7 +158,7 @@ function renderHeader(){
     '</div></form>' +
     '<div class="header-actions">' +
     '<a class="recetas-tab" href="#/recetas">' + icon('leaf', 16) + ' Recetas</a>' +
-    '<button class="btn-icon icon-on-deep cart-btn" id="cart-toggle-btn" data-action="open-cart" aria-haspopup="dialog" aria-controls="cart-drawer" aria-expanded="false" aria-label="Abrir carrito' + (count ? ', ' + count + ' productos' : '') + '">' +
+    '<button class="btn-icon cart-btn" id="cart-toggle-btn" data-action="open-cart" aria-haspopup="dialog" aria-controls="cart-drawer" aria-expanded="false" aria-label="Abrir carrito' + (count ? ', ' + count + ' productos' : '') + '">' +
     icon('cart', 22) + (count ? '<span class="cart-count" aria-hidden="true">' + count + '</span>' : '') + '</button>' +
     '<button class="menu-btn" id="menu-toggle-btn" data-action="open-menu" aria-haspopup="dialog" aria-controls="mega-menu" aria-expanded="false">' +
     '<span class="bars"><span></span><span></span><span></span></span> Menú</button>' +

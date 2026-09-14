@@ -83,34 +83,14 @@ function heroGlyphSvg(key){
   return '<svg class="glyph-svg" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true">' + inner + '</svg>';
 }
 
-function logoMark(){
-  return '<span class="logo-mark">' +
-    '<svg viewBox="0 0 48 48" width="100%" height="100%" aria-hidden="true">' +
-    '<defs><linearGradient id="logoGrad" x1="0" y1="0" x2="1" y2="1">' +
-    '<stop offset="0" stop-color="#F7B84B"/><stop offset="1" stop-color="#D8481A"/>' +
-    '</linearGradient></defs>' +
-    '<circle cx="24" cy="24" r="24" fill="url(#logoGrad)"/>' +
-    '<circle cx="24" cy="24" r="9" fill="#FFFFFF"/>' +
-    '</svg></span>';
+function headerLogoImg(){
+  return '<img class="logo-img" src="brand/maracuya-logo-compacto.svg" width="190" height="39" alt="MARACUYÁ · Mercado Latino"/>';
 }
 
-function seedRing(cx, cy, r){
-  var dots = '';
-  for (var i = 0; i < 10; i++){
-    var a = (i / 10) * Math.PI * 2;
-    dots += '<circle cx="' + (cx + Math.cos(a) * r).toFixed(1) + '" cy="' + (cy + Math.sin(a) * r).toFixed(1) + '" r="4.2" fill="#2A1710" opacity=".55"/>';
-  }
-  return dots;
+function footerLogoImg(){
+  return '<img class="logo-img" style="height:42px" src="brand/maracuya-logo-inverso.svg" width="230" height="48" alt="MARACUYÁ · Mercado Latino"/>';
 }
 
-function brandArt(){
-  return '<svg viewBox="0 0 320 320" width="100%" height="100%" aria-hidden="true">' +
-    '<circle cx="160" cy="160" r="120" fill="url(#gradBrand)"/>' +
-    '<circle cx="160" cy="160" r="78" fill="#fff" opacity=".18"/>' +
-    seedRing(160, 160, 42) +
-    '<circle cx="252" cy="76" r="30" fill="#F0C05C" opacity=".85"/>' +
-    '<circle cx="54" cy="240" r="22" fill="#E11760" opacity=".55"/>' +
-    '<defs><linearGradient id="gradBrand" x1="0" y1="0" x2="1" y2="1">' +
-    '<stop offset="0" stop-color="#F0C05C"/><stop offset=".55" stop-color="#E8621F"/><stop offset="1" stop-color="#3B1338"/>' +
-    '</linearGradient></defs></svg>';
+function heroIllustrationImg(){
+  return '<img src="brand/maracuya-ilustracion.svg" width="1200" height="1100" alt="Ilustración de maracuyá entero y cortado" loading="lazy"/>';
 }
