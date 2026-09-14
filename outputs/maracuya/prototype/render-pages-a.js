@@ -1,8 +1,56 @@
+// ============ Home hero ============
+function renderHeroBrand(){
+  return '<section class="hero"><div class="hero-inner">' +
+    '<div class="hero-copy">' +
+    '<span class="hero-eyebrow">' + esc(MARACUYA.config.brand.heroEyebrow) + '</span>' +
+    '<h1>' + esc(MARACUYA.config.brand.heroTitle) + '</h1>' +
+    '<p>' + esc(MARACUYA.config.brand.heroBody) + '</p>' +
+    '<div class="hero-ctas"><a class="btn btn-primary" href="#/catalogo">' + esc(MARACUYA.config.brand.heroCta) + '</a><a class="btn btn-secondary" href="#/ofertas">Ver ofertas</a></div>' +
+    '</div><div class="hero-art">' + heroIllustrationImg() + '</div>' +
+  '</div></section>';
+}
+function renderHeroOffers(slides){
+  var len = slides.length;
+  var i = ((state.heroSlide % len) + len) % len;
+  var current = slides[i];
+  var offer = current.offer, product = current.product;
+  var pricing = getPricing(product);
+  var country = getCountry(product.assocCountry);
+  var scopeBadge = offer.scope === 'day' ? icon('zap', 14) : icon('tag', 14);
+  var desc = product.description || (product.brand + ' · ' + product.format);
+  var navHtml = len > 1 ? (
+    '<div class="hero-carousel__controls">' +
+    '<button class="hero-carousel__arrow is-prev" id="hero-arrow-prev" data-action="hero-prev" aria-label="Oferta anterior" aria-controls="hero-slide-panel" style="transform:scaleX(-1)">' + icon('chevron-right', 18) + '</button>' +
+    '<div class="hero-carousel__dots">' + slides.map(function(s, idx){
+      return '<button class="hero-carousel__dot' + (idx === i ? ' is-active' : '') + '" id="hero-dot-' + idx + '" aria-label="Ir a la oferta ' + (idx + 1) + ' de ' + len + '" aria-current="' + (idx === i) + '" data-action="hero-goto" data-index="' + idx + '"></button>';
+    }).join('') + '</div>' +
+    '<button class="hero-carousel__arrow is-next" id="hero-arrow-next" data-action="hero-next" aria-label="Oferta siguiente" aria-controls="hero-slide-panel">' + icon('chevron-right', 18) + '</button>' +
+    '</div>'
+  ) : '';
+  return '<section class="hero-carousel" aria-roledescription="carrusel" aria-label="Ofertas destacadas">' +
+    '<div class="hero-slide tile-' + product.category + '" id="hero-slide-panel">' +
+    '<div class="hero-slide__bg" aria-hidden="true">' + glyphSvg(product.glyph) + '</div>' +
+    '<div class="hero-slide__scrim" aria-hidden="true"></div>' +
+    '<div class="hero-slide__content">' +
+    '<div class="hero-slide__badges">' +
+    '<span class="hero-badge">' + scopeBadge + ' ' + esc(offer.label) + '</span>' +
+    (pricing.discountPct ? '<span class="hero-discount">-' + pricing.discountPct + '%</span>' : '') +
+    '<span class="hero-countdown" data-countdown-end="' + offer.endISO + '">' + icon('clock', 14) + ' Termina en <span class="countdown-chip tabular">--:--:--</span></span>' +
+    '</div>' +
+    (country ? '<span class="hero-slide__country">' + flagFor(country.code) + ' ' + esc(country.name) + '</span>' : '') +
+    '<h1 class="hero-slide__title">' + esc(product.name) + '</h1>' +
+    '<p class="hero-slide__desc">' + esc(desc) + '</p>' +
+    '<div class="hero-ctas"><a class="btn btn-primary" href="#/producto/' + product.id + '">Ver oferta ' + icon('arrow-right', 16) + '</a>' +
+    '<a class="btn btn-secondary" href="#/ofertas">Ver todas las ofertas</a></div>' +
+    '</div>' + navHtml +
+    '</div></section>';
+}
+
 // ============ Home ============
 function renderHome(){
-  var activeOfferProducts = MARACUYA.offers
-    .filter(function(o){ return new Date(o.endISO).getTime() > Date.now(); })
-    .map(function(o){ return getProduct(o.productId); });
+  var activeOffers = MARACUYA.offers.filter(function(o){ return new Date(o.endISO).getTime() > Date.now(); });
+  var activeOfferProducts = activeOffers.map(function(o){ return getProduct(o.productId); });
+  var heroSlides = activeOffers.map(function(o){ return { offer:o, product:getProduct(o.productId) }; });
   var popularIds = ['p01', 'p02', 'p04', 'p06', 'p08', 'p09', 'p11', 'p12', 'p14', 'p16', 'p19'];
   var popular = MARACUYA.products
     .filter(function(p){ return popularIds.indexOf(p.id) !== -1 && !getActiveOffer(p.id); })
@@ -11,14 +59,7 @@ function renderHome(){
   var countriesWithProducts = MARACUYA.config.countries.filter(function(c){ return MARACUYA.products.some(function(p){ return p.assocCountry === c.code; }); });
 
   return '' +
-  '<section class="hero"><div class="hero-inner">' +
-    '<div class="hero-copy">' +
-    '<span class="hero-eyebrow">' + esc(MARACUYA.config.brand.heroEyebrow) + '</span>' +
-    '<h1>' + esc(MARACUYA.config.brand.heroTitle) + '</h1>' +
-    '<p>' + esc(MARACUYA.config.brand.heroBody) + '</p>' +
-    '<div class="hero-ctas"><a class="btn btn-primary" href="#/catalogo">' + esc(MARACUYA.config.brand.heroCta) + '</a><a class="btn btn-secondary" href="#/ofertas">Ver ofertas</a></div>' +
-    '</div><div class="hero-art">' + heroIllustrationImg() + '</div>' +
-  '</div></section>' +
+  (heroSlides.length ? renderHeroOffers(heroSlides) : renderHeroBrand()) +
 
   '<section class="section"><div class="container">' +
     '<div class="section-header"><div><h2>Categorías</h2><p class="section-subtitle">Todo lo que necesitas para cocinar y disfrutar.</p></div></div>' +

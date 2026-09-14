@@ -14,7 +14,8 @@ var state = {
   postalCode: '',
   headerSearchDraft: '',
   openAccordions: new Set(),
-  addingLock: false
+  addingLock: false,
+  heroSlide: 0
 };
 var cartLineSeq = 0;
 var pendingModalContent = null;

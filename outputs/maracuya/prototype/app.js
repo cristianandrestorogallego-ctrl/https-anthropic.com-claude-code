@@ -243,7 +243,11 @@ var actions = {
     rerender();
   },
   'rail-prev': function(el){ var rail = document.getElementById(el.dataset.rail); if(rail) rail.scrollBy({ left:-240, behavior: prefersReducedMotion() ? 'auto' : 'smooth' }); },
-  'rail-next': function(el){ var rail = document.getElementById(el.dataset.rail); if(rail) rail.scrollBy({ left:240, behavior: prefersReducedMotion() ? 'auto' : 'smooth' }); }
+  'rail-next': function(el){ var rail = document.getElementById(el.dataset.rail); if(rail) rail.scrollBy({ left:240, behavior: prefersReducedMotion() ? 'auto' : 'smooth' }); },
+
+  'hero-prev': function(){ state.heroSlide = state.heroSlide - 1; rerender(); },
+  'hero-next': function(){ state.heroSlide = state.heroSlide + 1; rerender(); },
+  'hero-goto': function(el){ state.heroSlide = parseInt(el.dataset.index, 10) || 0; rerender(); }
 };
 
 // ============ Event wiring ============
