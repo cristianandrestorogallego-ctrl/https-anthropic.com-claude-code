@@ -40,6 +40,7 @@ MARACUYA.config = {
     { code: 'CU', name: 'Cuba', flag: '🇨🇺' },
     { code: 'BR', name: 'Brasil', flag: '🇧🇷' },
     { code: 'EC', name: 'Ecuador', flag: '🇪🇨' },
+    { code: 'PY', name: 'Paraguay', flag: '🇵🇾' },
     { code: 'LK', name: 'Sri Lanka', flag: '🇱🇰' }
   ],
 

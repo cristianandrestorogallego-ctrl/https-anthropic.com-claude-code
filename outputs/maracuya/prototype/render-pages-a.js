@@ -21,13 +21,13 @@ function renderHome(){
   '</div></section>' +
 
   '<section class="section"><div class="container">' +
-    '<div class="section-header"><div><span class="section-eyebrow">Explora</span><h2>Categorías</h2></div></div>' +
+    '<div class="section-header"><div><h2>Categorías</h2><p class="section-subtitle">Todo lo que necesitas para cocinar y disfrutar.</p></div></div>' +
     '<div class="category-grid">' + MARACUYA.config.categories.map(renderCategoryCardHome).join('') + '</div>' +
   '</div></section>' +
 
   '<section class="section section-alt"><div class="container">' +
-    '<div class="section-header"><div><span class="section-eyebrow">No te lo pierdas</span><h2>Ofertas destacadas</h2></div>' +
-    '<a class="section-link" href="#/ofertas">Ver todas las ofertas</a></div>' +
+    '<div class="section-header"><div><h2>Ofertas destacadas</h2><p class="section-subtitle">Selección de ofertas de demostración.</p></div>' +
+    '<a class="section-link" href="#/ofertas">Ver todas las ofertas ' + icon('arrow-right', 14) + '</a></div>' +
     '<div class="offers-rail-wrap"><div class="offers-rail-nav">' +
     '<button data-action="rail-prev" data-rail="offers-rail-home" aria-label="Ver ofertas anteriores" style="transform:scaleX(-1)">' + icon('chevron-right', 18) + '</button>' +
     '<button data-action="rail-next" data-rail="offers-rail-home" aria-label="Ver más ofertas">' + icon('chevron-right', 18) + '</button></div>' +
@@ -35,29 +35,29 @@ function renderHome(){
     '</div></div></section>' +
 
   '<section class="section"><div class="container">' +
-    '<div class="section-header"><div><span class="section-eyebrow">Lo más elegido</span><h2>Productos populares</h2></div>' +
-    '<a class="section-link" href="#/catalogo">Ver todo el catálogo</a></div>' +
+    '<div class="section-header"><div><h2>Productos populares</h2><p class="section-subtitle">Una muestra de nuestro catálogo de demostración.</p></div>' +
+    '<a class="section-link" href="#/catalogo">Ver todo el catálogo ' + icon('arrow-right', 14) + '</a></div>' +
     '<div class="card-grid cols-4">' + popular.map(function(p){ return renderProductCard(p); }).join('') + '</div>' +
   '</div></section>' +
 
   '<section class="section section-deep"><div class="container">' +
-    '<div class="section-header"><div><span class="section-eyebrow">Recetas</span><h2>Cocina con MARACUYÁ</h2></div>' +
-    '<a class="section-link" href="#/recetas">Ver todas las recetas</a></div>' +
+    '<div class="section-header"><div><h2>Cocina con MARACUYÁ</h2><p class="section-subtitle">Recetas latinas con los ingredientes listos para comprar.</p></div>' +
+    '<a class="section-link" href="#/recetas">Ver todas las recetas ' + icon('arrow-right', 14) + '</a></div>' +
     '<div class="card-grid cols-4">' + featuredRecipes.map(renderRecipeCard).join('') + '</div>' +
   '</div></section>' +
 
   '<section class="section"><div class="container">' +
-    '<div class="section-header"><div><span class="section-eyebrow">Explora por origen</span><h2>Comprar por país</h2></div></div>' +
+    '<div class="section-header"><div><h2>Comprar por país</h2><p class="section-subtitle">Descubre productos asociados a cada país de Latinoamérica.</p></div></div>' +
     '<div class="country-grid">' + countriesWithProducts.map(renderCountryTile).join('') + '</div>' +
   '</div></section>' +
 
-  '<section class="section section-alt"><div class="container">' +
+  '<section class="section section-deep"><div class="container">' +
     '<div class="feature-grid">' +
-    '<div class="feature-card">' + icon('truck', 24) + '<h3>Envíos</h3><p>Reparto en España peninsular. Introduce tu código postal en cualquier producto para ver una entrega estimada.</p></div>' +
-    '<div class="feature-card">' + icon('headset', 24) + '<h3>Atención al cliente</h3><p>Escríbenos por WhatsApp para dudas sobre productos, recetas o pedidos.</p></div>' +
-    '<div class="feature-card">' + icon('shield-check', 24) + '<h3>Pagos</h3><p>Previstos mediante el checkout seguro de Shopify.</p>' +
+    '<div class="feature-card"><span class="feature-card__icon">' + icon('truck', 22) + '</span><div><h3>Envío a toda España</h3><p>Reparto en España peninsular. Introduce tu código postal en cualquier producto para ver una entrega estimada.</p></div></div>' +
+    '<div class="feature-card"><span class="feature-card__icon">' + icon('headset', 22) + '</span><div><h3>Atención cercana</h3><p>Escríbenos por WhatsApp para dudas sobre productos, recetas o pedidos.</p></div></div>' +
+    '<div class="feature-card"><span class="feature-card__icon">' + icon('shield-check', 22) + '</span><div><h3>Pago seguro</h3><p>Los métodos de pago se habilitarán al conectar la tienda. Hoy la web funciona como demostración.</p></div></div>' +
+    '</div>' +
     '<div class="payment-methods">' + MARACUYA.config.paymentMethods.map(function(m){ return '<span class="payment-chip">' + esc(m.label) + '<small>Demostración</small></span>'; }).join('') + '</div>' +
-    '</div></div>' +
   '</div></section>';
 }
 
@@ -169,10 +169,10 @@ function renderContactPage(){
   return '<div class="page-hero"><div class="container"><h1>Contacto y ayuda</h1><p>Resolvemos dudas sobre productos, recetas, pedidos y envíos.</p></div></div>' +
   '<div class="container" style="padding-block:var(--sp-7);display:grid;gap:var(--sp-8)">' +
     '<div class="feature-grid">' +
-    '<div class="feature-card">' + icon('whatsapp', 22) + '<h3>WhatsApp</h3><p>' + esc(cfg.whatsapp.displayNote) + '</p>' +
+    '<div class="feature-card feature-card--surface">' + icon('whatsapp', 22) + '<h3>WhatsApp</h3><p>' + esc(cfg.whatsapp.displayNote) + '</p>' +
     '<button class="btn btn-whatsapp btn-sm" data-action="whatsapp-cart" style="margin-top:6px">Escribir por WhatsApp</button></div>' +
-    '<div class="feature-card">' + icon('info', 22) + '<h3>Correo</h3><p>' + esc(cfg.contact.email) + '</p></div>' +
-    '<div class="feature-card">' + icon('map-pin', 22) + '<h3>Envíos</h3><p>' + esc(cfg.contact.addressNote) + '</p></div>' +
+    '<div class="feature-card feature-card--surface">' + icon('info', 22) + '<h3>Correo</h3><p>' + esc(cfg.contact.email) + '</p></div>' +
+    '<div class="feature-card feature-card--surface">' + icon('map-pin', 22) + '<h3>Envíos</h3><p>' + esc(cfg.contact.addressNote) + '</p></div>' +
     '</div>' +
     '<div><h2 style="font-family:var(--font-display);font-size:1.4rem;margin-bottom:12px">Preguntas frecuentes</h2>' + faqHtml + '</div>' +
     '<div><h2 style="font-family:var(--font-display);font-size:1.4rem;margin-bottom:12px">Zonas de entrega (ejemplo)</h2>' +

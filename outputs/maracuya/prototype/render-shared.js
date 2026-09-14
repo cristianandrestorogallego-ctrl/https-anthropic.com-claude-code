@@ -83,32 +83,35 @@ function productInfoAccordion(product){
 function renderProductCard(product, opts){
   opts = opts || {};
   var pricing = getPricing(product);
-  var stockMeta = getStockMeta(product.stock);
   var country = getCountry(product.assocCountry);
   var hasVariants = Array.isArray(product.variants) && product.variants.length > 0;
-  var ctaHtml;
-  if(product.stock === 'out'){
-    ctaHtml = '<button class="btn btn-ghost btn-block btn-sm" disabled>Agotado</button>';
+  var isOut = product.stock === 'out';
+  var cartBtnHtml;
+  if(isOut){
+    cartBtnHtml = '<span class="product-card__cart-btn is-disabled" aria-hidden="true">' + icon('cart', 18) + '</span>';
   } else if(hasVariants){
-    ctaHtml = '<a class="btn btn-outline btn-block btn-sm" href="#/producto/' + product.id + '">Elegir opciones</a>';
+    cartBtnHtml = '<a class="product-card__cart-btn" href="#/producto/' + product.id + '" aria-label="Elegir opciones de ' + esc(product.name) + '">' + icon('arrow-right', 18) + '</a>';
   } else {
-    ctaHtml = '<button class="btn btn-primary btn-block btn-sm" id="add-cart-' + product.id + (opts.idSuffix || '') + '" data-action="add-to-cart" data-product-id="' + product.id + '">Añadir al carrito</button>';
+    cartBtnHtml = '<button class="product-card__cart-btn" id="add-cart-' + product.id + (opts.idSuffix || '') + '" data-action="add-to-cart" data-product-id="' + product.id + '" aria-label="Añadir ' + esc(product.name) + ' al carrito">' + icon('cart', 18) + '</button>';
   }
   var badges = '';
   if(pricing.offer) badges += '<span class="badge badge-offer">-' + pricing.discountPct + '%</span>';
-  if(product.stock === 'low') badges += '<span class="badge badge-stock-low">' + stockMeta.label + '</span>';
-  if(product.stock === 'out') badges += '<span class="badge badge-stock-out">' + stockMeta.label + '</span>';
+  if(product.stock === 'low') badges += '<span class="badge badge-stock-low">' + getStockMeta('low').label + '</span>';
   if(opts.showCountdown && pricing.offer) badges += renderCountdown(pricing.offer);
-  return '<article class="product-card">' +
+  return '<article class="product-card' + (isOut ? ' is-out' : '') + '">' +
     '<a href="#/producto/' + product.id + '" class="product-card__media tile-' + product.category + '" aria-label="' + esc(product.name) + '">' +
     '<span class="product-card__badges">' + badges + '</span>' + glyphSvg(product.glyph) + '</a>' +
     '<div class="product-card__body">' +
     '<span class="product-card__country">' + (country ? flagFor(country.code) + ' ' + esc(country.name) : '') + '</span>' +
     '<a href="#/producto/' + product.id + '"><h3 class="product-card__name">' + esc(product.name) + '</h3></a>' +
     '<span class="product-card__brand">' + esc(product.brand) + ' · ' + esc(product.format) + '</span>' +
-    '<div class="product-card__price-row"><span class="price">' + formatMoney(pricing.current) + '</span>' +
+    '<div class="product-card__footer">' +
+    '<div class="product-card__pricebox">' +
+    '<div class="product-card__price-line"><span class="price">' + formatMoney(pricing.current) + '</span>' +
     (pricing.old ? '<span class="price-old">' + formatMoney(pricing.old) + '</span>' : '') + '</div>' +
-    '<div class="product-card__cta">' + ctaHtml + '</div></div></article>';
+    '<span class="product-card__avail ' + (isOut ? 'is-out' : 'is-in') + '">' + (isOut ? icon('close', 12) + ' Agotado' : icon('check', 12) + ' Disponible') + '</span>' +
+    '</div>' + cartBtnHtml +
+    '</div></div></article>';
 }
 function renderRecipeCard(recipe){
   var ui = getRecipeUiState(recipe.id);
@@ -116,11 +119,12 @@ function renderRecipeCard(recipe){
   var available = isPackageAvailable(recipe);
   return '<article class="recipe-card">' +
     '<a href="#/receta/' + recipe.id + '" class="recipe-card__media tile-recipe">' +
-    '<span class="recipe-card__badges"><span class="badge badge-demo">Demostración</span>' +
+    '<span class="recipe-card__badges">' +
+    '<span class="badge recipe-card__country-badge">' + flagFor(recipe.countryCode) + ' ' + esc(recipe.countryText) + '</span>' +
     (available ? '' : '<span class="badge badge-stock-out">Paquete no disponible</span>') + '</span>' +
     heroGlyphSvg(recipe.heroIcon) + '</a>' +
     '<div class="recipe-card__body">' +
-    '<span class="recipe-card__country">' + flagFor(recipe.countryCode) + ' ' + esc(recipe.countryText) + '</span>' +
+    '<span class="badge badge-demo" style="width:fit-content">Demostración</span>' +
     '<h3 class="recipe-card__name">' + esc(recipe.name) + '</h3>' +
     '<div class="recipe-card__meta">' +
     '<span>' + icon('clock', 14) + ' ' + (recipe.prepMinutes + recipe.cookMinutes) + ' min</span>' +
@@ -128,12 +132,12 @@ function renderRecipeCard(recipe){
     '<span>' + icon('users', 14) + ' ' + recipe.baseServings + ' raciones</span></div>' +
     '<div class="recipe-card__price"><span style="font-size:.78rem;color:var(--ink-soft)">Paquete desde</span><span class="price">' + formatMoney(pkg.total) + '</span></div>' +
     '<div class="recipe-card__actions"><a class="btn btn-outline btn-sm" href="#/receta/' + recipe.id + '">Ver receta</a>' +
-    '<a class="btn btn-primary btn-sm" href="#/receta/' + recipe.id + '">Ver paquete</a></div></div></article>';
+    '<a class="btn btn-leaf btn-sm" href="#/receta/' + recipe.id + '">Ver paquete</a></div></div></article>';
 }
 function renderCategoryCardHome(cat){
   return '<a class="category-card" href="#/catalogo" data-action="goto-category" data-cat="' + cat.id + '">' +
     '<span class="category-card__media tile-' + cat.id + '">' + glyphSvg(cat.icon) + '</span>' +
-    '<strong>' + esc(cat.label) + '</strong><span>' + esc(cat.blurb) + '</span></a>';
+    '<strong>' + esc(cat.label) + '</strong></a>';
 }
 function renderCountryTile(c){
   var n = MARACUYA.products.filter(function(p){ return p.assocCountry === c.code; }).length;

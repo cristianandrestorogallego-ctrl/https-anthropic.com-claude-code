@@ -34,7 +34,8 @@ var FLAGS = {
   DO: '<rect width="30" height="20" fill="#FFFFFF"/><rect width="13" height="9" fill="#002D62"/><rect x="17" width="13" height="9" fill="#CE1126"/><rect y="11" width="13" height="9" fill="#CE1126"/><rect x="17" y="11" width="13" height="9" fill="#002D62"/>',
   CU: '<rect width="30" height="20" fill="#FFFFFF"/><rect width="30" height="4" fill="#002A8F"/><rect y="8" width="30" height="4" fill="#002A8F"/><rect y="16" width="30" height="4" fill="#002A8F"/><path d="M0 0 L13 10 L0 20 Z" fill="#CB1515"/><circle cx="5" cy="10" r="2" fill="#FFFFFF"/>',
   BR: '<rect width="30" height="20" fill="#009639"/><path d="M15 2 L28 10 L15 18 L2 10 Z" fill="#FEDD00"/><circle cx="15" cy="10" r="4.5" fill="#002776"/>',
-  EC: '<rect width="30" height="20" fill="#FFDD00"/><rect y="10" width="30" height="5" fill="#034EA2"/><rect y="15" width="30" height="5" fill="#ED1C24"/>'
+  EC: '<rect width="30" height="20" fill="#FFDD00"/><rect y="10" width="30" height="5" fill="#034EA2"/><rect y="15" width="30" height="5" fill="#ED1C24"/>',
+  PY: '<rect width="30" height="6.67" fill="#D52B1E"/><rect y="6.67" width="30" height="6.67" fill="#FFFFFF"/><rect y="13.33" width="30" height="6.67" fill="#0038A8"/>'
 };
 
 function flagSvg(code, size){

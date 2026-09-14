@@ -232,5 +232,15 @@ MARACUYA.products = [
     description: 'Cacao puro en polvo de origen ecuatoriano, para repostería y bebidas.',
     ingredientsText: PENDING, allergens: PENDING, conservation: PENDING, nutrition: PENDING,
     usedInRecipes: []
+  },
+  {
+    id: 'p22', name: 'Yerba mate paraguaya', brand: 'Cosecha Latina',
+    category: 'bebidas', format: 'Paquete 500 g', netQty: 500, netUnit: 'g',
+    originCountry: 'PY', assocCountry: 'PY',
+    basePrice: 6.50, stock: 'in', stockQty: 18,
+    glyph: 'bag', variants: null,
+    description: 'Yerba mate tradicional paraguaya, para preparar mate o tereré.',
+    ingredientsText: PENDING, allergens: PENDING, conservation: PENDING, nutrition: PENDING,
+    usedInRecipes: []
   }
 ];
