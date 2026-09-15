@@ -269,7 +269,7 @@ function buildWaLink(text){
 function buildProductMessage(product, variant, qty){
   var unitPrice = variant ? variant.basePrice : getPricing(product).current;
   var lines = [
-    'Hola MARACUYÁ 👋, quiero pedir:',
+    'Hola MARACUYA 👋, quiero pedir:',
     '• ' + product.name + (variant ? ' — ' + variant.label : '') + ' × ' + qty + ' — ' + formatMoney(unitPrice) + ' c/u',
     'Subtotal: ' + formatMoney(unitPrice * qty),
     '', WA_DISCLAIMER
@@ -277,7 +277,7 @@ function buildProductMessage(product, variant, qty){
   return lines.join('\n');
 }
 function buildPackageMessage(recipe, pkg){
-  var lines = ['Hola MARACUYÁ 👋, quiero pedir el paquete de la receta "' + recipe.name + '" (' + pkg.servings + ' raciones):', ''];
+  var lines = ['Hola MARACUYA 👋, quiero pedir el paquete de la receta "' + recipe.name + '" (' + pkg.servings + ' raciones):', ''];
   pkg.rows.filter(function(r){ return r.selected; }).forEach(function(r){
     lines.push('• ' + r.product.name + ' × ' + r.units + ' — ' + formatMoney(r.lineTotal));
   });
@@ -290,7 +290,7 @@ function buildPackageMessage(recipe, pkg){
   return lines.join('\n');
 }
 function buildCartMessage(){
-  var lines = ['Hola MARACUYÁ 👋, quiero pedir:', ''];
+  var lines = ['Hola MARACUYA 👋, quiero pedir:', ''];
   var grouped = groupCartLines(state.cart);
   grouped.standalone.forEach(function(l){ lines.push('• ' + l.name + ' × ' + l.qty + ' — ' + formatMoney(l.unitPrice * l.qty)); });
   grouped.groups.forEach(function(g){

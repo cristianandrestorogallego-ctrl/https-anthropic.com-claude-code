@@ -18,7 +18,7 @@ MARACUYA.recipes = [
     baseServings: 4, minServings: 2, maxServings: 10, servingStep: 1,
     heroIcon: 'beans-rice',
     summary: 'Un plato de cuchara reconfortante: frijoles negros bien sazonados sobre arroz blanco, con un toque de salsa criolla.',
-    description: 'Receta de demostración original para MARACUYÁ mercado latino. El arroz y los frijoles se cocinan por separado y se sirven juntos con verduras sofritas y un toque de salsa al gusto. Un clásico cotidiano del Caribe hispano.',
+    description: 'Receta de demostración original para MARACUYA mercado latino. El arroz y los frijoles se cocinan por separado y se sirven juntos con verduras sofritas y un toque de salsa al gusto. Un clásico cotidiano del Caribe hispano.',
     utensils: ['Olla mediana con tapa', 'Sartén', 'Cuchara de madera', 'Colador'],
     tips: [
       'Sofríe bien la cebolla, el ajo y el pimiento antes de añadir los frijoles: es la base del sabor.',
@@ -53,7 +53,7 @@ MARACUYA.recipes = [
     baseServings: 4, minServings: 2, maxServings: 12, servingStep: 2,
     heroIcon: 'arepa',
     summary: 'Arepas doradas por fuera y suaves por dentro, rellenas de queso blanco fundido.',
-    description: 'Receta de demostración original para MARACUYÁ mercado latino. Con harina de maíz precocida, agua y sal se forma una masa que se cocina en plancha o sartén y se abre para rellenar con queso blanco.',
+    description: 'Receta de demostración original para MARACUYA mercado latino. Con harina de maíz precocida, agua y sal se forma una masa que se cocina en plancha o sartén y se abre para rellenar con queso blanco.',
     utensils: ['Bol para amasar', 'Plancha o sartén antiadherente', 'Horno (opcional, para terminar de cocinar por dentro)'],
     tips: [
       'Deja reposar la masa 5 minutos antes de formar las arepas: cuesta menos que no se agriete.',
@@ -84,7 +84,7 @@ MARACUYA.recipes = [
     baseServings: 6, minServings: 2, maxServings: 12, servingStep: 2,
     heroIcon: 'rice-pudding',
     summary: 'Arroz con leche cremoso perfumado con canela en rama y un toque de coco rallado.',
-    description: 'Receta de demostración original para MARACUYÁ mercado latino. El arroz se cuece a fuego lento con leche condensada, canela y cáscara de limón hasta lograr una textura cremosa, y se termina con coco rallado.',
+    description: 'Receta de demostración original para MARACUYA mercado latino. El arroz se cuece a fuego lento con leche condensada, canela y cáscara de limón hasta lograr una textura cremosa, y se termina con coco rallado.',
     utensils: ['Olla de fondo grueso', 'Cuchara de madera', 'Rallador (para la cáscara de limón)'],
     tips: [
       'Remueve con frecuencia hacia el final de la cocción para que no se pegue al fondo.',
@@ -118,7 +118,7 @@ MARACUYA.recipes = [
     baseServings: 4, minServings: 2, maxServings: 8, servingStep: 2,
     heroIcon: 'mole-chicken',
     summary: 'Pechugas de pollo bañadas en una salsa de mole poblano espesa y aromática.',
-    description: 'Receta de demostración original para MARACUYÁ mercado latino. La pasta de mole se diluye con caldo caliente hasta lograr una salsa untuosa en la que se termina de cocinar el pollo.',
+    description: 'Receta de demostración original para MARACUYA mercado latino. La pasta de mole se diluye con caldo caliente hasta lograr una salsa untuosa en la que se termina de cocinar el pollo.',
     utensils: ['Cazuela amplia', 'Batidor de varillas', 'Cuchara de madera'],
     tips: [
       'Diluye la pasta de mole poco a poco con caldo caliente para que no queden grumos.',

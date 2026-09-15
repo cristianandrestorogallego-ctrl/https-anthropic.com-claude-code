@@ -2,7 +2,7 @@ window.MARACUYA = window.MARACUYA || {};
 
 MARACUYA.config = {
   brand: {
-    name: 'MARACUYÁ',
+    name: 'MARACUYA',
     descriptor: 'Mercado Latino',
     tagline: 'Raíces latinas. Sabor de casa.',
     heroEyebrow: 'Mercado Latino',
@@ -13,7 +13,7 @@ MARACUYA.config = {
 
   whatsapp: {
     numberE164: '',
-    displayNote: 'Número de WhatsApp pendiente de configurar por el equipo de MARACUYÁ.'
+    displayNote: 'Número de WhatsApp pendiente de configurar por el equipo de MARACUYA.'
   },
 
   contact: {

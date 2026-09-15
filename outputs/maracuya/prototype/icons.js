@@ -86,11 +86,11 @@ function heroGlyphSvg(key){
 }
 
 function headerLogoImg(){
-  return '<img class="logo-img" src="brand/maracuya-logo-compacto.svg" width="190" height="39" alt="MARACUYÁ · Mercado Latino"/>';
+  return '<img class="logo-img" src="brand/maracuya-logo-compacto.svg" width="190" height="39" alt="MARACUYA · Mercado Latino"/>';
 }
 
 function footerLogoImg(){
-  return '<img class="logo-img" style="height:42px" src="brand/maracuya-logo-inverso.svg" width="230" height="48" alt="MARACUYÁ · Mercado Latino"/>';
+  return '<img class="logo-img" style="height:42px" src="brand/maracuya-logo-inverso.svg" width="230" height="48" alt="MARACUYA · Mercado Latino"/>';
 }
 
 function heroIllustrationImg(){

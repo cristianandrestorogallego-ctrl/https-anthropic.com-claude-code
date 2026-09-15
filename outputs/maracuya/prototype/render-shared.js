@@ -154,7 +154,7 @@ function renderHeader(){
     '<div class="site-header">' +
     '<div class="promo-strip"><span>' + esc(MARACUYA.config.brand.descriptor.toUpperCase()) + ' · Envíos a España peninsular · Prototipo de demostración</span></div>' +
     '<div class="header-row">' +
-    '<a class="logo" href="#/" aria-label="MARACUYÁ mercado latino — inicio">' + headerLogoImg() + '</a>' +
+    '<a class="logo" href="#/" aria-label="MARACUYA mercado latino — inicio">' + headerLogoImg() + '</a>' +
     '<form id="global-search-form" class="search-form" role="search">' +
     '<div class="search-box">' + icon('search', 18) +
     '<label class="visually-hidden" for="global-search-input">Buscar productos</label>' +
