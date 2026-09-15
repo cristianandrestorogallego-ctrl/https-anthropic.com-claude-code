@@ -5,7 +5,6 @@ MARACUYA.config = {
     name: 'MARACUYA',
     descriptor: 'Mercado Latino',
     tagline: 'Raíces latinas. Sabor de casa.',
-    heroEyebrow: 'Mercado Latino',
     heroTitle: 'Lo de casa, más cerca.',
     heroBody: 'Descubre tus sabores favoritos de Latinoamérica.',
     heroCta: 'Explorar productos'

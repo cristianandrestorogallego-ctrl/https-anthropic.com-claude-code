@@ -33,6 +33,19 @@ function getFocusable(container){
   var nodes = container.querySelectorAll('a[href],button:not([disabled]),input:not([disabled]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])');
   return Array.prototype.filter.call(nodes, function(el){ return el.offsetParent !== null; });
 }
+// An element that is still visibility:hidden silently ignores .focus(). Rather
+// than guess how long the panel takes to become visible, retry across frames
+// until the focus actually lands, with a hard deadline so this can never spin.
+function focusWhenReady(container){
+  var deadline = Date.now() + 600;
+  function attempt(){
+    var target = getFocusable(container)[0] || container;
+    target.focus();
+    if(document.activeElement === target || Date.now() > deadline) return;
+    requestAnimationFrame(attempt);
+  }
+  requestAnimationFrame(attempt);
+}
 function openOverlay(type){
   if(state.overlay) closeOverlay(false);
   var activeEl = document.activeElement;
@@ -42,10 +55,7 @@ function openOverlay(type){
   render();
   var containerId = type === 'cart' ? 'cart-drawer' : (type === 'menu' ? 'mega-menu' : 'info-modal');
   var container = document.getElementById(containerId);
-  setTimeout(function(){
-    var focusables = getFocusable(container);
-    (focusables[0] || container).focus();
-  }, 50);
+  focusWhenReady(container);
   trapHandler = function(e){
     if(e.key === 'Escape'){ e.preventDefault(); closeOverlay(true); return; }
     if(e.key !== 'Tab') return;
@@ -106,6 +116,15 @@ function render(){
   renderInfoModal();
   syncOverlays();
   tickCountdowns();
+  syncRailNav();
+}
+// Arrows that cannot scroll anything are a false affordance.
+function syncRailNav(){
+  document.querySelectorAll('.offers-rail').forEach(function(rail){
+    var nav = document.querySelector('[data-rail="' + rail.id + '"]');
+    if(!nav || !nav.parentElement) return;
+    nav.parentElement.hidden = rail.scrollWidth <= rail.clientWidth + 1;
+  });
 }
 function navigateTo(hash){
   if(location.hash === hash) onRouteChange(); else location.hash = hash;

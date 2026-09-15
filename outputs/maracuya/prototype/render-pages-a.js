@@ -2,7 +2,6 @@
 function renderHeroBrand(){
   return '<section class="hero"><div class="hero-inner">' +
     '<div class="hero-copy">' +
-    '<span class="hero-eyebrow">' + esc(MARACUYA.config.brand.heroEyebrow) + '</span>' +
     '<h1>' + esc(MARACUYA.config.brand.heroTitle) + '</h1>' +
     '<p>' + esc(MARACUYA.config.brand.heroBody) + '</p>' +
     '<div class="hero-ctas"><a class="btn btn-primary" href="#/catalogo">' + esc(MARACUYA.config.brand.heroCta) + '</a><a class="btn btn-secondary" href="#/ofertas">Ver ofertas</a></div>' +
@@ -68,10 +67,13 @@ function renderHome(){
 
   '<section class="section section-alt"><div class="container">' +
     '<div class="section-header"><div><h2>Ofertas destacadas</h2><p class="section-subtitle">Selección de ofertas de demostración.</p></div>' +
-    '<a class="section-link" href="#/ofertas">Ver todas las ofertas ' + icon('arrow-right', 14) + '</a></div>' +
-    '<div class="offers-rail-wrap"><div class="offers-rail-nav">' +
+    '<div class="section-header__aside">' +
+    '<a class="section-link" href="#/ofertas">Ver todas las ofertas ' + icon('arrow-right', 14) + '</a>' +
+    '<div class="offers-rail-nav">' +
     '<button data-action="rail-prev" data-rail="offers-rail-home" aria-label="Ver ofertas anteriores" style="transform:scaleX(-1)">' + icon('chevron-right', 18) + '</button>' +
     '<button data-action="rail-next" data-rail="offers-rail-home" aria-label="Ver más ofertas">' + icon('chevron-right', 18) + '</button></div>' +
+    '</div></div>' +
+    '<div class="offers-rail-wrap">' +
     '<div class="offers-rail" id="offers-rail-home">' + activeOfferProducts.map(function(p){ return renderProductCard(p, { showCountdown:true }); }).join('') + '</div>' +
     '</div></div></section>' +
 
