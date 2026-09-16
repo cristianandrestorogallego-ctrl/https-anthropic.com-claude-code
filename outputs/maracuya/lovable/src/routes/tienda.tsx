@@ -1,13 +1,22 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { ProductCard } from "@/components/site/product-card";
-import { categorias, productos, type Categoria } from "@/lib/catalogo";
+import { categorias, productos } from "@/lib/catalogo";
+
+const CATEGORIA_IDS = ["despensa", "salsas", "bebidas", "dulces"] as const;
+
+// El filtro vive en la URL, no en useState: así la portada puede enlazar
+// directamente a un pasillo del mercado y el enlace se puede compartir.
+const tiendaSearchSchema = z.object({
+  categoria: z.enum(CATEGORIA_IDS).optional(),
+});
 
 export const Route = createFileRoute("/tienda")({
+  validateSearch: tiendaSearchSchema,
   head: () => ({
     meta: [
       { title: "Tienda online de productos latinos | MARACUYA mercado latino" },
@@ -30,41 +39,49 @@ export const Route = createFileRoute("/tienda")({
 });
 
 function Tienda() {
-  const [filtro, setFiltro] = useState<Categoria | "todos">("todos");
-  const lista = filtro === "todos" ? productos : productos.filter((p) => p.categoria === filtro);
+  const { categoria } = Route.useSearch();
+  const lista = categoria ? productos.filter((p) => p.categoria === categoria) : productos;
+  const activa = categoria ? categorias.find((c) => c.id === categoria) : undefined;
 
   return (
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-6xl px-4 py-12">
         <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Catálogo</p>
-        <h1 className="mt-2 font-display text-4xl sm:text-5xl">El mercado completo</h1>
+        <h1 className="mt-2 font-display text-4xl sm:text-5xl">
+          {activa ? activa.nombre : "El mercado completo"}
+        </h1>
         <p className="mt-3 max-w-xl text-muted-foreground">
-          Una selección corta y honesta: solo entran los productos que usamos en nuestra
-          propia cocina.
+          {activa
+            ? activa.claim
+            : "Una selección corta y honesta: solo entran los productos que usamos en nuestra propia cocina."}
         </p>
 
         <div className="mt-8 flex flex-wrap gap-2">
-          <Button
-            variant={filtro === "todos" ? "default" : "outline"}
-            size="sm"
-            onClick={() => setFiltro("todos")}
-          >
-            Todos
+          <Button asChild variant={categoria ? "outline" : "default"} size="sm">
+            <Link to="/tienda" search={{}}>
+              Todos
+            </Link>
           </Button>
           {categorias.map((c) => (
             <Button
               key={c.id}
-              variant={filtro === c.id ? "default" : "outline"}
+              asChild
+              variant={categoria === c.id ? "default" : "outline"}
               size="sm"
-              onClick={() => setFiltro(c.id)}
             >
-              {c.nombre}
+              <Link to="/tienda" search={{ categoria: c.id }}>
+                {c.nombre}
+              </Link>
             </Button>
           ))}
         </div>
 
-        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <p className="mt-6 text-sm text-muted-foreground">
+          {lista.length === 1 ? "1 producto" : `${lista.length} productos`}
+        </p>
+
+        <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {lista.map((p) => (
             <ProductCard key={p.id} producto={p} />
           ))}

@@ -19,7 +19,7 @@ type CarritoContexto = {
   total: number;
   abierto: boolean;
   setAbierto: (v: boolean) => void;
-  agregar: (producto: Producto) => void;
+  agregar: (producto: Producto, cantidad?: number) => void;
   cambiar: (id: string, delta: number) => void;
   quitar: (id: string) => void;
 };
@@ -47,24 +47,23 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
       total,
       abierto,
       setAbierto,
-      agregar: (producto) => {
+      agregar: (producto, cantidad = 1) => {
+        const suma = Math.max(1, Math.trunc(cantidad));
         setLineas((prev) => {
           const existe = prev.find((l) => l.producto.id === producto.id);
           if (existe) {
             return prev.map((l) =>
-              l.producto.id === producto.id ? { ...l, cantidad: l.cantidad + 1 } : l,
+              l.producto.id === producto.id ? { ...l, cantidad: l.cantidad + suma } : l,
             );
           }
-          return [...prev, { producto, cantidad: 1 }];
+          return [...prev, { producto, cantidad: suma }];
         });
         setAbierto(true);
       },
       cambiar: (id, delta) =>
         setLineas((prev) =>
           prev
-            .map((l) =>
-              l.producto.id === id ? { ...l, cantidad: l.cantidad + delta } : l,
-            )
+            .map((l) => (l.producto.id === id ? { ...l, cantidad: l.cantidad + delta } : l))
             .filter((l) => l.cantidad > 0),
         ),
       quitar: (id) => setLineas((prev) => prev.filter((l) => l.producto.id !== id)),

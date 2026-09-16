@@ -8,11 +8,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <span className="inline-block rounded-lg bg-background px-4 py-2">
-            <img
-              src={logoAsset.url}
-              alt="MARACUYA mercado latino"
-              className="h-10 w-auto"
-            />
+            <img src={logoAsset.url} alt="MARACUYA mercado latino" className="h-10 w-auto" />
           </span>
           <p className="mt-4 max-w-xs text-sm opacity-80">
             Productos de América Latina seleccionados uno a uno para las cocinas de España.
@@ -21,7 +17,7 @@ export function Footer() {
         <div className="space-y-2 text-sm opacity-85">
           <p className="font-medium opacity-100">Comprar</p>
           <p>
-            <Link to="/tienda" className="hover:underline">
+            <Link to="/tienda" search={{}} className="hover:underline">
               Todo el catálogo
             </Link>
           </p>

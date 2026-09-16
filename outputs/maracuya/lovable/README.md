@@ -28,31 +28,50 @@ bun run dev      # http://localhost:3000
 bun run build    # verificado: compila sin errores
 ```
 
-## Qué NO se pudo traer, y por qué
+## De dónde salió cada archivo
 
-**Las 12 imágenes originales.** El servidor MCP de Lovable solo devuelve
-archivos como texto, así que los binarios llegan corrompidos, y `lovable.dev`
-y sus CDN están bloqueados por el proxy de salida de este entorno. Se
-verificó: `https://lovable.dev/` y `https://screenshot2.lovable.dev/`
-devuelven error de conexión.
+El proyecto se trajo primero archivo a archivo por el servidor MCP de
+Lovable, que solo devuelve texto: los binarios llegaban corrompidos y
+`lovable.dev` y sus CDN están bloqueados por el proxy de salida de este
+entorno. Después Cristian conectó el proyecto a GitHub, y el repositorio
+`cristianandrestorogallego-ctrl/maracuya-mercado-latino` se clonó aquí,
+así que **las 13 imágenes y los 46 componentes de shadcn son los reales**.
 
-En su lugar, `src/assets/*.jpg` son **marcadores de posición generados
-aquí**, con el nombre del archivo escrito encima para que no haya duda de
-que no son fotografías reales. Para recuperar las originales hay dos vías:
+La transcripción por MCP se verificó contra el clon: 24 de 26 archivos
+salieron byte a byte idénticos. Los dos que no (`styles.css` y
+`__root.tsx`) difieren solo por el `prettier` del propio proyecto, que
+Lovable no había ejecutado sobre ellos.
 
-1. Descargarlas desde el editor de Lovable y copiarlas sobre
-   `src/assets/`, conservando los nombres.
-2. Conectar el proyecto de Lovable a GitHub; entonces el repositorio se
-   puede clonar aquí con las imágenes incluidas.
+Una sola cosa se aparta del original a propósito: **`logo.asset.json`**.
+Apuntaba a `/__l5e/assets-v1/…/MARACUYA-logo.png`, una ruta que solo
+resuelve dentro de la vista previa de Lovable. Ahora apunta a
+`/maracuya-logo.svg`, el logotipo de marca real, que está en `public/` y
+por tanto funciona en los dos sitios.
 
-**El logotipo** sí es el real: `logo.asset.json` apuntaba al CDN de Lovable
-y ahora apunta a `/maracuya-logo.svg`, el logotipo de marca que ya estaba en
-este repositorio.
+## Dos copias, un aviso
 
-**47 componentes de `src/components/ui/`** que shadcn instala por defecto y
-que esta aplicación no importa (accordion, calendar, chart, table…). Solo se
-trajeron los tres que se usan: `button`, `sheet` y `sonner`. Si hicieran
-falta: `bunx shadcn@latest add <nombre>`.
+Este directorio y el repositorio `maracuya-mercado-latino` son copias
+distintas del mismo proyecto. Los commits que se empujan a la rama
+conectada de ese repositorio se sincronizan con el editor de Lovable; los
+de aquí, no. Si se trabaja en los dos sitios a la vez, divergen.
+
+## Cambios hechos aquí sobre el original
+
+- **Filtro de categoría en la URL.** Las tarjetas de categoría de la portada
+  enlazaban todas a `/tienda` sin filtrar, así que pulsar "Bebidas" mostraba
+  el catálogo entero. Ahora el filtro es un search param validado con zod
+  (`/tienda?categoria=bebidas`), los botones navegan en vez de guardar
+  estado local, y el enlace se puede compartir.
+- **Página de producto** en `/producto/$id`: migas de pan, selector de
+  cantidad, añadir a la cesta, condiciones de envío y productos
+  relacionados de la misma categoría. Un id inexistente devuelve 404.
+- `agregar()` del carrito acepta una cantidad, para que el selector de la
+  ficha funcione de una sola vez.
+
+Verificado: `bun run build` y `bunx tsc --noEmit` pasan sin errores y
+`bun run lint` sin errores (quedan avisos de `react-refresh` propios del
+patrón de shadcn). Las rutas responden 200, y `/producto/no-existe`
+responde 404.
 
 ## Contenido de demostración
 

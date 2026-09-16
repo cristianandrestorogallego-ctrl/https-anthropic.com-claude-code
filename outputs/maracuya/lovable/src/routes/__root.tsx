@@ -80,10 +80,17 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "MARACUYA mercado latino | Sabor latinoamericano en España" },
-      { name: "description", content: "Mercado latino online: despensa, ajíes, bebidas y dulces de América Latina con envío a toda España." },
+      {
+        name: "description",
+        content:
+          "Mercado latino online: despensa, ajíes, bebidas y dulces de América Latina con envío a toda España.",
+      },
       { name: "author", content: "MARACUYA mercado latino" },
       { property: "og:title", content: "MARACUYA mercado latino" },
-      { property: "og:description", content: "Productos latinoamericanos seleccionados para las cocinas de España." },
+      {
+        property: "og:description",
+        content: "Productos latinoamericanos seleccionados para las cocinas de España.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:site", content: "@Lovable" },

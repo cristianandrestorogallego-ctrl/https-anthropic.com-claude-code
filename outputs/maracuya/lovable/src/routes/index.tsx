@@ -62,12 +62,18 @@ function Index() {
             </h1>
             <p className="max-w-lg text-base opacity-90 sm:text-lg">
               Harinas para arepas, ajíes con carácter, jugos tropicales y dulces de siempre.
-              Seleccionamos poco y bien, para que cocines como en casa sin buscar de tienda
-              en tienda.
+              Seleccionamos poco y bien, para que cocines como en casa sin buscar de tienda en
+              tienda.
             </p>
             <div className="flex flex-wrap gap-3">
-              <Button asChild size="lg" className="bg-maracuya text-maracuya-foreground hover:bg-maracuya/90">
-                <Link to="/tienda">Ver el catálogo</Link>
+              <Button
+                asChild
+                size="lg"
+                className="bg-maracuya text-maracuya-foreground hover:bg-maracuya/90"
+              >
+                <Link to="/tienda" search={{}}>
+                  Ver el catálogo
+                </Link>
               </Button>
               <Button
                 asChild
@@ -110,7 +116,9 @@ function Index() {
               <h2 className="mt-2 font-display text-3xl sm:text-4xl">Elige por antojo</h2>
             </div>
             <Button asChild variant="link" className="px-0">
-              <Link to="/tienda">Ver todo el catálogo →</Link>
+              <Link to="/tienda" search={{}}>
+                Ver todo el catálogo →
+              </Link>
             </Button>
           </div>
 
@@ -119,6 +127,7 @@ function Index() {
               <Link
                 key={c.id}
                 to="/tienda"
+                search={{ categoria: c.id }}
                 className="group relative overflow-hidden rounded-2xl"
               >
                 <img
@@ -176,17 +185,18 @@ function Index() {
                 Empezó por una arepa en un piso de Madrid
               </h2>
               <p className="mt-4 text-muted-foreground">
-                MARACUYA nació de la nostalgia compartida: encontrar la harina correcta, el ají
-                que sabe a casa, el dulce de leche de la abuela. Hoy traemos ese mercado a
-                cualquier cocina de España, con productos originales y explicados en español
-                claro.
+                MARACUYA nació de la nostalgia compartida: encontrar la harina correcta, el ají que
+                sabe a casa, el dulce de leche de la abuela. Hoy traemos ese mercado a cualquier
+                cocina de España, con productos originales y explicados en español claro.
               </p>
               <p className="mt-3 text-muted-foreground">
-                Probamos cada referencia antes de venderla. Si no la ponemos en nuestra mesa,
-                no entra en la tienda.
+                Probamos cada referencia antes de venderla. Si no la ponemos en nuestra mesa, no
+                entra en la tienda.
               </p>
               <Button asChild className="mt-6">
-                <Link to="/tienda">Descubrir productos</Link>
+                <Link to="/tienda" search={{}}>
+                  Descubrir productos
+                </Link>
               </Button>
             </div>
           </div>

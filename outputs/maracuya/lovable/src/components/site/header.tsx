@@ -17,16 +17,13 @@ export function Header() {
       <div className="border-b border-border/70 bg-background/90 backdrop-blur">
         <nav className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
           <Link to="/" aria-label="MARACUYA mercado latino — ir al inicio">
-            <img
-              src={logoAsset.url}
-              alt="MARACUYA mercado latino"
-              className="h-9 w-auto sm:h-10"
-            />
+            <img src={logoAsset.url} alt="MARACUYA mercado latino" className="h-9 w-auto sm:h-10" />
           </Link>
 
           <div className="ml-auto hidden items-center gap-6 text-sm md:flex">
             <Link
               to="/tienda"
+              search={{}}
               className="transition-colors hover:text-primary"
               activeProps={{ className: "text-primary font-medium" }}
             >

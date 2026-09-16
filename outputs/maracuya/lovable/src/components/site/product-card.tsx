@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -9,10 +10,16 @@ export function ProductCard({ producto }: { producto: Producto }) {
 
   return (
     <article className="group overflow-hidden rounded-2xl border bg-card transition-shadow hover:shadow-[var(--shadow-soft)]">
-      <div className="relative aspect-4/5 overflow-hidden bg-arena">
+      <Link
+        to="/producto/$id"
+        params={{ id: producto.id }}
+        className="relative block aspect-4/5 overflow-hidden bg-arena"
+        tabIndex={-1}
+        aria-hidden="true"
+      >
         <img
           src={producto.imagen}
-          alt={producto.nombre}
+          alt=""
           loading="lazy"
           className="size-full object-cover transition-transform duration-700 group-hover:scale-105"
         />
@@ -21,16 +28,29 @@ export function ProductCard({ producto }: { producto: Producto }) {
             {producto.etiqueta}
           </span>
         )}
-      </div>
+      </Link>
       <div className="space-y-2 p-4">
         <p className="text-[0.7rem] uppercase tracking-[0.18em] text-muted-foreground">
           {producto.origen} · {producto.formato}
         </p>
-        <h3 className="font-display text-lg leading-snug">{producto.nombre}</h3>
+        <h3 className="font-display text-lg leading-snug">
+          <Link
+            to="/producto/$id"
+            params={{ id: producto.id }}
+            className="transition-colors hover:text-primary"
+          >
+            {producto.nombre}
+          </Link>
+        </h3>
         <p className="line-clamp-2 text-sm text-muted-foreground">{producto.descripcion}</p>
         <div className="flex items-center justify-between pt-2">
           <span className="font-display text-xl">{formatoPrecio(producto.precio)}</span>
-          <Button size="sm" className="gap-1" onClick={() => agregar(producto)}>
+          <Button
+            size="sm"
+            className="gap-1"
+            aria-label={`Añadir ${producto.nombre} a la cesta`}
+            onClick={() => agregar(producto)}
+          >
             <Plus className="size-4" />
             Añadir
           </Button>
