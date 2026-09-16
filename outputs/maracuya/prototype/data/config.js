@@ -15,6 +15,15 @@ MARACUYA.config = {
     displayNote: 'Número de WhatsApp pendiente de configurar por el equipo de MARACUYA.'
   },
 
+  // Header social row. Each icon renders only once its url is filled in —
+  // no placeholder links to profiles that do not exist yet.
+  social: [
+    { id: 'instagram', label: 'Instagram', url: '' },
+    { id: 'facebook', label: 'Facebook', url: '' },
+    { id: 'tiktok', label: 'TikTok', url: '' },
+    { id: 'youtube', label: 'YouTube', url: '' }
+  ],
+
   contact: {
     email: 'hola@maracuya-mercado.example',
     phoneDisplay: 'Pendiente de configurar',

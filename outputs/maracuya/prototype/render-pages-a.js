@@ -26,9 +26,13 @@ function renderHeroOffers(slides){
     '<button class="hero-carousel__arrow is-next" id="hero-arrow-next" data-action="hero-next" aria-label="Oferta siguiente" aria-controls="hero-slide-panel">' + icon('chevron-right', 18) + '</button>' +
     '</div>'
   ) : '';
+  var render3d = product3dKeyFor(product.glyph);
+  var stage = render3d
+    ? '<div class="hero-slide__stage" aria-hidden="true">' + product3dSvg(render3d) + '</div>'
+    : '<div class="hero-slide__bg" aria-hidden="true">' + glyphSvg(product.glyph) + '</div>';
   return '<section class="hero-carousel" aria-roledescription="carrusel" aria-label="Ofertas destacadas">' +
     '<div class="hero-slide tile-' + product.category + '" id="hero-slide-panel">' +
-    '<div class="hero-slide__bg" aria-hidden="true">' + glyphSvg(product.glyph) + '</div>' +
+    stage +
     '<div class="hero-slide__scrim" aria-hidden="true"></div>' +
     '<div class="hero-slide__content">' +
     '<div class="hero-slide__badges">' +

@@ -23,7 +23,11 @@ var ICONS = {
   'map-pin': '<path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="9" r="2.4"/>',
   info: '<circle cx="12" cy="12" r="9"/><line x1="12" y1="11" x2="12" y2="16"/><line x1="12" y1="7.5" x2="12.01" y2="7.5"/>',
   tag: '<path d="M3 12 12 3h7a2 2 0 0 1 2 2v7l-9 9a2 2 0 0 1-2.8 0L3 14.8a2 2 0 0 1 0-2.8z"/><circle cx="16" cy="8" r="1.6"/>',
-  zap: '<polygon points="13 2 4 14 11 14 10 22 20 10 13 10 13 2"/>'
+  zap: '<polygon points="13 2 4 14 11 14 10 22 20 10 13 10 13 2"/>',
+  instagram: '<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/>',
+  facebook: '<path d="M14 8.5V7a1.5 1.5 0 0 1 1.5-1.5H17V2.5h-2.5A4.5 4.5 0 0 0 10 7v1.5H7.5V12H10v9.5h4V12h2.6l.4-3.5z"/>',
+  tiktok: '<path d="M15 3.5c.6 2.3 2.1 3.7 4.5 3.9v3.2a7.6 7.6 0 0 1-4.3-1.4v5.9a6 6 0 1 1-6-6c.4 0 .7 0 1 .1v3.3a2.7 2.7 0 1 0 1.9 2.6V3.5z"/>',
+  youtube: '<rect x="2.5" y="5.5" width="19" height="13" rx="4"/><path d="M10.2 9.4l5 2.6-5 2.6z"/>'
 };
 
 var FLAGS = {
@@ -85,8 +89,164 @@ function heroGlyphSvg(key){
   return '<svg class="glyph-svg" viewBox="0 0 48 48" fill="currentColor" aria-hidden="true">' + inner + '</svg>';
 }
 
+/* ============ Product renders with real volume ============
+   Not icons: each is lit from the upper left with a cylinder ramp across the
+   body, a specular band, a rim light on the shaded edge, a blurred cast
+   shadow and a ground reflection. Gradient ids are suffixed per instance so
+   two renders on one page never collide. */
+var p3dSeq = 0;
+
+// Cylinder ramp: dark edge, specular, mid, shadow, thin rim light.
+function p3dBody(id, lit, mid, dark){
+  return '<linearGradient id="' + id + '" x1="0" y1="0" x2="1" y2="0">' +
+    '<stop offset="0" stop-color="' + dark + '"/>' +
+    '<stop offset=".10" stop-color="' + mid + '"/>' +
+    '<stop offset=".27" stop-color="' + lit + '"/>' +
+    '<stop offset=".46" stop-color="' + mid + '"/>' +
+    '<stop offset=".80" stop-color="' + dark + '"/>' +
+    '<stop offset=".95" stop-color="' + dark + '"/>' +
+    '<stop offset="1" stop-color="' + mid + '"/>' +
+    '</linearGradient>';
+}
+function p3dShared(id){
+  return '<radialGradient id="sh' + id + '" cx=".5" cy=".5" r=".5">' +
+      '<stop offset="0" stop-color="#1B0E20" stop-opacity=".55"/>' +
+      '<stop offset="1" stop-color="#1B0E20" stop-opacity="0"/>' +
+    '</radialGradient>' +
+    '<linearGradient id="rf' + id + '" x1="0" y1="0" x2="0" y2="1">' +
+      '<stop offset="0" stop-color="#fff" stop-opacity=".22"/>' +
+      '<stop offset="1" stop-color="#fff" stop-opacity="0"/>' +
+    '</linearGradient>' +
+    '<linearGradient id="gl' + id + '" x1="0" y1="0" x2="1" y2="0">' +
+      '<stop offset="0" stop-color="#fff" stop-opacity="0"/>' +
+      '<stop offset=".5" stop-color="#fff" stop-opacity=".55"/>' +
+      '<stop offset="1" stop-color="#fff" stop-opacity="0"/>' +
+    '</linearGradient>';
+}
+// Cast shadow + the mirrored, fading copy that sits it on a surface.
+function p3dGround(id, cx, cy, rx, ry){
+  return '<ellipse cx="' + cx + '" cy="' + cy + '" rx="' + rx + '" ry="' + ry + '" fill="url(#sh' + id + ')"/>';
+}
+
+var PRODUCT_3D = {
+  // Glass jar of amber paste with a ribbed metal lid.
+  jar: function(id){
+    return '<defs>' + p3dShared(id) +
+      p3dBody('b' + id, '#F6C445', '#DFA326', '#9C6B12') +
+      p3dBody('l' + id, '#6E4A72', '#4B204F', '#2C1030') +
+      '</defs>' +
+      p3dGround(id, 110, 306, 74, 16) +
+      '<g>' +
+        '<rect x="60" y="120" width="100" height="176" rx="14" fill="url(#b' + id + ')"/>' +
+        '<rect x="60" y="120" width="100" height="176" rx="14" fill="none" stroke="#7A4E10" stroke-opacity=".35"/>' +
+        '<ellipse cx="110" cy="122" rx="50" ry="10" fill="#B9841C" opacity=".55"/>' +
+        '<rect x="72" y="150" width="76" height="92" rx="6" fill="#FFF8EC" opacity=".95"/>' +
+        '<rect x="72" y="150" width="76" height="20" fill="#4B204F"/>' +
+        '<text x="110" y="165" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#FFF8EC">MARACUYA</text>' +
+        '<text x="110" y="196" text-anchor="middle" font-family="Georgia,serif" font-size="15" fill="#4B204F">Ají</text>' +
+        '<text x="110" y="216" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#625669">EN PASTA</text>' +
+        '<rect x="66" y="128" width="13" height="160" rx="6" fill="url(#gl' + id + ')" opacity=".5"/>' +
+        '<rect x="62" y="96" width="96" height="34" rx="8" fill="url(#l' + id + ')"/>' +
+        '<g opacity=".28" stroke="#1B0E20" stroke-width="1.5">' +
+        '<line x1="76" y1="102" x2="76" y2="124"/><line x1="90" y1="102" x2="90" y2="124"/>' +
+        '<line x1="104" y1="102" x2="104" y2="124"/><line x1="118" y1="102" x2="118" y2="124"/>' +
+        '<line x1="132" y1="102" x2="132" y2="124"/><line x1="146" y1="102" x2="146" y2="124"/></g>' +
+        '<ellipse cx="110" cy="96" rx="48" ry="9" fill="#7A5480"/>' +
+        '<ellipse cx="110" cy="94" rx="40" ry="6" fill="#8E6494" opacity=".7"/>' +
+      '</g>';
+  },
+  // Stand-up coffee pouch with a folded gusset top and a tin tie.
+  bag: function(id){
+    return '<defs>' + p3dShared(id) +
+      p3dBody('b' + id, '#7E5B3C', '#5E4129', '#33220F') +
+      '</defs>' +
+      p3dGround(id, 110, 308, 76, 15) +
+      '<g>' +
+        '<path d="M58 118 q52 -18 104 0 l10 176 q-62 16 -124 0z" fill="url(#b' + id + ')"/>' +
+        '<path d="M58 118 q52 -18 104 0 l3 52 q-55 -14 -110 0z" fill="#1B0E20" opacity=".16"/>' +
+        '<rect x="74" y="176" width="72" height="96" rx="5" fill="#FFF8EC" opacity=".96"/>' +
+        '<rect x="74" y="176" width="72" height="22" fill="#4B204F"/>' +
+        '<text x="110" y="192" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#FFF8EC">MARACUYA</text>' +
+        '<text x="110" y="226" text-anchor="middle" font-family="Georgia,serif" font-size="16" fill="#4B204F">Café</text>' +
+        '<text x="110" y="246" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#625669">MOLIDO · 500 g</text>' +
+        '<path d="M66 128 q8 -6 14 -7 l6 168 q-8 1 -14 3z" fill="url(#gl' + id + ')" opacity=".45"/>' +
+        '<path d="M62 116 q48 -20 96 0 q-48 -8 -96 0z" fill="#8D6A49"/>' +
+        '<rect x="66" y="104" width="88" height="14" rx="4" fill="#4B204F"/>' +
+        '<rect x="66" y="104" width="88" height="5" rx="2.5" fill="#6E4A72" opacity=".8"/>' +
+      '</g>';
+  },
+  // Carton with two visible faces, so the form reads as a box, not a rectangle.
+  box: function(id){
+    return '<defs>' + p3dShared(id) +
+      '<linearGradient id="f' + id + '" x1="0" y1="0" x2="1" y2="0">' +
+        '<stop offset="0" stop-color="#F3D9A8"/><stop offset=".55" stop-color="#E7C079"/><stop offset="1" stop-color="#D3A755"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="s' + id + '" x1="0" y1="0" x2="1" y2="0">' +
+        '<stop offset="0" stop-color="#A97F35"/><stop offset="1" stop-color="#8A6524"/>' +
+      '</linearGradient>' +
+      '<linearGradient id="t' + id + '" x1="0" y1="0" x2="1" y2="1">' +
+        '<stop offset="0" stop-color="#FBEBC8"/><stop offset="1" stop-color="#E4C384"/>' +
+      '</linearGradient>' +
+      '</defs>' +
+      p3dGround(id, 112, 300, 80, 16) +
+      '<g>' +
+        '<path d="M52 128 L140 108 L176 126 L176 262 L140 284 L52 264z" fill="url(#s' + id + ')"/>' +
+        '<path d="M140 108 L176 126 L176 262 L140 284z" fill="url(#s' + id + ')"/>' +
+        '<path d="M52 128 L140 108 L140 284 L52 264z" fill="url(#f' + id + ')"/>' +
+        '<path d="M52 128 L140 108 L176 126 L88 146z" fill="url(#t' + id + ')"/>' +
+        '<rect x="66" y="166" width="62" height="86" rx="4" fill="#FFF8EC" opacity=".95" transform="rotate(-6 97 209)"/>' +
+        '<g transform="rotate(-6 97 209)">' +
+        '<rect x="66" y="166" width="62" height="20" fill="#4B204F"/>' +
+        '<text x="97" y="180" text-anchor="middle" font-family="Georgia,serif" font-size="10" fill="#FFF8EC">MARACUYA</text>' +
+        '<text x="97" y="212" text-anchor="middle" font-family="Georgia,serif" font-size="14" fill="#4B204F">Alfajores</text>' +
+        '<text x="97" y="230" text-anchor="middle" font-family="Arial,sans-serif" font-size="8" fill="#625669">ESTUCHE x6</text>' +
+        '</g>' +
+        '<path d="M52 128 L140 108 L140 284 L52 264z" fill="url(#gl' + id + ')" opacity=".22"/>' +
+      '</g>';
+  },
+  // PET bottle: tapered shoulder, ribbed neck, liquid line below the label.
+  bottle: function(id){
+    return '<defs>' + p3dShared(id) +
+      p3dBody('b' + id, '#C489C9', '#7C3F82', '#3E1943') +
+      p3dBody('c' + id, '#F8D368', '#E0B02E', '#A87A12') +
+      '</defs>' +
+      p3dGround(id, 110, 306, 66, 14) +
+      '<g>' +
+        '<path d="M86 84 h48 v26 q0 10 8 20 q14 18 14 42 v112 q0 12 -12 12 h-68 q-12 0 -12 -12 v-112 q0 -24 14 -42 q8 -10 8 -20z" fill="url(#b' + id + ')"/>' +
+        '<rect x="70" y="196" width="80" height="74" rx="4" fill="#FFF8EC" opacity=".96"/>' +
+        '<rect x="70" y="196" width="80" height="20" fill="#4B204F"/>' +
+        '<text x="110" y="211" text-anchor="middle" font-family="Georgia,serif" font-size="12" fill="#FFF8EC">MARACUYA</text>' +
+        '<text x="110" y="240" text-anchor="middle" font-family="Georgia,serif" font-size="15" fill="#4B204F">Refresco</text>' +
+        '<text x="110" y="258" text-anchor="middle" font-family="Arial,sans-serif" font-size="9" fill="#625669">1,5 L</text>' +
+        '<rect x="78" y="120" width="11" height="160" rx="5" fill="url(#gl' + id + ')" opacity=".55"/>' +
+        '<g opacity=".22" stroke="#1B0E20" stroke-width="2">' +
+        '<line x1="88" y1="92" x2="132" y2="92"/><line x1="88" y1="100" x2="132" y2="100"/></g>' +
+        '<rect x="84" y="58" width="52" height="30" rx="5" fill="url(#c' + id + ')"/>' +
+        '<ellipse cx="110" cy="58" rx="26" ry="5" fill="#F8D368"/>' +
+      '</g>';
+  }
+};
+
+// Returns a standalone, decorative render. Sizing is the caller's job.
+function product3dSvg(key){
+  var make = PRODUCT_3D[key];
+  if(!make) return '';
+  p3dSeq++;
+  return '<svg class="product-3d" viewBox="0 0 220 330" role="img" aria-hidden="true" focusable="false">' +
+    make(p3dSeq) + '</svg>';
+}
+// Which 3D render stands in for a catalogue glyph.
+function product3dKeyFor(glyph){
+  if(glyph === 'jar' || glyph === 'pantry') return 'jar';
+  if(glyph === 'bag') return 'bag';
+  if(glyph === 'box' || glyph === 'frozen-pack') return 'box';
+  if(glyph === 'bottle' || glyph === 'can' || glyph === 'drink-glass') return 'bottle';
+  return '';
+}
+
 function headerLogoImg(){
-  return '<img class="logo-img" src="brand/maracuya-logo-compacto.svg" width="190" height="39" alt="MARACUYA · Mercado Latino"/>';
+  return '<img class="logo-img logo-img--on-light" src="brand/maracuya-logo-compacto.svg" width="190" height="39" alt="MARACUYA · Mercado Latino"/>' +
+    '<img class="logo-img logo-img--on-deep" src="brand/maracuya-logo-inverso.svg" width="190" height="39" alt="" aria-hidden="true"/>';
 }
 
 function footerLogoImg(){

@@ -146,6 +146,13 @@ function renderCountryTile(c){
 }
 
 // ============ Header ============
+function renderSocialLinks(){
+  var list = (MARACUYA.config.social || []).filter(function(s){ return s.url; });
+  return list.map(function(s){
+    return '<a class="social-link" href="' + esc(s.url) + '" target="_blank" rel="noopener noreferrer" aria-label="' + esc(s.label) + '">' +
+      icon(s.id, 18) + '</a>';
+  }).join('');
+}
 function renderHeader(){
   var wrap = document.getElementById('header-wrap');
   var count = cartCount();
@@ -154,7 +161,9 @@ function renderHeader(){
     '<div class="site-header">' +
     '<div class="promo-strip"><span>' + esc(MARACUYA.config.brand.descriptor.toUpperCase()) + ' · Envíos a España peninsular · Prototipo de demostración</span></div>' +
     '<div class="header-row">' +
+    '<div class="header-social">' + renderSocialLinks() + '</div>' +
     '<a class="logo" href="#/" aria-label="MARACUYA mercado latino — inicio">' + headerLogoImg() + '</a>' +
+    '<div class="header-right">' +
     '<form id="global-search-form" class="search-form" role="search">' +
     '<div class="search-box">' + icon('search', 18) +
     '<label class="visually-hidden" for="global-search-input">Buscar productos</label>' +
@@ -165,7 +174,7 @@ function renderHeader(){
     icon('cart', 22) + (count ? '<span class="cart-count" aria-hidden="true">' + count + '</span>' : '') + '</button>' +
     '<button class="menu-btn" id="menu-toggle-btn" data-action="open-menu" aria-haspopup="dialog" aria-controls="mega-menu" aria-expanded="false">' +
     '<span class="bars"><span></span><span></span><span></span></span> Menú</button>' +
-    '</div></div>' +
+    '</div></div></div>' +
     '<nav class="quick-nav" aria-label="Navegación principal"><div class="quick-nav-inner">' +
     '<button class="quick-pill" id="nav-productos-btn" data-action="open-menu" aria-haspopup="dialog" aria-controls="mega-menu" aria-expanded="false">Productos ' + icon('chevron-down', 13) + '</button>' +
     '<a class="quick-pill' + (activeRoute === 'ofertas' ? ' is-active' : '') + '" href="#/ofertas">Ofertas</a>' +
