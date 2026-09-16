@@ -1,0 +1,21 @@
+{
+  "type": "footer",
+  "name": "Pie de página",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "settings": {
+        "tagline": "Raíces latinas. Sabor de casa. Productos de Latinoamérica para el mercado español.",
+        "notice": ""
+      },
+      "blocks": {
+        "shop": {
+          "type": "menu",
+          "settings": { "heading": "Comprar", "menu": "main-menu" }
+        }
+      },
+      "block_order": ["shop"]
+    }
+  },
+  "order": ["footer"]
+}

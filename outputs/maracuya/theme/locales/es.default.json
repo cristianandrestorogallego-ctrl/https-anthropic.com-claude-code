@@ -1,0 +1,113 @@
+{
+  "general": {
+    "skip_to_content": "Saltar al contenido",
+    "page": "Página {{ page }}",
+    "tagged": "Etiquetado: {{ tags }}",
+    "search": {
+      "title": "Buscar",
+      "placeholder": "Busca café, arepas, mole…",
+      "submit": "Buscar",
+      "results_with_count": {
+        "one": "{{ count }} resultado",
+        "other": "{{ count }} resultados"
+      },
+      "no_results": "No encontramos nada para «{{ terms }}».",
+      "no_results_help": "Prueba con otra palabra o explora el catálogo completo."
+    },
+    "pagination": {
+      "label": "Paginación",
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "page": "Página {{ number }}"
+    },
+    "404": {
+      "title": "Página no encontrada",
+      "body": "La página que buscas no existe o ha cambiado de dirección.",
+      "link": "Ir al inicio"
+    }
+  },
+  "header": {
+    "menu": "Menú",
+    "close_menu": "Cerrar menú",
+    "cart": "Abrir carrito",
+    "cart_with_count": {
+      "one": "Abrir carrito, {{ count }} producto",
+      "other": "Abrir carrito, {{ count }} productos"
+    },
+    "account": "Mi cuenta"
+  },
+  "products": {
+    "vendor": "Marca",
+    "available": "Disponible",
+    "sold_out": "Agotado",
+    "low_stock": "Últimas unidades",
+    "on_sale": "Oferta",
+    "from_price": "Desde {{ price }}",
+    "regular_price": "Precio habitual",
+    "sale_price": "Precio de oferta",
+    "quantity": "Cantidad",
+    "add_to_cart": "Añadir al carrito",
+    "choose_options": "Elegir opciones",
+    "view_product": "Ver {{ title }}",
+    "description": "Descripción",
+    "no_description": "Descripción pendiente de completar.",
+    "share": "Compartir"
+  },
+  "collections": {
+    "all": "Todos los productos",
+    "empty": "Aún no hay productos en esta colección.",
+    "browse_all": "Ver todo el catálogo",
+    "count": {
+      "one": "{{ count }} producto",
+      "other": "{{ count }} productos"
+    },
+    "sort_by": "Ordenar por",
+    "title": "Colecciones"
+  },
+  "cart": {
+    "title": "Tu carrito",
+    "empty": "Tu carrito está vacío",
+    "empty_help": "Explora el catálogo para empezar.",
+    "continue_shopping": "Seguir comprando",
+    "subtotal": "Subtotal",
+    "shipping_note": "Los gastos de envío e impuestos se calculan en el pago.",
+    "checkout": "Finalizar compra",
+    "remove": "Eliminar",
+    "quantity_increase": "Aumentar cantidad",
+    "quantity_decrease": "Reducir cantidad",
+    "whatsapp": "Pedir por WhatsApp",
+    "close": "Cerrar carrito",
+    "view_cart": "Ver el carrito"
+  },
+  "onboarding": {
+    "no_products_title": "Todavía no hay productos",
+    "no_products_body": "Añade productos desde Shopify Admin y aparecerán aquí automáticamente.",
+    "no_collections_title": "Todavía no hay colecciones",
+    "no_collections_body": "Crea colecciones desde Shopify Admin para organizar el catálogo por categoría o por país."
+  },
+  "blogs": {
+    "empty_title": "Todavía no hay artículos",
+    "empty_body": "Cuando publiques el primer artículo desde el panel de Shopify, aparecerá aquí."
+  },
+  "password": {
+    "signup_title": "Avísame cuando abra",
+    "signup_success": "Gracias. Te escribiremos a ese correo cuando la tienda esté abierta.",
+    "email_label": "Correo electrónico",
+    "email_placeholder": "tu@correo.com",
+    "signup_submit": "Avisadme",
+    "owner_title": "¿Tienes la contraseña?",
+    "password_label": "Contraseña de la tienda",
+    "password_submit": "Entrar",
+    "note": "Esta página solo se muestra mientras la tienda está protegida con contraseña."
+  },
+  "gift_card": {
+    "title": "Tarjeta regalo",
+    "subtitle": "Saldo disponible",
+    "initial_value": "Valor inicial: {{ value }}",
+    "expired": "Esta tarjeta ya no es válida.",
+    "expires_on": "Válida hasta el {{ date }}",
+    "code_label": "Código de la tarjeta",
+    "shop_link": "Ir a la tienda",
+    "print": "Imprimir"
+  }
+}

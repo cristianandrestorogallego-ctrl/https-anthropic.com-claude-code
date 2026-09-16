@@ -1,0 +1,80 @@
+{%- comment -%}
+  Product card. Falls back to a branded placeholder when a product has no
+  image, so an empty or half-loaded catalogue still looks deliberate.
+  Usage: {% render 'product-card', product: product %}
+{%- endcomment -%}
+{%- liquid
+  assign is_out = false
+  unless product.available
+    assign is_out = true
+  endunless
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+-%}
+<article class="product-card{% if is_out %} is-out{% endif %}">
+  <a href="{{ product.url }}" class="product-card__media{% unless product.featured_image %} media-placeholder{% endunless %}"
+     aria-label="{{ 'products.view_product' | t: title: product.title }}">
+    <span class="product-card__badges">
+      {%- if on_sale -%}
+        {%- assign pct = product.compare_at_price | minus: product.price | times: 100.0 | divided_by: product.compare_at_price | round -%}
+        <span class="badge badge-offer">-{{ pct }}%</span>
+      {%- endif -%}
+      {%- if is_out -%}
+        <span class="badge badge-stock-out">{{ 'products.sold_out' | t }}</span>
+      {%- endif -%}
+    </span>
+    {%- if product.featured_image -%}
+      <img src="{{ product.featured_image | image_url: width: 600 }}"
+           alt="{{ product.featured_image.alt | default: product.title | escape }}"
+           width="600" height="600" loading="lazy"
+           style="width:100%;height:100%;object-fit:cover">
+    {%- else -%}
+      {% render 'brand-icon', name: 'bag', size: 64 %}
+    {%- endif -%}
+  </a>
+
+  <div class="product-card__body">
+    {%- if settings.show_vendor and product.vendor != blank -%}
+      <span class="product-card__country">{{ product.vendor }}</span>
+    {%- endif -%}
+    <a href="{{ product.url }}"><h3 class="product-card__name">{{ product.title }}</h3></a>
+
+    <div class="product-card__footer">
+      <div class="product-card__pricebox">
+        <div class="product-card__price-line">
+          <span class="price">{{ product.price | money }}</span>
+          {%- if on_sale -%}
+            <span class="price-old">{{ product.compare_at_price | money }}</span>
+          {%- endif -%}
+        </div>
+        {%- if settings.show_availability -%}
+          <span class="product-card__avail {% if is_out %}is-out{% else %}is-in{% endif %}">
+            {%- if is_out -%}
+              {% render 'brand-icon', name: 'close', size: 12 %} {{ 'products.sold_out' | t }}
+            {%- else -%}
+              {% render 'brand-icon', name: 'check', size: 12 %} {{ 'products.available' | t }}
+            {%- endif -%}
+          </span>
+        {%- endif -%}
+      </div>
+
+      {%- if is_out -%}
+        <span class="product-card__cart-btn is-disabled" aria-hidden="true">{% render 'brand-icon', name: 'cart', size: 18 %}</span>
+      {%- elsif product.variants.size > 1 or settings.enable_quick_add == false -%}
+        <a class="product-card__cart-btn" href="{{ product.url }}" aria-label="{{ 'products.choose_options' | t }}">
+          {% render 'brand-icon', name: 'arrow-right', size: 18 %}
+        </a>
+      {%- else -%}
+        {%- form 'product', product, class: 'product-card__form' -%}
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <button class="product-card__cart-btn" type="submit"
+                  aria-label="{{ 'products.add_to_cart' | t }}: {{ product.title | escape }}">
+            {% render 'brand-icon', name: 'cart', size: 18 %}
+          </button>
+        {%- endform -%}
+      {%- endif -%}
+    </div>
+  </div>
+</article>

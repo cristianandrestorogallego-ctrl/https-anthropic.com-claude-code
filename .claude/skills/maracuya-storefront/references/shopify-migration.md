@@ -5,19 +5,55 @@ this live".
 
 ## Verification status of this file
 
-**Nothing here has been verified against `shopify.dev` from this project.**
-The network egress proxy in the working environment blocks `shopify.dev`,
-so the structure below is written from general knowledge of Shopify's
-Online Store 2.0 theme architecture, not from a reading of the current
-docs.
+Direct HTTP to `shopify.dev` is blocked by the environment's egress proxy,
+but the **Shopify MCP server reaches the docs**: use
+`mcp__Shopify__search_docs_chunks` for Liquid and theme architecture, and
+`mcp__Shopify__graphql_schema` for the Admin API. Use them instead of
+recalling Liquid from memory — a wrong object name fails silently at
+render time, with no error anywhere.
 
-Treat every structural claim as *to be confirmed*, and confirm it before
-writing theme files — architecture details and platform requirements change
-and this file has no update cadence. When an item is confirmed against the
-live docs, rewrite it in observed voice and drop it from this warning.
+Confirmed against the docs while building the theme:
 
-Sources to check first: the theme architecture reference, the Shopify CLI
-reference, and Theme Check, all under `shopify.dev/docs/storefronts/themes`.
+- Theme directory structure; only `layout/theme.liquid` is strictly
+  required, and no template type is required — but a page type with no
+  matching template cannot render.
+- JSON templates set their layout with a `"layout"` attribute; Liquid
+  templates use the `{% layout %}` tag.
+- Legacy `templates/customers/*` are deprecated and must be left out, so
+  the store gets the current customer-accounts experience.
+- `{% form 'product', product %}` with `name="quantity"` and
+  `{{ form | payment_button }}`.
+- Cart form: `action="{{ routes.cart_url }}" method="post"`, with
+  `name="checkout"`, `name="updates[]"` and `item.url_to_remove`.
+- `{% paginate %}` and the `paginate` object: `pages`, `parts`,
+  `current_page`, `previous`, `next`; `part.is_link`, `part.title`,
+  `part.url`.
+- `{% form 'storefront_password' %}` and `{% form 'customer' %}` with
+  `contact[tags]` for the password page.
+- `gift_card` object fields, and that `gift_card.liquid` cannot be JSON.
+- `blog.previous_article` / `blog.next_article`.
+
+Two traps found the hard way, both silent:
+
+- **`| t:` takes one filter, not a chain.** `{{ 'k' | t: tags: x | join: ', ' }}`
+  joins the *translated string*, not `x`. Build the argument with
+  `{%- assign -%}` first.
+- **`format_code` is not in the docs.** Filters that only appear in Dawn are
+  not a specification. If the docs do not name it, do not use it.
+
+## Linting the theme
+
+`@shopify/theme-check-node` is the real gate and it runs offline:
+
+```
+npm install --no-audit --no-fund --prefix ./tc @shopify/theme-check-node
+```
+
+then call `themeCheckRun(root, configPath)` with a config of
+`extends: theme-check:all` (86 checks). It caught a parser-blocking
+`script_tag` that the Shopify docs themselves recommend. Run it before
+every commit that touches the theme; the static reference sweep in
+`outputs/maracuya/tools/verify_theme.py` complements it but does not replace it.
 
 ## What does and does not carry over
 

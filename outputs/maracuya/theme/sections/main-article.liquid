@@ -1,0 +1,58 @@
+<article class="article-page">
+  <div class="page-hero">
+    <div class="container" style="max-width:76ch">
+      <nav class="breadcrumbs" aria-label="Ruta de navegación">
+        <a href="{{ routes.root_url }}">Inicio</a>
+        <span class="sep">/</span>
+        <a href="{{ blog.url }}">{{ blog.title }}</a>
+        <span class="sep">/</span>
+        <span aria-current="page">{{ article.title }}</span>
+      </nav>
+      <h1>{{ article.title }}</h1>
+      <p class="article-card__meta">
+        <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%-d %B %Y' }}</time>
+        {%- if section.settings.show_author and article.author != blank %} · {{ article.author }}{% endif -%}
+      </p>
+    </div>
+  </div>
+
+  {%- if article.image and section.settings.show_image -%}
+    <div class="container" style="padding-top:var(--sp-6)">
+      <img class="article-hero-image" src="{{ article.image | image_url: width: 1400 }}"
+           alt="{{ article.image.alt | default: article.title | escape }}" width="1400" height="780">
+    </div>
+  {%- endif -%}
+
+  <div class="container" style="padding-block:var(--sp-7);max-width:76ch">
+    <div class="rte">{{ article.content }}</div>
+
+    {%- if article.tags.size > 0 -%}
+      <p class="article-tags">
+        {%- for tag in article.tags -%}
+          <a class="badge badge-neutral" href="{{ blog.url }}/tagged/{{ tag | handleize }}">{{ tag }}</a>
+        {%- endfor -%}
+      </p>
+    {%- endif -%}
+
+    <nav class="article-nav" aria-label="Más artículos">
+      {%- if blog.previous_article -%}
+        <a class="btn btn-ghost" href="{{ blog.previous_article }}">{{ 'general.pagination.previous' | t }}</a>
+      {%- endif -%}
+      <a class="btn btn-secondary" href="{{ blog.url }}">{{ blog.title }}</a>
+      {%- if blog.next_article -%}
+        <a class="btn btn-ghost" href="{{ blog.next_article }}">{{ 'general.pagination.next' | t }}</a>
+      {%- endif -%}
+    </nav>
+  </div>
+</article>
+
+{% schema %}
+{
+  "name": "Artículo",
+  "tag": "section",
+  "settings": [
+    { "type": "checkbox", "id": "show_image", "label": "Mostrar imagen destacada", "default": true },
+    { "type": "checkbox", "id": "show_author", "label": "Mostrar autor", "default": false }
+  ]
+}
+{% endschema %}

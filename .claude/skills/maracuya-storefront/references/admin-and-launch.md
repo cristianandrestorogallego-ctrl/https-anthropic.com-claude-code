@@ -64,13 +64,39 @@ theirs to perform:
 5. Complete the legal and tax details for selling food in Spain, and fill
    in the policy pages.
 
+## Installing the theme (unpublished preview)
+
+The theme lives at `outputs/maracuya/theme/` and is packaged to
+`outputs/maracuya/maracuya-theme.zip`. Rebuild the zip with:
+
+```
+cd outputs/maracuya/theme
+zip -rq ../maracuya-theme.zip assets config layout locales sections snippets templates -x '.*'
+```
+
+The owner installs it themselves, because the Admin API's `themeCreate`
+takes a publicly reachable zip URL and this environment has none:
+
+1. Shopify Admin → Online Store → Themes
+2. "Add theme" → "Upload zip file" → pick `maracuya-theme.zip`
+3. It lands in **Theme library**, unpublished. Use **Preview** — never
+   **Publish** — unless the owner says to publish.
+
+Never publish a theme, and never write to the MAIN theme's files, without
+the owner's explicit instruction for that specific action.
+
 ## Launch checklist — status
 
-Outstanding before this can go live. Nothing here is done yet.
+**Store — exists**
+
+- [x] Shopify store created: `yw4vyu-vf.myshopify.com`, Basic plan,
+      EUR, Spain, timezone CEST. Still named "Mi tienda"; the live theme
+      is Horizon.
 
 **Blocked on the owner**
 
-- [ ] Shopify store, plan and domain
+- [ ] Rename the store to MARACUYA mercado latino
+- [ ] Domain
 - [ ] Payment methods activated and verified
 - [ ] Business, tax and invoicing details
 - [ ] Real shipping zones and rates (the prototype's are examples)
@@ -81,13 +107,18 @@ Outstanding before this can go live. Nothing here is done yet.
       ingredients, nutrition. Everything in the prototype is fictional.
 - [ ] Product photography
 
-**Build work still to do**
+**Build work**
 
-- [ ] The theme itself — see `shopify-migration.md`; none of it exists yet
+- [x] The theme itself — `outputs/maracuya/theme/`, 38 files: layout,
+      config, locales, 17 sections, 4 snippets, 10 templates, brand assets
+- [x] Theme Check passing — `@shopify/theme-check-node` with
+      `extends: theme-check:all` (86 checks): 0 errors, 0 warnings, 0 info
+      across 39 files
+- [ ] Upload the zip as an unpublished theme (owner's step, above)
 - [ ] A decision on how the recipe package builder is implemented
-- [ ] Theme Check passing
-- [ ] Accessibility and performance pass on the real theme
-- [ ] Test orders end to end on a development store
+- [ ] Accessibility and performance pass against the rendered theme —
+      only static checks have run; nothing has been rendered by Shopify
+- [ ] Test orders end to end
 
 **Not to be claimed**
 

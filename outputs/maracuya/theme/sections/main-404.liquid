@@ -1,0 +1,12 @@
+<div class="container" style="padding-block:var(--sp-10)">
+  <div class="empty-state">
+    {% render 'brand-icon', name: 'alert-triangle', size: 40 %}
+    <h3>{{ 'general.404.title' | t }}</h3>
+    <p>{{ 'general.404.body' | t }}</p>
+    <a class="btn btn-primary" href="{{ routes.root_url }}">{{ 'general.404.link' | t }}</a>
+  </div>
+</div>
+
+{% schema %}
+{ "name": "Página 404", "tag": "section", "settings": [] }
+{% endschema %}

@@ -1,0 +1,56 @@
+<div class="page-hero">
+  <div class="container">
+    <h1>{{ collection.title }}</h1>
+    {%- if collection.description != blank -%}
+      <div class="rte">{{ collection.description }}</div>
+    {%- endif -%}
+  </div>
+</div>
+
+<div class="container" style="padding-block:var(--sp-7)">
+  <p class="filter-results-count">{{ 'collections.count' | t: count: collection.products_count }}</p>
+
+  {%- paginate collection.products by section.settings.per_page -%}
+    {%- if collection.products.size > 0 -%}
+      <div class="shop-grid">
+        {%- for product in collection.products -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}">{{ 'general.pagination.previous' | t }}</a>
+          {%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}">{{ part.title }}</a>
+            {%- else -%}
+              <span class="{% if part.title == paginate.current_page %}is-current{% endif %}">{{ part.title }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}">{{ 'general.pagination.next' | t }}</a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- else -%}
+      <div class="empty-state">
+        {% render 'brand-icon', name: 'bag', size: 40 %}
+        <h3>{{ 'collections.empty' | t }}</h3>
+        <a class="btn btn-primary" href="{{ routes.all_products_collection_url }}">{{ 'collections.browse_all' | t }}</a>
+      </div>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "Colección",
+  "tag": "section",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Productos por página", "min": 8, "max": 48, "step": 4, "default": 24 }
+  ]
+}
+{% endschema %}

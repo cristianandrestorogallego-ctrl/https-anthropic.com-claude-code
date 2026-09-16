@@ -1,0 +1,76 @@
+<div class="page-hero">
+  <div class="container">
+    <h1>{{ blog.title }}</h1>
+    {%- if current_tags -%}
+      {%- assign tag_list = current_tags | join: ', ' -%}
+      <p class="section-subtitle">{{ 'general.tagged' | t: tags: tag_list }}</p>
+    {%- endif -%}
+  </div>
+</div>
+
+<div class="container" style="padding-block:var(--sp-7)">
+  {%- paginate blog.articles by section.settings.per_page -%}
+    {%- if blog.articles.size > 0 -%}
+      <div class="article-grid">
+        {%- for article in blog.articles -%}
+          <article class="article-card">
+            <a class="article-card__media{% unless article.image %} media-placeholder{% endunless %}" href="{{ article.url }}" tabindex="-1" aria-hidden="true">
+              {%- if article.image -%}
+                <img src="{{ article.image | image_url: width: 800 }}" alt="" width="800" height="500" loading="lazy">
+              {%- else -%}
+                {% render 'brand-icon', name: 'leaf', size: 32 %}
+              {%- endif -%}
+            </a>
+            <div class="article-card__body">
+              <p class="article-card__meta">
+                <time datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%-d %B %Y' }}</time>
+                {%- if section.settings.show_author and article.author != blank %} · {{ article.author }}{% endif -%}
+              </p>
+              <h2 class="article-card__title"><a href="{{ article.url }}">{{ article.title }}</a></h2>
+              {%- if section.settings.show_excerpt -%}
+                <p class="article-card__excerpt">{{ article.excerpt_or_content | strip_html | truncate: 160 }}</p>
+              {%- endif -%}
+            </div>
+          </article>
+        {%- endfor -%}
+      </div>
+
+      {%- if paginate.pages > 1 -%}
+        <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}">{{ 'general.pagination.previous' | t }}</a>
+          {%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}">{{ part.title }}</a>
+            {%- else -%}
+              <span class="{% if part.title == paginate.current_page %}is-current{% endif %}">{{ part.title }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}">{{ 'general.pagination.next' | t }}</a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+    {%- else -%}
+      <div class="empty-state">
+        {% render 'brand-icon', name: 'leaf', size: 40 %}
+        <h3>{{ 'blogs.empty_title' | t }}</h3>
+        <p>{{ 'blogs.empty_body' | t }}</p>
+        <a class="btn btn-primary" href="{{ routes.root_url }}">{{ 'general.404.link' | t }}</a>
+      </div>
+    {%- endif -%}
+  {%- endpaginate -%}
+</div>
+
+{% schema %}
+{
+  "name": "Blog",
+  "tag": "section",
+  "settings": [
+    { "type": "range", "id": "per_page", "label": "Artículos por página", "min": 6, "max": 24, "step": 3, "default": 12 },
+    { "type": "checkbox", "id": "show_excerpt", "label": "Mostrar extracto", "default": true },
+    { "type": "checkbox", "id": "show_author", "label": "Mostrar autor", "default": false }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,15 @@
+{
+  "type": "header",
+  "name": "Cabecera",
+  "sections": {
+    "header": {
+      "type": "header",
+      "settings": {
+        "menu": "main-menu",
+        "show_announcement": true,
+        "announcement": "MERCADO LATINO · ENVÍOS A ESPAÑA PENINSULAR"
+      }
+    }
+  },
+  "order": ["header"]
+}

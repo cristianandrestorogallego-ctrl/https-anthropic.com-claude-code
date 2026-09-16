@@ -1,0 +1,50 @@
+<div class="page-hero">
+  <div class="container">
+    <h1>{{ 'general.search.title' | t }}</h1>
+    <form action="{{ routes.search_url }}" method="get" role="search" style="margin-top:var(--sp-4);max-width:520px">
+      <div class="search-box" style="background:var(--surface);border-color:var(--border);color:var(--ink)">
+        {% render 'brand-icon', name: 'search', size: 18 %}
+        <label class="visually-hidden" for="search-page">{{ 'general.search.title' | t }}</label>
+        <input type="search" id="search-page" name="q" value="{{ search.terms | escape }}"
+               placeholder="{{ 'general.search.placeholder' | t }}" style="color:var(--ink)">
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="container" style="padding-block:var(--sp-7)">
+  {%- if search.performed -%}
+    <p class="filter-results-count">{{ 'general.search.results_with_count' | t: count: search.results_count }}</p>
+    {%- paginate search.results by 24 -%}
+      {%- if search.results_count > 0 -%}
+        <div class="shop-grid">
+          {%- for item in search.results -%}
+            {%- if item.object_type == 'product' -%}
+              {% render 'product-card', product: item %}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" aria-label="{{ 'general.pagination.label' | t }}">
+            {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">{{ 'general.pagination.previous' | t }}</a>{%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}<a href="{{ part.url }}">{{ part.title }}</a>
+              {%- else -%}<span class="{% if part.title == paginate.current_page %}is-current{% endif %}">{{ part.title }}</span>{%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}<a href="{{ paginate.next.url }}">{{ 'general.pagination.next' | t }}</a>{%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- else -%}
+        <div class="empty-state">
+          {% render 'brand-icon', name: 'search', size: 40 %}
+          <h3>{{ 'general.search.no_results' | t: terms: search.terms }}</h3>
+          <p>{{ 'general.search.no_results_help' | t }}</p>
+        </div>
+      {%- endif -%}
+    {%- endpaginate -%}
+  {%- endif -%}
+</div>
+
+{% schema %}
+{ "name": "Búsqueda", "tag": "section", "settings": [] }
+{% endschema %}

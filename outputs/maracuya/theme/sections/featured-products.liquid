@@ -1,0 +1,51 @@
+{%- liquid
+  assign col = section.settings.collection
+  assign limit = section.settings.count
+-%}
+<section class="section{% if section.settings.tinted %} section-alt{% endif %}">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <h2>{{ section.settings.heading }}</h2>
+        {%- if section.settings.subheading != blank -%}
+          <p class="section-subtitle">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+      </div>
+      {%- if col != blank -%}
+        <a class="section-link" href="{{ col.url }}">
+          {{ section.settings.link_label | default: 'Ver todo' }} {% render 'brand-icon', name: 'arrow-right', size: 14 %}
+        </a>
+      {%- endif -%}
+    </div>
+
+    {%- if col != blank and col.products_count > 0 -%}
+      <div class="shop-grid">
+        {%- for product in col.products limit: limit -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      </div>
+    {%- else -%}
+      <div class="empty-state">
+        {% render 'brand-icon', name: 'bag', size: 40 %}
+        <h3>{{ 'onboarding.no_products_title' | t }}</h3>
+        <p>{{ 'onboarding.no_products_body' | t }}</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Productos destacados",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Título", "default": "Productos destacados" },
+    { "type": "text", "id": "subheading", "label": "Subtítulo" },
+    { "type": "collection", "id": "collection", "label": "Colección" },
+    { "type": "range", "id": "count", "label": "Número de productos", "min": 4, "max": 16, "step": 4, "default": 8 },
+    { "type": "text", "id": "link_label", "label": "Texto del enlace", "default": "Ver todo" },
+    { "type": "checkbox", "id": "tinted", "label": "Fondo tintado", "default": false }
+  ],
+  "presets": [{ "name": "Productos destacados" }]
+}
+{% endschema %}

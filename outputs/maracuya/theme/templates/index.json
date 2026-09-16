@@ -1,0 +1,51 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero-offers",
+      "blocks": {
+        "s1": { "type": "slide", "settings": { "tile": "dulces", "shape": "box", "badge": "Destacado", "heading": "Sabores de casa, más cerca", "body": "Productos de Latinoamérica seleccionados para el mercado español.", "cta": "Ver catálogo", "cta_secondary": "Ver categorías" } },
+        "s2": { "type": "slide", "settings": { "tile": "despensa", "shape": "bag", "badge": "Despensa", "heading": "La despensa latina completa", "body": "Café, harinas, granos y básicos para cocinar como en casa.", "cta": "Ver productos" } },
+        "s3": { "type": "slide", "settings": { "tile": "salsas", "shape": "jar", "badge": "Salsas", "heading": "Picantes, moles y aderezos", "body": "El toque que le falta a tu receta.", "cta": "Ver productos" } }
+      },
+      "block_order": ["s1", "s2", "s3"],
+      "settings": { "heading": "Destacados" }
+    },
+    "categories": {
+      "type": "collection-grid",
+      "blocks": {
+        "c1": { "type": "item", "settings": { "tile": "bebidas" } },
+        "c2": { "type": "item", "settings": { "tile": "snacks" } },
+        "c3": { "type": "item", "settings": { "tile": "dulces" } },
+        "c4": { "type": "item", "settings": { "tile": "despensa" } },
+        "c5": { "type": "item", "settings": { "tile": "salsas" } }
+      },
+      "block_order": ["c1", "c2", "c3", "c4", "c5"],
+      "settings": {
+        "heading": "Categorías",
+        "subheading": "Todo lo que necesitas para cocinar y disfrutar.",
+        "link_label": "Ver todo",
+        "tinted": false
+      }
+    },
+    "featured": {
+      "type": "featured-products",
+      "settings": {
+        "heading": "Productos destacados",
+        "subheading": "Una selección de nuestro catálogo.",
+        "count": 8,
+        "tinted": true
+      }
+    },
+    "trust": {
+      "type": "trust-strip",
+      "blocks": {
+        "t1": { "type": "item", "settings": { "icon": "truck", "heading": "Envío a España peninsular", "body": "Los plazos y las tarifas se calculan en el momento del pago." } },
+        "t2": { "type": "item", "settings": { "icon": "headset", "heading": "Atención cercana", "body": "Escríbenos si tienes dudas sobre un producto o tu pedido." } },
+        "t3": { "type": "item", "settings": { "icon": "shield-check", "heading": "Pago seguro", "body": "El pago se procesa en el checkout seguro de Shopify." } }
+      },
+      "block_order": ["t1", "t2", "t3"],
+      "settings": { "show_payment_icons": true }
+    }
+  },
+  "order": ["hero", "categories", "featured", "trust"]
+}

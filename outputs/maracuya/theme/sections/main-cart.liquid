@@ -1,0 +1,61 @@
+<div class="page-hero">
+  <div class="container"><h1>{{ 'cart.title' | t }}</h1></div>
+</div>
+
+<div class="container" style="padding-block:var(--sp-7);max-width:900px">
+  {%- if cart.item_count > 0 -%}
+    <form action="{{ routes.cart_url }}" method="post" data-qty-wrap>
+      {%- for item in cart.items -%}
+        <div class="cart-page-line">
+          <a class="cart-page-line__media{% unless item.image %} media-placeholder{% endunless %}" href="{{ item.url }}">
+            {%- if item.image -%}
+              <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.title | escape }}" width="200" height="200">
+            {%- else -%}
+              {% render 'brand-icon', name: 'bag', size: 32 %}
+            {%- endif -%}
+          </a>
+
+          <div>
+            <a href="{{ item.url }}"><strong>{{ item.product.title }}</strong></a>
+            {%- unless item.product.has_only_default_variant -%}
+              <div class="cart-line__meta">{{ item.variant.title }}</div>
+            {%- endunless -%}
+            <div class="cart-line__price tabular">{{ item.original_price | money }}</div>
+            <a class="cart-line__remove" href="{{ item.url_to_remove }}">{{ 'cart.remove' | t }}</a>
+          </div>
+
+          <div style="display:grid;gap:8px;justify-items:end">
+            <label class="visually-hidden" for="updates-{{ item.key }}">{{ 'products.quantity' | t }}</label>
+            <input class="text-input" style="width:76px;text-align:center" type="number"
+                   id="updates-{{ item.key }}" name="updates[]" value="{{ item.quantity }}" min="0" inputmode="numeric">
+            <span class="price tabular">{{ item.original_line_price | money }}</span>
+          </div>
+        </div>
+      {%- endfor -%}
+
+      <div class="cart-totals">
+        <div class="cart-totals__row">
+          <span>{{ 'cart.subtotal' | t }}</span>
+          <span class="cart-totals__total tabular">{{ cart.total_price | money }}</span>
+        </div>
+        <p class="cart-shipping-note">
+          {% render 'brand-icon', name: 'truck', size: 14 %} {{ 'cart.shipping_note' | t }}
+        </p>
+        <button class="btn btn-ghost btn-block" type="submit" name="update">Actualizar carrito</button>
+        <button class="btn btn-primary btn-block" type="submit" name="checkout">{{ 'cart.checkout' | t }}</button>
+        <a class="btn btn-secondary btn-block" href="{{ routes.all_products_collection_url }}">{{ 'cart.continue_shopping' | t }}</a>
+      </div>
+    </form>
+  {%- else -%}
+    <div class="empty-state">
+      {% render 'brand-icon', name: 'cart', size: 48 %}
+      <h3>{{ 'cart.empty' | t }}</h3>
+      <p>{{ 'cart.empty_help' | t }}</p>
+      <a class="btn btn-primary" href="{{ routes.all_products_collection_url }}">{{ 'collections.browse_all' | t }}</a>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{ "name": "Carrito", "tag": "section", "settings": [] }
+{% endschema %}

@@ -1,0 +1,109 @@
+{%- liquid
+  assign logo_dark = settings.logo_dark
+  assign logo_light = settings.logo_light
+  assign menu = section.settings.menu
+-%}
+
+<div class="site-header">
+  {%- if section.settings.show_announcement and section.settings.announcement != blank -%}
+    <div class="promo-strip"><span>{{ section.settings.announcement }}</span></div>
+  {%- endif -%}
+
+  <div class="header-row">
+    <div class="header-social">
+      {%- if settings.social_instagram != blank -%}
+        <a class="social-link" href="{{ settings.social_instagram }}" target="_blank" rel="noopener noreferrer" aria-label="Instagram">{% render 'brand-icon', name: 'instagram', size: 18 %}</a>
+      {%- endif -%}
+      {%- if settings.social_facebook != blank -%}
+        <a class="social-link" href="{{ settings.social_facebook }}" target="_blank" rel="noopener noreferrer" aria-label="Facebook">{% render 'brand-icon', name: 'facebook', size: 18 %}</a>
+      {%- endif -%}
+      {%- if settings.social_tiktok != blank -%}
+        <a class="social-link" href="{{ settings.social_tiktok }}" target="_blank" rel="noopener noreferrer" aria-label="TikTok">{% render 'brand-icon', name: 'tiktok', size: 18 %}</a>
+      {%- endif -%}
+      {%- if settings.social_youtube != blank -%}
+        <a class="social-link" href="{{ settings.social_youtube }}" target="_blank" rel="noopener noreferrer" aria-label="YouTube">{% render 'brand-icon', name: 'youtube', size: 18 %}</a>
+      {%- endif -%}
+    </div>
+
+    <a class="logo" href="{{ routes.root_url }}" aria-label="{{ shop.name }} — inicio">
+      {%- if logo_dark != blank -%}
+        <img class="logo-img logo-img--on-deep" src="{{ logo_dark | image_url: width: 460 }}" width="{{ logo_dark.width }}" height="{{ logo_dark.height }}" alt="{{ shop.name }}" style="height:{{ settings.logo_height }}px;width:auto">
+      {%- else -%}
+        <img class="logo-img logo-img--on-deep" src="{{ 'maracuya-logo-inverso.svg' | asset_url }}" width="230" height="48" alt="{{ shop.name }}" style="height:{{ settings.logo_height }}px;width:auto">
+      {%- endif -%}
+      {%- if logo_light != blank -%}
+        <img class="logo-img logo-img--on-light" src="{{ logo_light | image_url: width: 460 }}" width="{{ logo_light.width }}" height="{{ logo_light.height }}" alt="" aria-hidden="true" style="height:{{ settings.logo_height }}px;width:auto">
+      {%- else -%}
+        <img class="logo-img logo-img--on-light" src="{{ 'maracuya-logo-compacto.svg' | asset_url }}" width="190" height="39" alt="" aria-hidden="true" style="height:{{ settings.logo_height }}px;width:auto">
+      {%- endif -%}
+    </a>
+
+    <div class="header-right">
+      <form class="search-form" action="{{ routes.search_url }}" method="get" role="search">
+        <div class="search-box">
+          {% render 'brand-icon', name: 'search', size: 18 %}
+          <label class="visually-hidden" for="header-search">{{ 'general.search.title' | t }}</label>
+          <input type="search" id="header-search" name="q" value="{{ search.terms | escape }}"
+                 placeholder="{{ 'general.search.placeholder' | t }}" autocomplete="off">
+        </div>
+      </form>
+
+      <div class="header-actions">
+        <button class="btn-icon cart-btn" id="cart-toggle-btn" type="button" data-open-cart
+                aria-haspopup="dialog" aria-controls="cart-drawer" aria-expanded="false"
+                aria-label="{% if cart.item_count > 0 %}{{ 'header.cart_with_count' | t: count: cart.item_count }}{% else %}{{ 'header.cart' | t }}{% endif %}">
+          {% render 'brand-icon', name: 'cart', size: 22 %}
+          {%- if cart.item_count > 0 -%}
+            <span class="cart-count" aria-hidden="true">{{ cart.item_count }}</span>
+          {%- endif -%}
+        </button>
+
+        <button class="menu-btn" type="button" data-toggle-menu aria-expanded="false" aria-controls="site-nav">
+          <span class="bars"><span></span><span></span><span></span></span> {{ 'header.menu' | t }}
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <nav class="quick-nav" id="site-nav" data-site-nav aria-label="{{ 'header.menu' | t }}">
+    <div class="quick-nav-inner">
+      {%- if menu != blank -%}
+        {%- for link in linklists[menu].links -%}
+          <a class="quick-pill{% if link.active %} is-active{% endif %}" href="{{ link.url }}">{{ link.title }}</a>
+        {%- endfor -%}
+      {%- else -%}
+        <a class="quick-pill" href="{{ routes.all_products_collection_url }}">{{ 'collections.all' | t }}</a>
+      {%- endif -%}
+    </div>
+  </nav>
+</div>
+
+{% schema %}
+{
+  "name": "Cabecera",
+  "settings": [
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menú de navegación",
+      "default": "main-menu",
+      "info": "Se edita en Tienda online → Navegación."
+    },
+    {
+      "type": "checkbox",
+      "id": "show_announcement",
+      "label": "Mostrar barra de aviso",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "announcement",
+      "label": "Texto de la barra de aviso",
+      "default": "MERCADO LATINO · ENVÍOS A ESPAÑA PENINSULAR"
+    }
+  ],
+  "enabled_on": {
+    "groups": ["header"]
+  }
+}
+{% endschema %}

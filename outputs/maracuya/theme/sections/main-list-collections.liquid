@@ -1,0 +1,33 @@
+<div class="page-hero">
+  <div class="container"><h1>{{ 'collections.title' | t }}</h1></div>
+</div>
+
+<div class="container" style="padding-block:var(--sp-7)">
+  {%- if collections.size > 0 -%}
+    <div class="category-grid">
+      {%- for col in collections -%}
+        <a class="category-card" href="{{ col.url }}">
+          <span class="category-card__media tile-despensa">
+            {%- if col.featured_image -%}
+              <img src="{{ col.featured_image | image_url: width: 500 }}" alt="" width="500" height="375" loading="lazy"
+                   style="width:100%;height:100%;object-fit:cover;border-radius:inherit">
+            {%- else -%}
+              {% render 'brand-icon', name: 'bag', size: 48 %}
+            {%- endif -%}
+          </span>
+          <strong>{{ col.title }}</strong>
+        </a>
+      {%- endfor -%}
+    </div>
+  {%- else -%}
+    <div class="empty-state">
+      {% render 'brand-icon', name: 'bag', size: 40 %}
+      <h3>{{ 'onboarding.no_collections_title' | t }}</h3>
+      <p>{{ 'onboarding.no_collections_body' | t }}</p>
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{ "name": "Lista de colecciones", "tag": "section", "settings": [] }
+{% endschema %}

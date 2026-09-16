@@ -1,0 +1,17 @@
+{
+  "current": {
+    "logo_height": 46,
+    "color_primary": "#4B204F",
+    "color_primary_deep": "#35163A",
+    "color_accent": "#F4C542",
+    "color_leaf": "#456B50",
+    "color_bg": "#FFF8EC",
+    "color_surface": "#FFFFFF",
+    "color_ink": "#302536",
+    "whatsapp_number": "",
+    "whatsapp_note": "El mensaje de WhatsApp es una solicitud: no confirma el pedido, no reserva stock ni acredita el pago.",
+    "show_vendor": true,
+    "show_availability": true,
+    "enable_quick_add": true
+  }
+}

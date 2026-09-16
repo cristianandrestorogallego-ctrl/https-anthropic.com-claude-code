@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="{{ settings.color_primary }}">
+    <link rel="canonical" href="{{ canonical_url }}">
+    {%- if settings.favicon != blank -%}
+      <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 48 }}">
+    {%- endif -%}
+
+    <title>
+      {{ page_title }}
+      {%- if current_tags %}{%- assign tag_list = current_tags | join: ', ' %} &ndash; {{ 'general.tagged' | t: tags: tag_list }}{% endif -%}
+      {%- if current_page != 1 %} &ndash; {{ 'general.page' | t: page: current_page }}{% endif -%}
+      {%- unless page_title contains shop.name %} &ndash; {{ shop.name }}{% endunless -%}
+    </title>
+
+    {%- if page_description -%}
+      <meta name="description" content="{{ page_description | escape }}">
+    {%- endif -%}
+
+    {{ content_for_header }}
+
+    {{ 'maracuya.css' | asset_url | stylesheet_tag }}
+
+    {%- comment -%}
+      Theme-editor colours override the stylesheet's defaults. Only the values a
+      merchant can actually change are emitted; everything derived from them
+      (washes, rules, soft text) stays in the stylesheet so the contrast rules
+      cannot be broken from the editor.
+    {%- endcomment -%}
+    <style>
+      :root{
+        --primary: {{ settings.color_primary }};
+        --primary-deep: {{ settings.color_primary_deep }};
+        --accent: {{ settings.color_accent }};
+        --leaf: {{ settings.color_leaf }};
+        --bg: {{ settings.color_bg }};
+        --surface: {{ settings.color_surface }};
+        --ink: {{ settings.color_ink }};
+      }
+    </style>
+  </head>
+
+  <body class="template-{{ request.page_type | handle }}">
+    <a class="skip-link" href="#main-content">{{ 'general.skip_to_content' | t }}</a>
+
+    <div id="toast-region" aria-live="polite" aria-atomic="true"></div>
+    <div id="backdrop" data-close-overlay></div>
+
+    {% sections 'header-group' %}
+
+    <main id="main-content" tabindex="-1">
+      {{ content_for_layout }}
+    </main>
+
+    {% sections 'footer-group' %}
+
+    <aside id="cart-drawer" class="cart-drawer" role="dialog" aria-modal="true" aria-label="{{ 'cart.title' | t }}" tabindex="-1">
+      {% render 'cart-drawer' %}
+    </aside>
+
+    <script src="{{ 'maracuya.js' | asset_url }}" defer></script>
+  </body>
+</html>
