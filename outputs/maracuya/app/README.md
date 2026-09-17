@@ -1,7 +1,8 @@
 # MARACUYA mercado latino — aplicación web
 
 Tienda de productos latinoamericanos para España. **React + TanStack Start
-+ Vite + Tailwind v4 + shadcn/ui.**
+
+- Vite + Tailwind v4 + shadcn/ui.**
 
 ```bash
 bun install

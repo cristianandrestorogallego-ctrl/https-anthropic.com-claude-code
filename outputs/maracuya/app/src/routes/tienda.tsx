@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { ProductCard } from "@/components/site/product-card";
+import { Reveal, stagger } from "@/components/site/reveal";
 import { categorias, productos } from "@/lib/catalogo";
 
 const CATEGORIA_IDS = ["despensa", "salsas", "bebidas", "dulces"] as const;
@@ -47,11 +48,10 @@ function Tienda() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-6xl px-4 py-12">
-        <p className="text-xs uppercase tracking-[0.3em] text-muted-foreground">Catálogo</p>
-        <h1 className="mt-2 font-display text-4xl sm:text-5xl">
+        <h1 className="font-display text-4xl tracking-[-0.025em] sm:text-5xl">
           {activa ? activa.nombre : "El mercado completo"}
         </h1>
-        <p className="mt-3 max-w-xl text-muted-foreground">
+        <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">
           {activa
             ? activa.claim
             : "Una selección corta y honesta: solo entran los productos que usamos en nuestra propia cocina."}
@@ -77,13 +77,15 @@ function Tienda() {
           ))}
         </div>
 
-        <p className="mt-6 text-sm text-muted-foreground">
+        <p className="tabular mt-6 text-sm text-muted-foreground">
           {lista.length === 1 ? "1 producto" : `${lista.length} productos`}
         </p>
 
         <div className="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {lista.map((p) => (
-            <ProductCard key={p.id} producto={p} />
+          {lista.map((p, i) => (
+            <Reveal key={p.id} delay={stagger(i)}>
+              <ProductCard producto={p} />
+            </Reveal>
           ))}
         </div>
       </main>

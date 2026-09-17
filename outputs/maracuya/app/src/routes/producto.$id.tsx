@@ -80,7 +80,7 @@ function DetalleProducto() {
           <img
             src={producto.imagen}
             alt={producto.nombre}
-            className="aspect-4/5 w-full rounded-3xl bg-arena object-cover shadow-[var(--shadow-soft)]"
+            className="aspect-4/5 w-full rounded-3xl bg-arena object-cover shadow-[var(--shadow-e3)]"
           />
 
           <div className="lg:py-4">
@@ -90,15 +90,19 @@ function DetalleProducto() {
               </span>
             )}
 
-            <p className="mt-4 text-xs uppercase tracking-[0.3em] text-muted-foreground">
-              {producto.origen} · {producto.formato}
-            </p>
-            <h1 className="mt-2 font-display text-3xl leading-tight sm:text-4xl">
+            <h1 className="mt-4 font-display text-3xl leading-tight tracking-[-0.025em] sm:text-4xl">
               {producto.nombre}
             </h1>
-            <p className="mt-4 text-muted-foreground">{producto.descripcion}</p>
+            <p className="mt-2 text-sm text-muted-foreground">
+              {producto.origen} · {producto.formato}
+            </p>
+            <p className="mt-5 max-w-prose leading-relaxed text-muted-foreground">
+              {producto.descripcion}
+            </p>
 
-            <p className="mt-6 font-display text-4xl">{formatoPrecio(producto.precio)}</p>
+            <p className="tabular mt-7 font-display text-4xl tracking-[-0.02em]">
+              {formatoPrecio(producto.precio)}
+            </p>
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-1 rounded-md border p-1">
@@ -112,7 +116,7 @@ function DetalleProducto() {
                 >
                   <Minus className="size-3.5" />
                 </Button>
-                <span className="w-8 text-center text-sm tabular-nums">{cantidad}</span>
+                <span className="tabular w-8 text-center text-sm">{cantidad}</span>
                 <Button
                   size="icon"
                   variant="ghost"
@@ -124,13 +128,17 @@ function DetalleProducto() {
                 </Button>
               </div>
 
-              <Button size="lg" className="gap-2" onClick={() => agregar(producto, cantidad)}>
+              <Button
+                size="lg"
+                className="gap-2 shadow-[var(--shadow-e1)] transition-[transform,box-shadow] duration-200 hover:shadow-[var(--shadow-e2)] active:translate-y-px"
+                onClick={() => agregar(producto, cantidad)}
+              >
                 <ShoppingBag className="size-4" />
                 Añadir a la cesta · {formatoPrecio(producto.precio * cantidad)}
               </Button>
             </div>
 
-            <div className="mt-8 space-y-3 rounded-2xl border bg-card p-5 text-sm">
+            <div className="mt-8 space-y-3 rounded-2xl bg-card p-5 text-sm shadow-[var(--shadow-e1)] ring-1 ring-[oklch(0.27_0.06_158_/_0.08)]">
               <p className="flex items-center gap-2 font-medium">
                 <Truck className="size-4 text-primary" />
                 Envío en 24-72 h a España peninsular
