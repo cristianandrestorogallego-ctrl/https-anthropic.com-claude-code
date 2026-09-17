@@ -1,0 +1,7 @@
+[install]
+saveTextLockfile = true
+# Guarda de cadena de suministro: ignora versiones publicadas hace menos de
+# un día. Cada entrada de la lista de excepciones salta esa guarda para un
+# paquete, así que se confirma con el usuario antes de añadir ninguna.
+minimumReleaseAge = 86400
+minimumReleaseAgeExcludes = []

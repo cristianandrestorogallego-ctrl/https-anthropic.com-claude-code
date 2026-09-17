@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 
-import logoAsset from "@/assets/logo.asset.json";
+import logoUrl from "@/assets/maracuya-logo.svg";
 
 export function Footer() {
   return (
@@ -8,7 +8,7 @@ export function Footer() {
       <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 lg:grid-cols-4">
         <div>
           <span className="inline-block rounded-lg bg-background px-4 py-2">
-            <img src={logoAsset.url} alt="MARACUYA mercado latino" className="h-10 w-auto" />
+            <img src={logoUrl} alt="MARACUYA mercado latino" className="h-10 w-auto" />
           </span>
           <p className="mt-4 max-w-xs text-sm opacity-80">
             Productos de América Latina seleccionados uno a uno para las cocinas de España.

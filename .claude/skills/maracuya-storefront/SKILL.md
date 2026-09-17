@@ -1,6 +1,6 @@
 ---
 name: maracuya-storefront
-description: Project skill for the MARACUYA mercado latino storefront in outputs/maracuya/prototype — a vanilla HTML/CSS/JS prototype, not yet a Shopify theme. Use when editing that storefront's markup, styles, data or render functions; when making visual or brand decisions about it; when asked how it gets administered or what is missing before it can go live on Shopify; or when planning the migration from the prototype to a Liquid theme. Carries the brand invariants, the architecture truth, the verification loop, and the launch and admin checklists so they are not re-derived or contradicted each session.
+description: Project skill for MARACUYA mercado latino, which lives in three codebases under outputs/maracuya — app (React + TanStack Start, the one under active development), theme (a verified Shopify Liquid theme, parked) and prototype (the original vanilla JS study). Use when editing any of them, when making visual or brand decisions, when asked which one is current or how they differ, when asked how the store is administered or what is missing before launch, or when planning work between them. Carries the architecture truth, the two competing design systems and which applies where, the brand invariants, the verification loop and the launch checklist, so none of it is re-derived or contradicted each session.
 ---
 
 # MARACUYA mercado latino — project skill
@@ -8,39 +8,63 @@ description: Project skill for the MARACUYA mercado latino storefront in outputs
 **Internal skill.** It carries this project's specifics and is not for
 distribution. No licence or attribution block applies.
 
-## Architecture truth — read this before any Shopify claim
+## Architecture truth — three codebases, read before any claim
 
-This project is a **standalone prototype in vanilla HTML, CSS and JS**,
-living in `outputs/maracuya/prototype/` and published as a Claude Artifact.
+`outputs/maracuya/` holds three separate things. Confusing them is the
+failure mode this section exists to prevent.
 
-It is **not a Shopify theme**. There is no Liquid, no `sections/`, no
-`config/settings_schema.json`, no `templates/`. Nothing in this repository
-is installable into a Shopify store as-is.
+| Directory | What it is | Status |
+|---|---|---|
+| `app/` | React + TanStack Start + Vite + Tailwind v4 + shadcn/ui | **Active. Work here unless told otherwise.** |
+| `theme/` | Shopify Online Store 2.0 theme, Liquid | Finished and verified; parked, not installed |
+| `prototype/` | Vanilla HTML/CSS/JS single page | Historical. The original design study |
 
-That distinction drives several rules:
+**`app/` is where development happens.** It began as a Lovable project the
+user preferred over the prototype. Their Lovable access has lapsed, so the
+app was made independent of Lovable: its own `vite.config.ts` replaces
+`@lovable.dev/vite-tanstack-config`, and nothing under `src/` references
+Lovable. Do not reintroduce that dependency, and do not assume the Lovable
+MCP server or `lovable.dev` is reachable — the egress proxy blocks both.
+A read-only clone of the user's GitHub mirror may sit at
+`/home/user/maracuya-mercado-latino`; it is a source of assets, not the
+place to work.
 
-- Never describe the current state as "a Shopify theme", "Shopify-ready",
-  or "approved by Shopify". It is a design and behaviour prototype that a
-  theme will later be built from.
-- Requirements for the Shopify **Theme Store** (public distribution) do not
-  apply. The agreed goal is a single merchant's own store. Only apply Theme
-  Store rules if the user says distribution is the goal.
-- The migration path is planned, not started. Read
-  `references/shopify-migration.md` before doing or promising any of it.
+**`app/` is not a Shopify theme and cannot be uploaded to Shopify.** It is
+React. Selling through it would mean wiring the Shopify Storefront API and
+hosting it separately. The user was told this and chose React anyway.
+`theme/` is the thing Shopify installs, and it is complete: run
+`@shopify/theme-check-node` with `extends: theme-check:all` and it passes
+0/0/0. It has never been uploaded to a store.
+
+Never describe any of this as "approved by Shopify", "Shopify-ready" or
+live. Nothing has been published, and nothing has been written to the
+user's store.
 
 ## Brand invariants — these fire on every visual change
 
 1. **The name carries no accent.** "MARACUYA", never "MARACUYÁ". This was
    changed deliberately across the logo outlines and all copy. The JS
    namespace `window.MARACUYA` was always unaccented and is unrelated.
-2. **Fonts are pinned by the client's brand kit**: Georgia for display,
-   Arial for body, both loaded from the system with no external font
-   request. Do not substitute a "better" typeface. If typography needs to
-   improve, improve scale, weight, tracking, measure and spacing — not the
-   family. Raise a font change with the user as a brand decision.
-3. **The logo SVGs in `brand/` are traced outlines from the official kit.**
-   Edit them only by removing or moving existing path data. Never redraw a
-   glyph, never substitute a font-rendered wordmark.
+2. **Two design systems exist, and they disagree. Match the one you are
+   editing; never merge them without the user's say-so.**
+
+   | | `app/` (active) | `theme/` and `prototype/` |
+   |---|---|---|
+   | Ground | Cream `oklch(0.977 0.014 88)` | Cream `#FFF8EC` |
+   | Primary | Green `selva` `oklch(0.27 0.06 158)` | Purple `#4B204F` |
+   | Accent | `maracuya` `oklch(0.82 0.16 82)` | `#F4C542` |
+   | Display | Fraunces (Google Fonts) | Georgia |
+   | Body | Outfit (Google Fonts) | Arial |
+   | Motif | Photography | Drawn passion-fruit seeds and rind arc |
+
+   The user chose the green system by preferring it on sight. Do not
+   "restore" the purple one in `app/`, and do not push green into `theme/`
+   unless asked. A font or palette change is a brand decision: raise it,
+   do not make it.
+3. **The logo SVGs are traced outlines from the official kit** — in
+   `prototype/brand/`, `theme/assets/` and `app/src/assets/`. Edit them
+   only by removing or moving existing path data. Never redraw a glyph,
+   never substitute a font-rendered wordmark.
 4. **Never invent commercial substance.** No reviews, ratings, certifications,
    real brand names, stock figures, delivery guarantees or health claims.
    Product brands in the catalogue are fictional on purpose, to avoid
@@ -55,6 +79,24 @@ That distinction drives several rules:
 Work in bounded passes: build the whole change, inspect once in a batched
 round covering desktop and mobile together, fix everything that round shows
 in one batch, confirm with at most one more round, then stop.
+
+In `app/` the gates are the project's own, and all three must pass before
+a change is done:
+
+```bash
+cd outputs/maracuya/app
+bun run build        # compiles, and regenerates src/routeTree.gen.ts
+bunx tsc --noEmit    # tsconfig is strict; this catches what the build does not
+bun run lint         # prettier is enforced; `bun run format` fixes it
+```
+
+`react-refresh/only-export-components` warnings are inherent to shadcn's
+pattern — they are expected, and are not errors. Chromium for screenshots
+is at `/opt/pw-browsers/chromium-1194/chrome-linux/chrome`; pass
+`executablePath` and `args: ['--no-proxy-server']` or Playwright tries to
+download a build it cannot reach. Google Fonts is blocked by the proxy, so
+Fraunces and Outfit fall back to their local stacks in screenshots taken
+here — that is the environment, not a bug.
 
 Before calling any visual change done:
 
@@ -72,8 +114,12 @@ Before calling any visual change done:
    This check catches it:
 
    ```bash
-   grep -n 'rgba(255,248,236,' outputs/maracuya/prototype/styles.css
+   grep -n 'rgba(255,248,236,' outputs/maracuya/prototype/styles.css \
+                               outputs/maracuya/theme/assets/maracuya.css
    ```
+
+   This trap is specific to the purple codebases. `app/` states every
+   colour as an oklch token pair in `src/styles.css`; check those instead.
 
    Every hit must sit on a hardcoded dark ground (the hero scrim, a
    `rgba(0,0,0,…)` overlay), not on `var(--primary)`.
