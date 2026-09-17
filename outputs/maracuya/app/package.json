@@ -9,7 +9,8 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "build:preview": "MARACUYA_PREVIEW=1 VITE_HASH_ROUTER=1 vite build && node scripts/pack-preview.mjs"
   },
   "overrides": {
     "rolldown": "1.2.1"

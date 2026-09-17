@@ -15,6 +15,13 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 
 const srcDir = fileURLToPath(new URL("./src", import.meta.url));
 
+/**
+ * Vista previa estática: una sola página que arranca el router en cliente,
+ * con rutas relativas, para poder publicarla como un sitio suelto. Se activa
+ * con MARACUYA_PREVIEW=1 y no afecta a la compilación normal.
+ */
+const vistaPrevia = process.env["MARACUYA_PREVIEW"] === "1";
+
 export default defineConfig(async ({ command, mode }) => {
   const plugins: PluginOption[] = [
     tailwindcss(),
@@ -24,12 +31,26 @@ export default defineConfig(async ({ command, mode }) => {
         behavior: "error",
         client: { files: ["**/server/**"], specifiers: ["server-only"] },
       },
+      ...(vistaPrevia
+        ? {
+            spa: {
+              enabled: true,
+              maskPath: "/",
+              prerender: {
+                enabled: true,
+                outputPath: "/index.html",
+                crawlLinks: false,
+                retryCount: 0,
+              },
+            },
+          }
+        : {}),
     }),
   ];
 
   // nitro empaqueta el servidor SSR. Sin preset explícito construye para
   // Node, que es lo portable; el host se decide al desplegar.
-  if (command === "build") {
+  if (command === "build" && !vistaPrevia) {
     const { nitro } = await import("nitro/vite");
     plugins.push(nitro());
   }
@@ -43,6 +64,8 @@ export default defineConfig(async ({ command, mode }) => {
   );
 
   return {
+    // Bajo una ruta ajena las URL absolutas de los assets no resuelven.
+    base: vistaPrevia ? "./" : "/",
     define,
     plugins,
     resolve: {
