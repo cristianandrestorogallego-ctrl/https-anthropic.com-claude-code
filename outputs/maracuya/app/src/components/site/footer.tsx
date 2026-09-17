@@ -17,7 +17,7 @@ export function Footer() {
         <div className="space-y-2 text-sm opacity-85">
           <p className="font-medium opacity-100">Comprar</p>
           <p>
-            <Link to="/tienda" search={{}} className="hover:underline">
+            <Link to="/tienda" className="hover:underline">
               Todo el catálogo
             </Link>
           </p>

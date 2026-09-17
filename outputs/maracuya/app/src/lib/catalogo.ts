@@ -2,179 +2,530 @@ import despensa from "@/assets/cat-despensa.jpg";
 import salsas from "@/assets/cat-salsas.jpg";
 import bebidas from "@/assets/cat-bebidas.jpg";
 import dulces from "@/assets/cat-dulces.jpg";
+import snacks from "@/assets/cat-snacks.jpg";
+import harinas from "@/assets/cat-harinas.jpg";
+import recetaArepas from "@/assets/receta-arepas.jpg";
+import recetaCeviche from "@/assets/receta-ceviche.jpg";
+import recetaEmpanadas from "@/assets/receta-empanadas.jpg";
 
-export type Categoria = "despensa" | "salsas" | "bebidas" | "dulces";
+/**
+ * Datos de DEMOSTRACIÓN.
+ * En producción, productos, precios, inventario y pedidos vendrán de Shopify.
+ */
+
+export type Categoria = "bebidas" | "snacks" | "dulces" | "despensa" | "harinas" | "salsas";
 
 export const categorias: {
   id: Categoria;
   nombre: string;
   claim: string;
   imagen: string;
+  subcategorias: string[];
 }[] = [
-  {
-    id: "despensa",
-    nombre: "Despensa",
-    claim: "Harinas, granos y la base de cada receta",
-    imagen: despensa,
-  },
-  {
-    id: "salsas",
-    nombre: "Ajíes y salsas",
-    claim: "El picante justo para despertar el plato",
-    imagen: salsas,
-  },
   {
     id: "bebidas",
     nombre: "Bebidas",
     claim: "Jugos tropicales, panela y refrescos",
     imagen: bebidas,
+    subcategorias: ["Jugos y néctares", "Refrescos", "Infusiones"],
+  },
+  {
+    id: "snacks",
+    nombre: "Snacks",
+    claim: "Picoteo crujiente con acento latino",
+    imagen: snacks,
+    subcategorias: ["Plátano y yuca", "Maíz", "Frutos secos"],
   },
   {
     id: "dulces",
-    nombre: "Dulces y snacks",
-    claim: "Antojos de media tarde con acento latino",
+    nombre: "Dulces",
+    claim: "Antojos de media tarde",
     imagen: dulces,
+    subcategorias: ["Dulce de leche", "Galletas", "Golosinas"],
+  },
+  {
+    id: "despensa",
+    nombre: "Despensa",
+    claim: "Granos, conservas y la base de cada receta",
+    imagen: despensa,
+    subcategorias: ["Legumbres", "Conservas", "Condimentos"],
+  },
+  {
+    id: "harinas",
+    nombre: "Harinas",
+    claim: "Para arepas, tamales y masas",
+    imagen: harinas,
+    subcategorias: ["Maíz precocido", "Yuca y almidones", "Mezclas"],
+  },
+  {
+    id: "salsas",
+    nombre: "Salsas",
+    claim: "El picante justo para despertar el plato",
+    imagen: salsas,
+    subcategorias: ["Ajíes", "Picantes", "Aderezos"],
   },
 ];
+
+export type PaisId =
+  "colombia" | "mexico" | "peru" | "venezuela" | "ecuador" | "brasil" | "argentina";
+
+export const paises: { id: PaisId; nombre: string; codigo: string; nota: string }[] = [
+  { id: "colombia", nombre: "Colombia", codigo: "co", nota: "Arepas, panela y guayaba" },
+  { id: "mexico", nombre: "México", codigo: "mx", nota: "Chiles, maíz y salsas" },
+  { id: "peru", nombre: "Perú", codigo: "pe", nota: "Ají amarillo y ceviche" },
+  { id: "venezuela", nombre: "Venezuela", codigo: "ve", nota: "Harina P.A.N. y hallacas" },
+  { id: "ecuador", nombre: "Ecuador", codigo: "ec", nota: "Plátano, ají criollo y cacao" },
+  { id: "brasil", nombre: "Brasil", codigo: "br", nota: "Tapioca, feijão y guaraná" },
+  { id: "argentina", nombre: "Argentina", codigo: "ar", nota: "Dulce de leche y yerba mate" },
+];
+
+export const banderaUrl = (codigo: string) => `https://flagcdn.com/w80/${codigo}.png`;
 
 export type Producto = {
   id: string;
   nombre: string;
-  origen: string;
+  marca: string;
   formato: string;
   precio: number;
+  precioAnterior?: number;
   categoria: Categoria;
+  subcategoria: string;
+  pais: PaisId;
+  /** País de fabricación cuando difiere del país asociado comercialmente. */
+  fabricadoEn?: string;
   imagen: string;
+  disponible: boolean;
+  variantes?: string[];
   etiqueta?: string;
   descripcion: string;
+  /** Campos de ficha pendientes de datos reales del proveedor. */
+  ingredientes?: string;
+  alergenos?: string;
+  conservacion?: string;
+  nutricional?: string;
 };
 
 export const productos: Producto[] = [
   {
     id: "harina-maiz-blanco",
     nombre: "Harina de maíz blanco precocida",
-    origen: "Venezuela",
+    marca: "Marca de demostración",
     formato: "1 kg",
     precio: 2.95,
-    categoria: "despensa",
-    imagen: despensa,
+    categoria: "harinas",
+    subcategoria: "Maíz precocido",
+    pais: "venezuela",
+    imagen: harinas,
+    disponible: true,
     etiqueta: "Más vendido",
     descripcion: "La base de las arepas de siempre. Sin gluten, lista en minutos.",
   },
   {
     id: "harina-maiz-amarillo",
-    nombre: "Harina de maíz amarillo",
-    origen: "Colombia",
+    nombre: "Harina de maíz amarillo precocida",
+    marca: "Marca de demostración",
     formato: "1 kg",
     precio: 3.15,
-    categoria: "despensa",
-    imagen: despensa,
+    categoria: "harinas",
+    subcategoria: "Maíz precocido",
+    pais: "colombia",
+    imagen: harinas,
+    disponible: true,
     descripcion: "Para arepas de choclo, envueltos y bollos con sabor de casa.",
+  },
+  {
+    id: "almidon-yuca",
+    nombre: "Almidón de yuca agrio",
+    marca: "Marca de demostración",
+    formato: "500 g",
+    precio: 3.4,
+    categoria: "harinas",
+    subcategoria: "Yuca y almidones",
+    pais: "colombia",
+    imagen: harinas,
+    disponible: false,
+    descripcion: "Para pandebono, pan de yuca y almojábanas.",
   },
   {
     id: "frijol-negro",
     nombre: "Frijol negro seleccionado",
-    origen: "Perú",
+    marca: "Marca de demostración",
     formato: "500 g",
     precio: 2.4,
     categoria: "despensa",
+    subcategoria: "Legumbres",
+    pais: "venezuela",
     imagen: despensa,
+    disponible: true,
     descripcion: "Grano entero, ideal para caraotas y feijoada de domingo.",
+  },
+  {
+    id: "maiz-mote",
+    nombre: "Maíz mote pelado",
+    marca: "Marca de demostración",
+    formato: "400 g",
+    precio: 2.9,
+    categoria: "despensa",
+    subcategoria: "Conservas",
+    pais: "peru",
+    imagen: despensa,
+    disponible: true,
+    descripcion: "El grano gordo que acompaña al ceviche y a los guisos andinos.",
   },
   {
     id: "aji-amarillo",
     nombre: "Pasta de ají amarillo",
-    origen: "Perú",
+    marca: "Marca de demostración",
     formato: "225 g",
     precio: 4.6,
+    precioAnterior: 5.4,
     categoria: "salsas",
+    subcategoria: "Ajíes",
+    pais: "peru",
     imagen: salsas,
-    etiqueta: "Favorito",
+    disponible: true,
+    etiqueta: "Oferta del día",
     descripcion: "Aroma frutal y picor medio: la firma de la cocina peruana.",
   },
   {
     id: "aji-criollo",
     nombre: "Ají criollo casero",
-    origen: "Ecuador",
+    marca: "Marca de demostración",
     formato: "250 ml",
     precio: 3.9,
     categoria: "salsas",
+    subcategoria: "Ajíes",
+    pais: "ecuador",
     imagen: salsas,
+    disponible: true,
+    variantes: ["Suave", "Picante"],
     descripcion: "Receta de mesa, con cilantro fresco y cebolla encurtida.",
   },
   {
     id: "salsa-chipotle",
     nombre: "Salsa de chipotle ahumado",
-    origen: "México",
+    marca: "Marca de demostración",
     formato: "150 ml",
     precio: 4.2,
+    precioAnterior: 4.9,
     categoria: "salsas",
+    subcategoria: "Picantes",
+    pais: "mexico",
     imagen: salsas,
+    disponible: true,
+    etiqueta: "Oferta del mes",
     descripcion: "Ahumada y densa, perfecta para tacos y carnes a la brasa.",
   },
   {
     id: "jugo-maracuya",
-    nombre: "Jugo de maracuyá 100% natural",
-    origen: "Colombia",
+    nombre: "Jugo de maracuyá",
+    marca: "Marca de demostración",
     formato: "1 L",
     precio: 3.8,
     categoria: "bebidas",
+    subcategoria: "Jugos y néctares",
+    pais: "colombia",
     imagen: bebidas,
+    disponible: true,
     etiqueta: "Nuestra fruta",
     descripcion: "Pulpa intensa y ácida, la que da nombre a la casa.",
   },
   {
     id: "jugo-guayaba",
     nombre: "Néctar de guayaba rosada",
-    origen: "Colombia",
+    marca: "Marca de demostración",
     formato: "1 L",
     precio: 3.5,
     categoria: "bebidas",
+    subcategoria: "Jugos y néctares",
+    pais: "colombia",
     imagen: bebidas,
+    disponible: true,
     descripcion: "Dulce, cremoso y con el color de las tardes del trópico.",
+  },
+  {
+    id: "guarana",
+    nombre: "Refresco de guaraná",
+    marca: "Marca de demostración",
+    formato: "1,5 L",
+    precio: 2.75,
+    categoria: "bebidas",
+    subcategoria: "Refrescos",
+    pais: "brasil",
+    imagen: bebidas,
+    disponible: true,
+    descripcion: "Burbujas dulces con el amargor justo del fruto amazónico.",
   },
   {
     id: "panela",
     nombre: "Panela en bloque",
-    origen: "Colombia",
+    marca: "Marca de demostración",
     formato: "500 g",
     precio: 2.8,
-    categoria: "bebidas",
+    categoria: "despensa",
+    subcategoria: "Condimentos",
+    pais: "colombia",
     imagen: dulces,
+    disponible: true,
     descripcion: "Caña sin refinar para aguapanela, postres y limonadas.",
   },
   {
     id: "dulce-de-leche",
     nombre: "Dulce de leche tradicional",
-    origen: "Argentina",
+    marca: "Marca de demostración",
     formato: "400 g",
     precio: 5.2,
     categoria: "dulces",
+    subcategoria: "Dulce de leche",
+    pais: "argentina",
     imagen: dulces,
+    disponible: true,
     etiqueta: "Edición artesana",
     descripcion: "Cocción lenta, textura de cuchara. Peligroso para el tarro.",
   },
   {
     id: "alfajores",
     nombre: "Alfajores de maicena con coco",
-    origen: "Argentina",
+    marca: "Marca de demostración",
     formato: "6 uds.",
     precio: 4.9,
     categoria: "dulces",
+    subcategoria: "Galletas",
+    pais: "argentina",
     imagen: dulces,
+    disponible: true,
     descripcion: "Se deshacen en la boca, rellenos de dulce de leche.",
   },
   {
     id: "platanitos",
     nombre: "Chips de plátano maduro",
-    origen: "Ecuador",
+    marca: "Marca de demostración",
     formato: "180 g",
     precio: 2.6,
-    categoria: "dulces",
-    imagen: dulces,
+    categoria: "snacks",
+    subcategoria: "Plátano y yuca",
+    pais: "ecuador",
+    imagen: snacks,
+    disponible: true,
     descripcion: "Crujientes y dulces, el picoteo que nunca dura.",
+  },
+  {
+    id: "tostones",
+    nombre: "Tostones de plátano verde",
+    marca: "Marca de demostración",
+    formato: "150 g",
+    precio: 2.45,
+    categoria: "snacks",
+    subcategoria: "Plátano y yuca",
+    pais: "venezuela",
+    imagen: snacks,
+    disponible: true,
+    descripcion: "Salados y firmes, para mojar en guacamole o ají.",
+  },
+  {
+    id: "maiz-tostado",
+    nombre: "Maíz tostado salado",
+    marca: "Marca de demostración",
+    formato: "200 g",
+    precio: 2.2,
+    categoria: "snacks",
+    subcategoria: "Maíz",
+    pais: "peru",
+    imagen: snacks,
+    disponible: true,
+    descripcion: "El cancha serrana que acompaña cualquier ceviche.",
+  },
+  {
+    id: "totopos",
+    nombre: "Totopos de maíz nixtamalizado",
+    marca: "Marca de demostración",
+    formato: "200 g",
+    precio: 2.95,
+    categoria: "snacks",
+    subcategoria: "Maíz",
+    pais: "mexico",
+    imagen: snacks,
+    disponible: true,
+    descripcion: "Gruesos y crujientes, aguantan cualquier salsa.",
   },
 ];
 
 export const formatoPrecio = (valor: number) =>
   new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(valor);
+
+export const productoPorId = (id: string) => productos.find((p) => p.id === id);
+
+/* ---------------------------------- Recetas --------------------------------- */
+
+export type IngredienteReceta = {
+  /** Referencia al catálogo; si falta, el cliente lo consigue por su cuenta. */
+  productoId?: string;
+  nombre: string;
+  /** Cantidad por ración. */
+  cantidadPorRacion: number;
+  unidad: string;
+  /** Contenido de un envase, en la misma unidad. */
+  contenidoEnvase?: number;
+  tipo: "paquete" | "aparte" | "basico";
+};
+
+export type Receta = {
+  slug: string;
+  nombre: string;
+  pais: PaisId;
+  tipo: "Principal" | "Entrante" | "Postre";
+  minutos: number;
+  dificultad: "Fácil" | "Media" | "Alta";
+  racionesBase: number;
+  imagen: string;
+  resumen: string;
+  ingredientes: IngredienteReceta[];
+  pasos: string[];
+  utensilios: string[];
+  consejos: string[];
+  alergenos: string;
+};
+
+export const recetas: Receta[] = [
+  {
+    slug: "arepas-rellenas",
+    nombre: "Arepas rellenas de carne mechada",
+    pais: "venezuela",
+    tipo: "Principal",
+    minutos: 45,
+    dificultad: "Fácil",
+    racionesBase: 2,
+    imagen: recetaArepas,
+    resumen:
+      "La cena de entre semana que resuelve todo: masa suave por dentro, corteza dorada y un relleno que sabe a domingo.",
+    ingredientes: [
+      {
+        productoId: "harina-maiz-blanco",
+        nombre: "Harina de maíz blanco precocida",
+        cantidadPorRacion: 125,
+        unidad: "g",
+        contenidoEnvase: 1000,
+        tipo: "paquete",
+      },
+      {
+        productoId: "aji-criollo",
+        nombre: "Ají criollo casero",
+        cantidadPorRacion: 25,
+        unidad: "ml",
+        contenidoEnvase: 250,
+        tipo: "paquete",
+      },
+      {
+        productoId: "jugo-maracuya",
+        nombre: "Jugo de maracuyá",
+        cantidadPorRacion: 250,
+        unidad: "ml",
+        contenidoEnvase: 1000,
+        tipo: "paquete",
+      },
+      { nombre: "Carne de falda para mechar", cantidadPorRacion: 150, unidad: "g", tipo: "aparte" },
+      { nombre: "Cebolla y pimiento", cantidadPorRacion: 1, unidad: "ud.", tipo: "aparte" },
+      { nombre: "Agua templada", cantidadPorRacion: 160, unidad: "ml", tipo: "basico" },
+      { nombre: "Sal y aceite", cantidadPorRacion: 1, unidad: "pizca", tipo: "basico" },
+    ],
+    pasos: [
+      "Cuece la carne con cebolla y pimiento hasta que se deshilache con facilidad. Reserva un poco del caldo.",
+      "Mezcla el agua templada con sal y añade la harina en lluvia. Amasa 3 minutos hasta una masa que no se agriete.",
+      "Forma bolas y aplástalas con el grosor de un dedo.",
+      "Dóralas en sartén con un hilo de aceite, 6 minutos por cada lado, hasta que suenen huecas.",
+      "Ábrelas por un lateral, rellena con la carne mechada y añade una cucharada de ají criollo.",
+      "Sirve enseguida con el jugo de maracuyá bien frío.",
+    ],
+    utensilios: ["Sartén o budare", "Bol amplio", "Olla para la carne"],
+    consejos: [
+      "Si la masa se agrieta al formarla, añade agua de cucharada en cucharada.",
+      "La carne mechada mejora de un día para otro.",
+    ],
+    alergenos: "Sin gluten en los productos incluidos. Revisa siempre la etiqueta del envase.",
+  },
+  {
+    slug: "ceviche-clasico",
+    nombre: "Ceviche clásico con ají amarillo",
+    pais: "peru",
+    tipo: "Entrante",
+    minutos: 25,
+    dificultad: "Media",
+    racionesBase: 2,
+    imagen: recetaCeviche,
+    resumen: "Pescado firme, lima recién exprimida y el punto justo de ají amarillo.",
+    ingredientes: [
+      {
+        productoId: "aji-amarillo",
+        nombre: "Pasta de ají amarillo",
+        cantidadPorRacion: 20,
+        unidad: "g",
+        contenidoEnvase: 225,
+        tipo: "paquete",
+      },
+      {
+        productoId: "maiz-tostado",
+        nombre: "Maíz tostado salado",
+        cantidadPorRacion: 40,
+        unidad: "g",
+        contenidoEnvase: 200,
+        tipo: "paquete",
+      },
+      { nombre: "Pescado blanco muy fresco", cantidadPorRacion: 180, unidad: "g", tipo: "aparte" },
+      { nombre: "Limas y cebolla roja", cantidadPorRacion: 3, unidad: "ud.", tipo: "aparte" },
+      { nombre: "Sal", cantidadPorRacion: 1, unidad: "pizca", tipo: "basico" },
+    ],
+    pasos: [
+      "Corta el pescado en dados regulares y mantenlo muy frío.",
+      "Mezcla el zumo de lima con la pasta de ají amarillo y sal.",
+      "Añade el pescado y la cebolla en pluma; deja reposar 3 minutos.",
+      "Sirve con maíz tostado por encima.",
+    ],
+    utensilios: ["Cuchillo afilado", "Bol frío"],
+    consejos: ["Congela el pescado 48 h antes por seguridad alimentaria."],
+    alergenos: "Contiene pescado. Consulta la etiqueta de cada envase.",
+  },
+  {
+    slug: "empanadas-colombianas",
+    nombre: "Empanadas colombianas con ají",
+    pais: "colombia",
+    tipo: "Entrante",
+    minutos: 60,
+    dificultad: "Media",
+    racionesBase: 4,
+    imagen: recetaEmpanadas,
+    resumen: "Masa de maíz amarillo crujiente y relleno de papa aliñada, con ají para mojar.",
+    ingredientes: [
+      {
+        productoId: "harina-maiz-amarillo",
+        nombre: "Harina de maíz amarillo precocida",
+        cantidadPorRacion: 90,
+        unidad: "g",
+        contenidoEnvase: 1000,
+        tipo: "paquete",
+      },
+      {
+        productoId: "aji-criollo",
+        nombre: "Ají criollo casero",
+        cantidadPorRacion: 20,
+        unidad: "ml",
+        contenidoEnvase: 250,
+        tipo: "paquete",
+      },
+      { nombre: "Patata y carne picada", cantidadPorRacion: 120, unidad: "g", tipo: "aparte" },
+      { nombre: "Aceite para freír y sal", cantidadPorRacion: 1, unidad: "pizca", tipo: "basico" },
+    ],
+    pasos: [
+      "Cuece y machaca la patata; sofríe la carne y mézclalo todo.",
+      "Amasa la harina con agua templada y sal hasta una masa maleable.",
+      "Forma discos, rellena, cierra y sella los bordes.",
+      "Fríe en aceite bien caliente hasta que estén doradas y sirve con ají.",
+    ],
+    utensilios: ["Sartén honda", "Rodillo o prensa"],
+    consejos: ["Sella bien los bordes para que no se abran al freír."],
+    alergenos: "Sin gluten en los productos incluidos. Revisa la etiqueta del envase.",
+  },
+];
+
+export const recetaPorSlug = (slug: string) => recetas.find((r) => r.slug === slug);
+
+export const paisPorId = (id: PaisId) => paises.find((p) => p.id === id)!;

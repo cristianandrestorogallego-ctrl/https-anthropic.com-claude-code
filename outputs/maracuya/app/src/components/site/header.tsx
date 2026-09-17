@@ -1,25 +1,34 @@
-import { Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Menu, ShoppingBag, Truck } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { MapPin, Menu, Search, ShoppingBag, Truck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCarrito } from "@/components/site/cart";
+import { EstimadorEntrega } from "@/components/site/entrega";
+import { banderaUrl, categorias, paises } from "@/lib/catalogo";
 import logoUrl from "@/assets/maracuya-logo.svg";
 
-const enlaces = [
-  { label: "Tienda", to: "/tienda" as const },
-  { label: "Categorías", href: "/#categorias" },
-  { label: "Nuestra historia", href: "/#historia" },
-  { label: "Envíos", href: "/#envios" },
+/** El catálogo de secciones, compartido por la barra de escritorio y el panel. */
+const SECCIONES = [
+  { etiqueta: "Productos", to: "/tienda" as const, search: {} },
+  { etiqueta: "Ofertas", to: "/tienda" as const, search: { oferta: true } },
+  { etiqueta: "Recetas", to: "/recetas" as const, search: {} },
+  { etiqueta: "Países", href: "/#paises" },
+  { etiqueta: "Envíos", href: "/#envios" },
 ];
 
 export function Header() {
   const { unidades, setAbierto } = useCarrito();
-  const [menuAbierto, setMenuAbierto] = useState(false);
+  const [menu, setMenu] = useState(false);
+  const [cp, setCp] = useState(false);
+  const [busqueda, setBusqueda] = useState("");
+  const navigate = useNavigate();
+  const cpRef = useRef<HTMLDivElement>(null);
 
-  // La cuenta salta cuando entra algo: es el acuse de recibo de una acción
-  // que ocurre lejos del cursor, al otro extremo de la cabecera.
+  // La cuenta salta cuando entra algo: el acuse de recibo de una acción que
+  // ocurre lejos del cursor, al otro extremo de la cabecera.
   const [salta, setSalta] = useState(false);
   const anterior = useRef(unidades);
   useEffect(() => {
@@ -42,105 +51,235 @@ export function Header() {
     return () => window.removeEventListener("scroll", alScroll);
   }, []);
 
+  useEffect(() => {
+    if (!cp) return;
+    const fuera = (e: MouseEvent) => {
+      if (cpRef.current && !cpRef.current.contains(e.target as Node)) setCp(false);
+    };
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setCp(false);
+    document.addEventListener("mousedown", fuera);
+    document.addEventListener("keydown", esc);
+    return () => {
+      document.removeEventListener("mousedown", fuera);
+      document.removeEventListener("keydown", esc);
+    };
+  }, [cp]);
+
+  const buscar = (e: React.FormEvent) => {
+    e.preventDefault();
+    const q = busqueda.trim();
+    navigate({ to: "/tienda", search: q ? { q } : {} });
+    setMenu(false);
+  };
+
+  const enlaceSeccion =
+    "inline-block py-1 text-foreground/85 transition-colors duration-200 hover:text-primary";
+
   return (
     <header className="sticky top-0 z-40">
-      <div className="flex items-center justify-center gap-2 bg-selva px-4 py-2 text-center text-xs text-selva-foreground">
+      <div className="flex items-center justify-center gap-2 bg-primary px-4 py-2 text-center text-[0.72rem] text-primary-foreground sm:text-xs">
         <Truck className="size-3.5 shrink-0" aria-hidden="true" />
-        Envíos a toda España en 24-72 h · Gratis desde 49 €
+        Mercado latino online · Envíos y condiciones se confirmarán al conectar la tienda
       </div>
+
       <div
-        className={`border-b bg-background/85 backdrop-blur-md transition-[box-shadow,border-color] duration-300 ${
+        className={`border-b bg-background/95 backdrop-blur transition-[box-shadow,border-color] duration-300 ${
           pegada ? "border-transparent shadow-[var(--shadow-e2)]" : "border-border/70"
         }`}
       >
-        <nav className="mx-auto flex max-w-6xl items-center gap-6 px-4 py-3">
-          <Link to="/" aria-label="MARACUYA mercado latino — ir al inicio">
-            <img src={logoUrl} alt="MARACUYA mercado latino" className="h-9 w-auto sm:h-10" />
-          </Link>
+        {/* Fila 1. Rejilla de tres columnas para que el logotipo quede
+            centrado de verdad aunque los lados no pesen lo mismo. */}
+        <div className="mx-auto grid max-w-6xl grid-cols-[1fr_auto_1fr] items-center gap-3 px-4 py-2.5">
+          <div className="flex min-w-0 items-center gap-2">
+            <Sheet open={menu} onOpenChange={setMenu}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="shrink-0" aria-label="Abrir el menú">
+                  <Menu className="size-5" />
+                </Button>
+              </SheetTrigger>
 
-          <div className="ml-auto hidden items-center gap-6 text-sm md:flex">
-            {enlaces.map((e) =>
-              e.to ? (
-                <Link
-                  key={e.label}
-                  to={e.to}
-                  search={{}}
-                  className="transition-colors duration-200 hover:text-primary"
-                  activeProps={{ className: "text-primary font-medium" }}
-                >
-                  {e.label}
-                </Link>
-              ) : (
-                <a
-                  key={e.label}
-                  href={e.href}
-                  className="transition-colors duration-200 hover:text-primary"
-                >
-                  {e.label}
-                </a>
-              ),
-            )}
+              <SheetContent side="left" className="w-full overflow-y-auto sm:max-w-sm">
+                <SheetHeader className="text-left">
+                  <SheetTitle className="font-display text-2xl">Menú</SheetTitle>
+                </SheetHeader>
+
+                <div className="space-y-7 px-4 pb-10">
+                  <form onSubmit={buscar} role="search" className="relative">
+                    <Search
+                      className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                      aria-hidden="true"
+                    />
+                    <Input
+                      value={busqueda}
+                      onChange={(e) => setBusqueda(e.target.value)}
+                      placeholder="Buscar productos o marcas"
+                      aria-label="Buscar productos o marcas"
+                      className="pl-9"
+                    />
+                  </form>
+
+                  <ul className="grid gap-0.5">
+                    {SECCIONES.map((sec) => (
+                      <li key={sec.etiqueta}>
+                        {sec.to ? (
+                          <Link
+                            to={sec.to}
+                            search={sec.search ?? {}}
+                            onClick={() => setMenu(false)}
+                            className="block rounded-lg px-3 py-2.5 font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
+                          >
+                            {sec.etiqueta}
+                          </Link>
+                        ) : (
+                          <a
+                            href={sec.href}
+                            onClick={() => setMenu(false)}
+                            className="block rounded-lg px-3 py-2.5 font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
+                          >
+                            {sec.etiqueta}
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div>
+                    <h3 className="px-3 text-sm font-medium text-muted-foreground">Categorías</h3>
+                    <ul className="mt-2 grid gap-0.5">
+                      {categorias.map((c) => (
+                        <li key={c.id}>
+                          <Link
+                            to="/tienda"
+                            search={{ categoria: c.id }}
+                            onClick={() => setMenu(false)}
+                            className="block rounded-lg px-3 py-2 text-sm transition-colors duration-200 hover:bg-arena hover:text-primary"
+                          >
+                            {c.nombre}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  <div>
+                    <h3 className="px-3 text-sm font-medium text-muted-foreground">Por país</h3>
+                    <ul className="mt-2 grid gap-0.5">
+                      {paises.map((p) => (
+                        <li key={p.id}>
+                          <Link
+                            to="/tienda"
+                            search={{ pais: p.id }}
+                            onClick={() => setMenu(false)}
+                            className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-200 hover:bg-arena hover:text-primary"
+                          >
+                            <img
+                              src={banderaUrl(p.codigo)}
+                              alt=""
+                              width={20}
+                              height={14}
+                              className="h-3.5 w-5 rounded-[2px] object-cover"
+                            />
+                            {p.nombre}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+
+            <form
+              onSubmit={buscar}
+              className="relative hidden min-w-0 flex-1 lg:block"
+              role="search"
+            >
+              <Search
+                className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <Input
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                placeholder="Buscar productos o marcas"
+                aria-label="Buscar productos o marcas"
+                className="pl-9"
+              />
+            </form>
           </div>
 
-          {/* En móvil los enlaces viven en un panel: sin esto la cabecera
-              se queda sin navegación por debajo de md. */}
-          <Sheet open={menuAbierto} onOpenChange={setMenuAbierto}>
-            <SheetTrigger asChild>
+          <Link
+            to="/"
+            aria-label="MARACUYA mercado latino — ir al inicio"
+            className="justify-self-center"
+          >
+            <img src={logoUrl} alt="MARACUYA mercado latino" className="h-9 w-auto sm:h-11" />
+          </Link>
+
+          <div className="flex items-center justify-end gap-1">
+            <div className="relative" ref={cpRef}>
               <Button
                 variant="ghost"
-                size="icon"
-                className="ml-auto md:hidden"
-                aria-label="Abrir el menú"
+                size="sm"
+                className="gap-1.5 px-2"
+                aria-expanded={cp}
+                onClick={() => setCp((v) => !v)}
               >
-                <Menu className="size-5" aria-hidden="true" />
+                <MapPin className="size-4" aria-hidden="true" />
+                <span className="hidden xl:inline">Código postal</span>
               </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-72">
-              <SheetHeader className="text-left">
-                <SheetTitle className="font-display text-2xl">Menú</SheetTitle>
-              </SheetHeader>
-              <nav className="mt-6 grid gap-1 px-4">
-                {enlaces.map((e) =>
-                  e.to ? (
-                    <Link
-                      key={e.label}
-                      to={e.to}
-                      search={{}}
-                      onClick={() => setMenuAbierto(false)}
-                      className="rounded-lg px-3 py-3 font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
-                    >
-                      {e.label}
-                    </Link>
-                  ) : (
-                    <a
-                      key={e.label}
-                      href={e.href}
-                      onClick={() => setMenuAbierto(false)}
-                      className="rounded-lg px-3 py-3 font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
-                    >
-                      {e.label}
-                    </a>
-                  ),
-                )}
-              </nav>
-            </SheetContent>
-          </Sheet>
+              {cp && (
+                <div className="absolute right-0 top-11 z-50 w-72 rounded-2xl bg-card p-4 shadow-[var(--shadow-e3)] ring-1 ring-[var(--ring-linea)]">
+                  <EstimadorEntrega compacto />
+                </div>
+              )}
+            </div>
 
-          <Button
-            variant="outline"
-            className="gap-2 transition-[transform,box-shadow] duration-200 hover:shadow-[var(--shadow-e1)] active:translate-y-px"
-            onClick={() => setAbierto(true)}
-          >
-            <ShoppingBag className="size-4" aria-hidden="true" />
-            Cesta
-            <span
-              className={`tabular rounded-full bg-maracuya px-2 text-xs font-semibold text-maracuya-foreground ${
-                salta ? "mrc-bump" : ""
-              }`}
+            <Button
+              variant="outline"
+              className="shrink-0 gap-2 px-3 transition-[transform,box-shadow] duration-200 hover:shadow-[var(--shadow-e1)] active:translate-y-px"
+              onClick={() => setAbierto(true)}
+              aria-label="Abrir la cesta"
             >
-              {unidades}
-            </span>
-          </Button>
+              <ShoppingBag className="size-4" aria-hidden="true" />
+              <span className="hidden sm:inline">Cesta</span>
+              <span
+                className={`tabular rounded-full bg-maracuya px-2 text-xs font-semibold text-maracuya-foreground ${
+                  salta ? "mrc-bump" : ""
+                }`}
+              >
+                {unidades}
+              </span>
+            </Button>
+          </div>
+        </div>
+
+        {/* Fila 2. El catálogo vive debajo del nombre, como la marquesina de
+            un puesto de mercado. En móvil el mismo contenido está en el panel. */}
+        <nav
+          aria-label="Secciones de la tienda"
+          className="hidden border-t border-border/60 lg:block"
+        >
+          <ul className="mx-auto flex max-w-6xl items-center justify-center gap-9 px-4 py-2.5 text-sm font-medium uppercase tracking-[0.07em]">
+            {SECCIONES.map((sec) => (
+              <li key={sec.etiqueta}>
+                {sec.to ? (
+                  <Link
+                    to={sec.to}
+                    search={sec.search ?? {}}
+                    className={enlaceSeccion}
+                    activeProps={{ className: "text-primary" }}
+                  >
+                    {sec.etiqueta}
+                  </Link>
+                ) : (
+                  <a href={sec.href} className={enlaceSeccion}>
+                    {sec.etiqueta}
+                  </a>
+                )}
+              </li>
+            ))}
+          </ul>
         </nav>
       </div>
     </header>

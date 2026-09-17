@@ -113,7 +113,7 @@ function CarritoPanel() {
               <div className="flex-1">
                 <p className="text-sm font-medium leading-tight">{producto.nombre}</p>
                 <p className="text-xs text-muted-foreground">
-                  {producto.origen} · {producto.formato}
+                  {producto.marca} · {producto.formato}
                 </p>
                 <div className="mt-2 flex items-center gap-2">
                   <Button

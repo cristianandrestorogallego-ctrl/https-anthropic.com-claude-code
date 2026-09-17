@@ -65,6 +65,7 @@
   --color-hibisco-foreground: var(--hibisco-foreground);
   --color-selva: var(--selva);
   --color-selva-foreground: var(--selva-foreground);
+  --color-hoja: var(--hoja);
   --color-arena: var(--arena);
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);
@@ -72,32 +73,34 @@
 
 :root {
   --radius: 0.5rem;
-  --background: oklch(0.977 0.014 88);
-  --foreground: oklch(0.26 0.045 155);
+  /* Paleta de marca: cáscara #4B204F · pulpa #F4C542 · crema #FFF8EC · hoja #456B50 · tinta #302536 */
+  --background: oklch(0.982 0.016 88);
+  --foreground: oklch(0.27 0.035 320);
   --card: oklch(0.995 0.008 90);
-  --card-foreground: oklch(0.26 0.045 155);
+  --card-foreground: oklch(0.27 0.035 320);
   --popover: oklch(0.995 0.008 90);
-  --popover-foreground: oklch(0.26 0.045 155);
-  --primary: oklch(0.38 0.1 158);
-  --primary-foreground: oklch(0.98 0.02 90);
-  --secondary: oklch(0.93 0.045 90);
-  --secondary-foreground: oklch(0.3 0.06 155);
-  --muted: oklch(0.94 0.02 88);
-  --muted-foreground: oklch(0.5 0.035 140);
-  --accent: oklch(0.82 0.16 82);
-  --accent-foreground: oklch(0.27 0.06 80);
+  --popover-foreground: oklch(0.27 0.035 320);
+  --primary: oklch(0.33 0.107 324);
+  --primary-foreground: oklch(0.982 0.016 88);
+  --secondary: oklch(0.94 0.035 88);
+  --secondary-foreground: oklch(0.33 0.107 324);
+  --muted: oklch(0.95 0.02 88);
+  --muted-foreground: oklch(0.51 0.03 320);
+  --accent: oklch(0.85 0.145 86);
+  --accent-foreground: oklch(0.27 0.035 320);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.984 0.003 247.858);
-  --border: oklch(0.89 0.025 88);
-  --input: oklch(0.89 0.025 88);
-  --ring: oklch(0.38 0.1 158);
-  --maracuya: oklch(0.82 0.16 82);
-  --maracuya-foreground: oklch(0.27 0.06 80);
+  --border: oklch(0.9 0.022 88);
+  --input: oklch(0.9 0.022 88);
+  --ring: oklch(0.33 0.107 324);
+  --maracuya: oklch(0.85 0.145 86);
+  --maracuya-foreground: oklch(0.27 0.035 320);
   --hibisco: oklch(0.58 0.2 24);
-  --hibisco-foreground: oklch(0.98 0.02 90);
-  --selva: oklch(0.27 0.06 158);
-  --selva-foreground: oklch(0.96 0.03 88);
-  --arena: oklch(0.93 0.035 78);
+  --hibisco-foreground: oklch(0.98 0.016 88);
+  --selva: oklch(0.33 0.107 324);
+  --selva-foreground: oklch(0.982 0.016 88);
+  --hoja: oklch(0.51 0.06 155);
+  --arena: oklch(0.94 0.03 82);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -116,15 +119,15 @@
   --shadow-soft: 0 18px 40px -24px oklch(0.27 0.06 158 / 0.45);
 
   /* Elevación. Cada paso lleva desplazamiento y desenfoque, nunca un halo
-     centrado, y va teñido de selva: sobre un fondo crema una sombra neutra
-     se ve sucia. El aro de un píxel es lo que hace que la tarjeta sostenga
-     su borde sin necesidad de un border visible. */
-  --shadow-e1: 0 1px 2px oklch(0.27 0.06 158 / 0.05), 0 2px 6px -2px oklch(0.27 0.06 158 / 0.09);
+     centrado, y va teñido con la tinta de marca: sobre crema, una sombra
+     gris se ve sucia. El aro de un píxel es lo que sostiene el borde de la
+     tarjeta sin necesitar un border visible. */
+  --shadow-e1: 0 1px 2px oklch(0.27 0.035 320 / 0.05), 0 2px 6px -2px oklch(0.27 0.035 320 / 0.09);
   --shadow-e2:
-    0 2px 4px -1px oklch(0.27 0.06 158 / 0.07), 0 10px 22px -8px oklch(0.27 0.06 158 / 0.16);
+    0 2px 4px -1px oklch(0.27 0.035 320 / 0.07), 0 10px 22px -8px oklch(0.27 0.035 320 / 0.16);
   --shadow-e3:
-    0 4px 8px -2px oklch(0.27 0.06 158 / 0.09), 0 24px 40px -14px oklch(0.27 0.06 158 / 0.26);
-  --ring-hairline: inset 0 0 0 1px oklch(0.27 0.06 158 / 0.07);
+    0 4px 8px -2px oklch(0.27 0.035 320 / 0.09), 0 24px 40px -14px oklch(0.27 0.035 320 / 0.26);
+  --ring-linea: oklch(0.27 0.035 320 / 0.08);
 
   /* Deceleración natural para llegadas; las salidas van más rápidas. */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
@@ -198,10 +201,10 @@
 }
 
 /* ============================================================
-   Superficies que no dibujamos, pero que igualmente son la marca:
-   la selección, el cursor de texto, el anillo de foco y la barra de
-   desplazamiento vienen con los valores del navegador, que no
-   pertenecen a ningún sistema de diseño.
+   Superficies que no dibujamos pero que también son la marca: la
+   selección, el cursor de texto, el anillo de foco y la barra de
+   desplazamiento vienen con valores del navegador que no pertenecen a
+   ningún sistema de diseño.
    ============================================================ */
 
 @layer base {
@@ -211,7 +214,7 @@
   }
 
   html {
-    scrollbar-color: oklch(0.27 0.06 158 / 0.3) transparent;
+    scrollbar-color: oklch(0.27 0.035 320 / 0.3) transparent;
     scrollbar-width: thin;
   }
 
@@ -223,13 +226,13 @@
     background: transparent;
   }
   ::-webkit-scrollbar-thumb {
-    background-color: oklch(0.27 0.06 158 / 0.24);
+    background-color: oklch(0.27 0.035 320 / 0.24);
     border: 3px solid transparent;
     border-radius: 999px;
     background-clip: padding-box;
   }
   ::-webkit-scrollbar-thumb:hover {
-    background-color: oklch(0.27 0.06 158 / 0.4);
+    background-color: oklch(0.27 0.035 320 / 0.4);
   }
 
   :focus-visible {
@@ -243,7 +246,7 @@
     caret-color: var(--primary);
   }
 
-  /* El precio es un dato: las cifras deben alinearse entre tarjetas. */
+  /* Un precio es un dato: las cifras deben alinearse entre tarjetas. */
   .tabular {
     font-variant-numeric: tabular-nums;
   }
@@ -264,26 +267,6 @@
   }
 }
 
-/* El hero: la fotografía asienta en lugar de aparecer ya quieta. */
-@keyframes mrc-settle {
-  from {
-    transform: scale(1.06);
-  }
-  to {
-    transform: scale(1);
-  }
-}
-
-@keyframes mrc-scrim {
-  from {
-    opacity: 0.4;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Acuse de recibo del carrito: la cuenta salta al entrar un producto. */
 @keyframes mrc-bump {
   0% {
     transform: scale(1);
@@ -296,16 +279,6 @@
   }
 }
 
-@utility mrc-hero-photo {
-  animation: mrc-settle 1100ms var(--ease-out-expo) both;
-}
-
-@utility mrc-hero-scrim {
-  animation: mrc-scrim 700ms var(--ease-out-expo) both;
-}
-
-/* Las líneas del titular entran en orden; el retraso lo pone el consumidor
-   con [animation-delay:…] para no multiplicar utilidades. */
 @utility mrc-rise {
   animation: mrc-rise 700ms var(--ease-out-expo) both;
 }
@@ -315,8 +288,8 @@
 }
 
 /* Revelado al entrar en pantalla. El estado por defecto es visible: si el
-   script falla o no llega a ejecutarse, el contenido está ahí igualmente.
-   Solo el marcado que JS ha marcado como pendiente arranca oculto. */
+   script falla o no llega a ejecutarse, el contenido sigue ahí. Solo lo que
+   JS marca como pendiente arranca oculto. */
 @layer base {
   [data-reveal="pending"] {
     opacity: 0;
@@ -333,8 +306,8 @@
   }
 }
 
-/* Movimiento reducido: se va el desplazamiento espacial, se queda el
-   acuse de recibo. Menos movimiento, no ausencia de respuesta. */
+/* Movimiento reducido: se va el desplazamiento espacial, se queda el acuse
+   de recibo. Menos movimiento, no ausencia de respuesta. */
 @media (prefers-reduced-motion: reduce) {
   @layer base {
     [data-reveal="pending"],
@@ -345,19 +318,11 @@
     }
   }
 
-  .mrc-hero-photo,
-  .mrc-hero-scrim,
   .mrc-rise {
     animation: none;
   }
 
   .mrc-bump {
     animation-duration: 1ms;
-  }
-
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
   }
 }

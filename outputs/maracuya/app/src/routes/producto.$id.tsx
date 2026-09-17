@@ -7,7 +7,7 @@ import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { ProductCard } from "@/components/site/product-card";
 import { useCarrito } from "@/components/site/cart";
-import { categorias, formatoPrecio, productos } from "@/lib/catalogo";
+import { banderaUrl, categorias, formatoPrecio, paisPorId, productos } from "@/lib/catalogo";
 
 export const Route = createFileRoute("/producto/$id")({
   loader: ({ params }) => {
@@ -21,7 +21,7 @@ export const Route = createFileRoute("/producto/$id")({
     return {
       meta: [
         { title: `${p.nombre} | MARACUYA mercado latino` },
-        { name: "description", content: `${p.descripcion} ${p.origen}, ${p.formato}.` },
+        { name: "description", content: `${p.descripcion} ${p.marca}, ${p.formato}.` },
         { property: "og:title", content: `${p.nombre} | MARACUYA` },
         { property: "og:description", content: p.descripcion },
         { property: "og:type", content: "product" },
@@ -38,6 +38,7 @@ function DetalleProducto() {
   const [cantidad, setCantidad] = useState(1);
 
   const categoria = categorias.find((c) => c.id === producto.categoria);
+  const pais = paisPorId(producto.pais);
   const relacionados = productos
     .filter((p) => p.categoria === producto.categoria && p.id !== producto.id)
     .slice(0, 3);
@@ -93,16 +94,46 @@ function DetalleProducto() {
             <h1 className="mt-4 font-display text-3xl leading-tight tracking-[-0.025em] sm:text-4xl">
               {producto.nombre}
             </h1>
-            <p className="mt-2 text-sm text-muted-foreground">
-              {producto.origen} · {producto.formato}
+            <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-muted-foreground">
+              <span className="inline-flex items-center gap-1.5">
+                <img
+                  src={banderaUrl(pais.codigo)}
+                  alt=""
+                  width={20}
+                  height={14}
+                  className="h-3.5 w-5 rounded-[2px] object-cover"
+                />
+                {pais.nombre}
+              </span>
+              <span>{producto.marca}</span>
+              <span>{producto.formato}</span>
+              {producto.fabricadoEn && <span>Fabricado en {producto.fabricadoEn}</span>}
             </p>
             <p className="mt-5 max-w-prose leading-relaxed text-muted-foreground">
               {producto.descripcion}
             </p>
 
-            <p className="tabular mt-7 font-display text-4xl tracking-[-0.02em]">
-              {formatoPrecio(producto.precio)}
+            <p className="mt-7 flex flex-wrap items-baseline gap-3">
+              <span className="tabular font-display text-4xl tracking-[-0.02em]">
+                {formatoPrecio(producto.precio)}
+              </span>
+              {producto.precioAnterior && (
+                <span className="tabular text-lg text-muted-foreground line-through">
+                  {formatoPrecio(producto.precioAnterior)}
+                </span>
+              )}
+              <span
+                className={`text-sm font-medium ${producto.disponible ? "text-primary" : "text-destructive"}`}
+              >
+                {producto.disponible ? "Disponible" : "Agotado"}
+              </span>
             </p>
+
+            {producto.variantes && producto.variantes.length > 0 && (
+              <p className="mt-3 text-sm text-muted-foreground">
+                Variantes: {producto.variantes.join(" · ")}
+              </p>
+            )}
 
             <div className="mt-6 flex flex-wrap items-center gap-3">
               <div className="flex items-center gap-1 rounded-md border p-1">
@@ -131,6 +162,7 @@ function DetalleProducto() {
               <Button
                 size="lg"
                 className="gap-2 shadow-[var(--shadow-e1)] transition-[transform,box-shadow] duration-200 hover:shadow-[var(--shadow-e2)] active:translate-y-px"
+                disabled={!producto.disponible}
                 onClick={() => agregar(producto, cantidad)}
               >
                 <ShoppingBag className="size-4" />
@@ -138,7 +170,7 @@ function DetalleProducto() {
               </Button>
             </div>
 
-            <div className="mt-8 space-y-3 rounded-2xl bg-card p-5 text-sm shadow-[var(--shadow-e1)] ring-1 ring-[oklch(0.27_0.06_158_/_0.08)]">
+            <div className="mt-8 space-y-3 rounded-2xl bg-card p-5 text-sm shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)]">
               <p className="flex items-center gap-2 font-medium">
                 <Truck className="size-4 text-primary" />
                 Envío en 24-72 h a España peninsular
