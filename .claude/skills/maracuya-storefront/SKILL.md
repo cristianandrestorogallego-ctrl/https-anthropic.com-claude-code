@@ -41,6 +41,21 @@ and never say the store is live. Nothing is published.
 
 ## What is actually in the user's Shopify store
 
+**Everything in that store today is a demonstration, including what is
+already there.** The user said so in as many words: the shop and the
+draft are examples; what is real is what gets loaded with them. So treat
+nothing in the store as data — not the 18 products, not their prices, not
+the delivery rates Shopify scaffolded, not the theme. Never cite any of
+it back to the user as a fact about their business, and never let it
+reach a customer's screen as though it were.
+
+The demo catalogue is built to be thrown away: every product carries the
+`demo` tag, so the whole lot deletes in one query when the real one
+arrives. Keep the `cat:<categoría>` and `pais:<país>` tagging convention
+for real products too — the 13 collections are smart collections keyed on
+those tags, so they populate themselves and survive the swap.
+
+
 Shop `yw4vyu-vf.myshopify.com`, Basic plan, online store still behind its
 password. Verify with a query before repeating any of this; it is a
 snapshot, not a guarantee.
