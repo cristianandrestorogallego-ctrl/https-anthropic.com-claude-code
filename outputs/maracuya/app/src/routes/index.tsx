@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Clock, Leaf, PackageCheck, Sparkles, Truck } from "lucide-react";
+import { ArrowRight, Clock, Leaf, PackageCheck, Truck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/site/header";
@@ -70,7 +70,9 @@ function Index() {
         <section id="categorias" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-20">
           <div className="flex flex-wrap items-end justify-between gap-4">
             <div>
-              <h2 className="mt-2 font-display text-3xl sm:text-4xl">Elige por antojo</h2>
+              <h2 className="font-display text-3xl tracking-[-0.02em] sm:text-4xl">
+                Elige por antojo
+              </h2>
             </div>
             <Button asChild variant="link" className="px-0">
               <Link to="/tienda">Ver todo el catálogo →</Link>
@@ -78,22 +80,28 @@ function Index() {
           </div>
 
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-            {categorias.map((c) => (
-              <Link key={c.id} to="/tienda" className="group relative overflow-hidden rounded-2xl">
-                <img
-                  src={c.imagen}
-                  alt={c.nombre}
-                  loading="lazy"
-                  width={912}
-                  height={1104}
-                  className="aspect-3/4 w-full object-cover transition-transform duration-700 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-selva/90 via-selva/20 to-transparent" />
-                <div className="absolute inset-x-0 bottom-0 p-5 text-selva-foreground">
-                  <h3 className="font-display text-xl">{c.nombre}</h3>
-                  <p className="text-sm opacity-85">{c.claim}</p>
-                </div>
-              </Link>
+            {categorias.map((c, i) => (
+              <Reveal key={c.id} delay={stagger(i)}>
+                <Link
+                  to="/tienda"
+                  search={{ categoria: c.id }}
+                  className="group relative block overflow-hidden rounded-2xl shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)] transition-[transform,box-shadow] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1 hover:shadow-[var(--shadow-e3)]"
+                >
+                  <img
+                    src={c.imagen}
+                    alt={c.nombre}
+                    loading="lazy"
+                    width={912}
+                    height={1104}
+                    className="aspect-3/4 w-full object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-selva/90 via-selva/20 to-transparent" />
+                  <div className="absolute inset-x-0 bottom-0 p-5 text-selva-foreground">
+                    <h3 className="font-display text-xl">{c.nombre}</h3>
+                    <p className="text-sm opacity-85">{c.claim}</p>
+                  </div>
+                </Link>
+              </Reveal>
             ))}
           </div>
         </section>
@@ -101,10 +109,7 @@ function Index() {
         {/* Destacados */}
         <section className="bg-secondary/50 py-20">
           <div className="mx-auto max-w-6xl px-4">
-            <div className="flex items-center gap-2 text-primary">
-              <Sparkles className="size-4" />
-            </div>
-            <h2 className="mt-2 font-display text-3xl sm:text-4xl">
+            <h2 className="font-display text-3xl tracking-[-0.02em] sm:text-4xl">
               Los imprescindibles de la casa
             </h2>
             <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

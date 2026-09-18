@@ -7,6 +7,14 @@ import harinas from "@/assets/cat-harinas.jpg";
 import recetaArepas from "@/assets/receta-arepas.jpg";
 import recetaCeviche from "@/assets/receta-ceviche.jpg";
 import recetaEmpanadas from "@/assets/receta-empanadas.jpg";
+import banderaCO from "@/assets/banderas/co.svg";
+import banderaMX from "@/assets/banderas/mx.svg";
+import banderaPE from "@/assets/banderas/pe.svg";
+import banderaVE from "@/assets/banderas/ve.svg";
+import banderaEC from "@/assets/banderas/ec.svg";
+import banderaBR from "@/assets/banderas/br.svg";
+import banderaAR from "@/assets/banderas/ar.svg";
+import banderaPY from "@/assets/banderas/py.svg";
 
 /**
  * Datos de DEMOSTRACIÓN.
@@ -67,19 +75,41 @@ export const categorias: {
 ];
 
 export type PaisId =
-  "colombia" | "mexico" | "peru" | "venezuela" | "ecuador" | "brasil" | "argentina";
+  "colombia" | "mexico" | "peru" | "venezuela" | "ecuador" | "brasil" | "argentina" | "paraguay";
 
 export const paises: { id: PaisId; nombre: string; codigo: string; nota: string }[] = [
   { id: "colombia", nombre: "Colombia", codigo: "co", nota: "Arepas, panela y guayaba" },
   { id: "mexico", nombre: "México", codigo: "mx", nota: "Chiles, maíz y salsas" },
   { id: "peru", nombre: "Perú", codigo: "pe", nota: "Ají amarillo y ceviche" },
-  { id: "venezuela", nombre: "Venezuela", codigo: "ve", nota: "Harina P.A.N. y hallacas" },
+  {
+    id: "venezuela",
+    nombre: "Venezuela",
+    codigo: "ve",
+    nota: "Harina de maíz precocida y hallacas",
+  },
   { id: "ecuador", nombre: "Ecuador", codigo: "ec", nota: "Plátano, ají criollo y cacao" },
   { id: "brasil", nombre: "Brasil", codigo: "br", nota: "Tapioca, feijão y guaraná" },
   { id: "argentina", nombre: "Argentina", codigo: "ar", nota: "Dulce de leche y yerba mate" },
+  { id: "paraguay", nombre: "Paraguay", codigo: "py", nota: "Yerba mate y tereré" },
 ];
 
-export const banderaUrl = (codigo: string) => `https://flagcdn.com/w80/${codigo}.png`;
+/**
+ * Las banderas se sirven desde el propio paquete: son ocho SVG planos.
+ * Antes venían de flagcdn.com, y una tienda no debería pedirle a un tercero
+ * un trozo de su propia portada.
+ */
+const banderas: Record<string, string> = {
+  co: banderaCO,
+  mx: banderaMX,
+  pe: banderaPE,
+  ve: banderaVE,
+  ec: banderaEC,
+  br: banderaBR,
+  ar: banderaAR,
+  py: banderaPY,
+};
+
+export const banderaUrl = (codigo: string) => banderas[codigo] ?? "";
 
 export type Producto = {
   id: string;
@@ -118,7 +148,7 @@ export const productos: Producto[] = [
     imagen: harinas,
     disponible: true,
     etiqueta: "Más vendido",
-    descripcion: "La base de las arepas de siempre. Sin gluten, lista en minutos.",
+    descripcion: "La base de las arepas de siempre: masa lista en minutos.",
   },
   {
     id: "harina-maiz-amarillo",
@@ -255,6 +285,19 @@ export const productos: Producto[] = [
     imagen: bebidas,
     disponible: true,
     descripcion: "Burbujas dulces con el amargor justo del fruto amazónico.",
+  },
+  {
+    id: "yerba-mate",
+    nombre: "Yerba mate para tereré",
+    marca: "Marca de demostración",
+    formato: "500 g",
+    precio: 6.4,
+    categoria: "bebidas",
+    subcategoria: "Infusiones",
+    pais: "paraguay",
+    imagen: bebidas,
+    disponible: true,
+    descripcion: "Hoja gruesa y poco polvo, la que aguanta el agua fría del tereré.",
   },
   {
     id: "panela",
@@ -441,7 +484,7 @@ export const recetas: Receta[] = [
       "Si la masa se agrieta al formarla, añade agua de cucharada en cucharada.",
       "La carne mechada mejora de un día para otro.",
     ],
-    alergenos: "Sin gluten en los productos incluidos. Revisa siempre la etiqueta del envase.",
+    alergenos: "Pendiente de la ficha del proveedor. Revisa siempre la etiqueta de cada envase.",
   },
   {
     slug: "ceviche-clasico",
@@ -482,7 +525,8 @@ export const recetas: Receta[] = [
     ],
     utensilios: ["Cuchillo afilado", "Bol frío"],
     consejos: ["Congela el pescado 48 h antes por seguridad alimentaria."],
-    alergenos: "Contiene pescado. Consulta la etiqueta de cada envase.",
+    alergenos:
+      "Esta receta lleva pescado. El resto, pendiente de la ficha del proveedor: revisa la etiqueta de cada envase.",
   },
   {
     slug: "empanadas-colombianas",
@@ -522,7 +566,7 @@ export const recetas: Receta[] = [
     ],
     utensilios: ["Sartén honda", "Rodillo o prensa"],
     consejos: ["Sella bien los bordes para que no se abran al freír."],
-    alergenos: "Sin gluten en los productos incluidos. Revisa la etiqueta del envase.",
+    alergenos: "Pendiente de la ficha del proveedor. Revisa siempre la etiqueta de cada envase.",
   },
 ];
 

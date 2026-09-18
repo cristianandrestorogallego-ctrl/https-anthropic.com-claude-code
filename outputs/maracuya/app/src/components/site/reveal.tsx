@@ -18,6 +18,8 @@ type RevealProps = {
  * 2. Lo que ya está en pantalla al montar no se anima. Con render en el
  *    servidor el contenido se pinta antes de hidratar, y animarlo después
  *    produciría un parpadeo: aparece, se esconde y vuelve.
+ * 3. Un temporizador de respaldo destapa lo que siga oculto al cabo de
+ *    1,4 s, por si el observador nunca dispara.
  */
 export function Reveal({ children, delay = 0, className }: RevealProps) {
   const ref = useRef<HTMLDivElement>(null);
@@ -44,7 +46,19 @@ export function Reveal({ children, delay = 0, className }: RevealProps) {
     );
 
     observer.observe(el);
-    return () => observer.disconnect();
+
+    // Red de seguridad: si el observador no llega a disparar —una rejilla
+    // dentro de un contenedor que nunca hace scroll, un navegador que se
+    // comporta raro—, el contenido aparece igual. Nada que se pueda leer
+    // debe depender de que salte un evento.
+    const red = window.setTimeout(() => {
+      if (el.dataset["reveal"] === "pending") el.dataset["reveal"] = "in";
+    }, 1400);
+
+    return () => {
+      observer.disconnect();
+      window.clearTimeout(red);
+    };
   }, [delay]);
 
   return (
