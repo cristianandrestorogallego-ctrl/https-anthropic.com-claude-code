@@ -1,0 +1,9 @@
+# Instalación local de @shopify/theme-check-node. Es una herramienta, no
+# parte del tema: se reinstala con el comando de references/shopify-migration.md.
+outputs/maracuya/tc/
+
+node_modules/
+.output/
+.wrangler/
+.nitro/
+.vite/
