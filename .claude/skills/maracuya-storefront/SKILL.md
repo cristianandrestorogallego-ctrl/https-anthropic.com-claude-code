@@ -34,11 +34,44 @@ React. Selling through it would mean wiring the Shopify Storefront API and
 hosting it separately. The user was told this and chose React anyway.
 `theme/` is the thing Shopify installs, and it is complete: run
 `@shopify/theme-check-node` with `extends: theme-check:all` and it passes
-0/0/0. It has never been uploaded to a store.
+0/0/0.
 
-Never describe any of this as "approved by Shopify", "Shopify-ready" or
-live. Nothing has been published, and nothing has been written to the
-user's store.
+Never describe any of this as "approved by Shopify" or "Shopify-ready",
+and never say the store is live. Nothing is published.
+
+## What is actually in the user's Shopify store
+
+Shop `yw4vyu-vf.myshopify.com`, Basic plan, online store still behind its
+password. Verify with a query before repeating any of this; it is a
+snapshot, not a guarantee.
+
+- **18 demo products**, all `DRAFT`, vendor "Marca de demostración",
+  handles equal to the ids in `app/src/lib/catalogo.ts` so recipes keep
+  resolving. Tagged `demo`, `cat:<categoría>`, `pais:<país>`, plus
+  `oferta` / `etiqueta:<texto>`. Every description ends saying the price,
+  format and stock are examples and that ingredients, allergens and
+  nutrition are pending the supplier's real data.
+- **13 smart collections**, by tag: six `cat:` and seven `pais:`.
+- **Headless channel** "Mi Tienda Headless", publication
+  `gid://shopify/Publication/374077882702`, `autoPublish: true`, with the
+  18 products added. A catalogue publication accepts products only —
+  adding a collection fails with "Una publicación de catálogo solo puede
+  contener productos."
+- **Theme** `gid://shopify/OnlineStoreTheme/204680560974`, "MARACUYA
+  mercado latino (sin publicar)", role `UNPUBLISHED`, 46 files. Horizon
+  is still `MAIN`. Uploading needs a public URL: `stagedUploadsCreate`
+  (resource `FILE`, there is no `THEME` resource) → POST the zip to the
+  returned target → `themeCreate(source: resourceUrl, role: UNPUBLISHED)`.
+
+**The Storefront API returns nothing while the products are `DRAFT`.**
+`publishedOnPublication` reads false for every one of them, whatever the
+channel says. Flipping them to `ACTIVE` is the user's call, not yours —
+it is the switch that would expose demo prices through a public token.
+Until they ask, the app reads `catalogo.ts` and says so on screen.
+
+The egress proxy blocks `yw4vyu-vf.myshopify.com` (403 to CONNECT), so
+the Storefront API cannot be exercised from a session. Admin GraphQL
+through the Shopify MCP server works fine. Do not retry the proxy denial.
 
 ## Brand invariants — these fire on every visual change
 
@@ -71,8 +104,18 @@ user's store.
    trademark and impersonation risk — keep them fictional even when copying
    the layout of a reference site that uses real ones. Unknown product data
    uses the `PENDING` sentinel and renders as "pendiente de confirmar".
+   **Allergens are the sharp edge of this rule.** "Sin gluten" is a legal
+   claim, not copy. Nothing on the site may state what a product contains
+   or is free of until a supplier's sheet says so; the standing wording is
+   that it is pending and the label on the package decides.
 5. **Everything on the site is a demonstration** and says so. The demo
    notices in the header strip and footer are load-bearing, not decoration.
+6. **No third party serves part of the shop.** Flags are eight local SVGs
+   in `app/src/assets/banderas/`, mapped by `banderaUrl` in `catalogo.ts`;
+   they used to come from flagcdn.com and must not go back. Google Fonts
+   is the one exception already in place — it is blocked by the egress
+   proxy here, so a `fonts.googleapis.com` failure in a Playwright run is
+   the sandbox, not a bug.
 
 ## The verification loop — do not skip, do not extend
 
