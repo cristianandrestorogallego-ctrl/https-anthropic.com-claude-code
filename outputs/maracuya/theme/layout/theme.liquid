@@ -22,6 +22,23 @@
 
     {{ content_for_header }}
 
+    {%- comment -%}
+      Las dos fuentes viajan dentro del tema, no las sirve un tercero. Son
+      variables y solo el subconjunto latino: 99 KB entre las dos.
+    {%- endcomment -%}
+    {{ 'fraunces-variable.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2' }}
+    {{ 'outfit-variable.woff2' | asset_url | preload_tag: as: 'font', type: 'font/woff2' }}
+    <style>
+      @font-face{
+        font-family:'Fraunces'; font-style:normal; font-weight:100 900; font-display:swap;
+        src:url({{ 'fraunces-variable.woff2' | asset_url }}) format('woff2-variations');
+      }
+      @font-face{
+        font-family:'Outfit'; font-style:normal; font-weight:100 900; font-display:swap;
+        src:url({{ 'outfit-variable.woff2' | asset_url }}) format('woff2-variations');
+      }
+    </style>
+
     {{ 'maracuya.css' | asset_url | stylesheet_tag }}
 
     {%- comment -%}

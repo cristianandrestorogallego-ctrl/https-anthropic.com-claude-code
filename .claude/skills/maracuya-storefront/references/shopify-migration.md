@@ -55,6 +55,42 @@ then call `themeCheckRun(root, configPath)` with a config of
 every commit that touches the theme; the static reference sweep in
 `outputs/maracuya/tools/verify_theme.py` complements it but does not replace it.
 
+## Updating the uploaded theme without recreating it
+
+`themeCreate` only makes a new theme, and the MCP server blocks theme
+deletion, so incremental changes go through `themeFilesUpsert` on the
+unpublished theme. There is no `THEME` staged-upload resource; use `FILE`.
+
+1. `stagedUploadsCreate` with `resource: FILE`, one entry per file, the
+   right `mimeType` (`text/plain` for `.liquid`, `text/css`, `font/woff2`).
+2. POST each file to the returned target with every parameter as a form
+   field, in the order given, and the file last. A 201 means it landed.
+3. `themeFilesUpsert(themeId:, files: [{filename, body: {type: URL,
+   value: <resourceUrl>}}])`. The `URL` body type is what keeps 65 KB of
+   CSS out of the conversation — `TEXT` and `BASE64` also work but the
+   content has to be transcribed exactly, which is how transcription bugs
+   get in.
+4. The mutation returns `upsertedThemeFiles: []` even on success; it is
+   asynchronous. Verify by querying `theme(id:) { files(filenames: [...])
+   { nodes { filename size updatedAt } } }` and matching the sizes.
+
+Staged upload targets expire after a day, so do the POST right away.
+
+## Self-hosted fonts
+
+Fraunces and Outfit come from npm, not Google: `npm pack
+@fontsource-variable/fraunces @fontsource-variable/outfit`, then take
+`files/fraunces-latin-opsz-normal.woff2` (67 KB, carries the optical-size
+axis the display face needs) and `files/outfit-latin-wght-normal.woff2`
+(32 KB). Google Fonts is blocked by the egress proxy anyway.
+
+The `@font-face` rules live in the `<style>` block in `layout/theme.liquid`,
+not in `maracuya.css`, so the stylesheet stays static and the fonts can be
+addressed with `asset_url`. Preload with the Liquid filter, never a hand
+written tag — `{{ 'x.woff2' | asset_url | preload_tag: as: 'font', type:
+'font/woff2' }}`. Theme-check's `AssetPreload` fails the hand written one,
+and Shopify turns the filter into a `Link` header for Early Hints.
+
 ## What does and does not carry over
 
 **Carries over more or less directly**
