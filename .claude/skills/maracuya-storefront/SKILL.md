@@ -78,22 +78,30 @@ through the Shopify MCP server works fine. Do not retry the proxy denial.
 1. **The name carries no accent.** "MARACUYA", never "MARACUYÁ". This was
    changed deliberately across the logo outlines and all copy. The JS
    namespace `window.MARACUYA` was always unaccented and is unrelated.
-2. **Two design systems exist, and they disagree. Match the one you are
-   editing; never merge them without the user's say-so.**
+2. **One palette, two typographies.** Check the files before claiming a
+   difference — this entry has been wrong before.
 
-   | | `app/` (active) | `theme/` and `prototype/` |
+   | | `app/` | `theme/` and `prototype/` |
    |---|---|---|
-   | Ground | Cream `oklch(0.977 0.014 88)` | Cream `#FFF8EC` |
-   | Primary | Green `selva` `oklch(0.27 0.06 158)` | Purple `#4B204F` |
-   | Accent | `maracuya` `oklch(0.82 0.16 82)` | `#F4C542` |
+   | Ground | `oklch(0.982 0.016 88)` cream | `#FFF8EC` cream |
+   | Primary | `oklch(0.33 0.107 324)` purple | `#4B204F` purple |
+   | Accent | `oklch(0.85 0.145 86)` gold | `#F4C542` gold |
    | Display | Fraunces (Google Fonts) | Georgia |
    | Body | Outfit (Google Fonts) | Arial |
    | Motif | Photography | Drawn passion-fruit seeds and rind arc |
 
-   The user chose the green system by preferring it on sight. Do not
-   "restore" the purple one in `app/`, and do not push green into `theme/`
-   unless asked. A font or palette change is a brand decision: raise it,
-   do not make it.
+   The colours already agree; only the fonts and the motif differ. The
+   app once ran a green primary, which is why `--selva` exists — it now
+   holds the same purple as `--primary` and the name is a leftover. Do
+   not read the name as a colour. A font or palette change is a brand
+   decision: raise it, do not make it.
+
+   **The theme is not behind the app on layout.** `sections/header.liquid`
+   already centres the logo with `grid-template-columns:1fr auto 1fr` and
+   hangs the menu from a second row, and `sections/hero-offers.liquid` is
+   a real carousel whose slides are editable blocks. What the theme does
+   not have: the two Google fonts, a "Compra por tradición y país"
+   section, and anything about recipes.
 3. **The logo SVGs are traced outlines from the official kit** — in
    `prototype/brand/`, `theme/assets/` and `app/src/assets/`. Edit them
    only by removing or moving existing path data. Never redraw a glyph,
