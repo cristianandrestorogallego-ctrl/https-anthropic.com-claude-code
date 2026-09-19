@@ -13,6 +13,7 @@ import appCss from "../styles.css?url";
 import faviconUrl from "@/assets/favicon.png";
 import { reportError } from "../lib/error-reporting";
 import { CarritoProvider } from "@/components/site/cart";
+import { TIENDA_PUBLICADA } from "@/lib/sitio";
 import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
@@ -94,6 +95,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
+      // Cerrada a buscadores hasta el lanzamiento; el porqué, en lib/sitio.ts.
+      ...(TIENDA_PUBLICADA ? [] : [{ name: "robots", content: "noindex, nofollow" }]),
     ],
     links: [
       {
