@@ -351,26 +351,6 @@ export function Header() {
                                     )}
                                     {h.etiqueta}
                                   </Link>
-                                  {/* El tercer nivel, el mismo que en escritorio.
-                                      Sin otra fila que abrir: son listas de dos o
-                                      tres, y esconderlas tras otro toque costaría
-                                      más de lo que ahorra. */}
-                                  {h.nietos && h.nietos.length > 0 && (
-                                    <ul className="grid gap-0.5 pb-1 pl-10">
-                                      {h.nietos.map((n) => (
-                                        <li key={n.clave}>
-                                          <Link
-                                            to={n.to}
-                                            search={n.search}
-                                            onClick={() => setMenu(false)}
-                                            className="block rounded-lg px-3 py-2 text-[0.82rem] text-muted-foreground transition-colors duration-200 hover:bg-arena hover:text-primary"
-                                          >
-                                            {n.etiqueta}
-                                          </Link>
-                                        </li>
-                                      ))}
-                                    </ul>
-                                  )}
                                 </li>
                               ))}
                             </Desplegable>
