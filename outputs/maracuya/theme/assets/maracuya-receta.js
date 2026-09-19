@@ -1,9 +1,10 @@
 /* ---------------------------------------------------------------------------
    El paquete de la receta.
 
-   El servidor deja en cada línea cuánto pide la receta por ración, cuánto trae
-   el envase y el precio de la variante. Aquí solo se reescala, se redondea
-   hacia arriba —medio bote no se vende— y se suma.
+   El servidor deja en cada línea la cantidad tal como está escrita la receta
+   —para sus raciones base, no por persona—, cuánto trae el envase y el precio
+   de la variante. Aquí solo se reescala por el factor raciones/base, se
+   redondea hacia arriba —medio bote no se vende— y se suma.
 
    La regla dura: "paquete completo" solo cuando están todos los comprables y
    ninguno agotado. Ni se sustituye lo que falta ni se llama completo a lo que
@@ -67,12 +68,12 @@
       }
       comprables += 1;
 
-      var porRacion = parseFloat(li.getAttribute('data-cantidad')) || 0;
+      var cantidadBase = parseFloat(li.getAttribute('data-cantidad')) || 0;
       var envase = parseFloat(li.getAttribute('data-envase')) || 0;
       var unidad = li.getAttribute('data-unidad') || '';
       var precio = parseInt(li.getAttribute('data-precio'), 10) || 0;
 
-      var necesario = porRacion * factor;
+      var necesario = cantidadBase * factor;
       var envases = envase > 0 ? Math.ceil(necesario / envase) : 1;
       var sobra = envase > 0 ? Math.max(0, envases * envase - necesario) : 0;
 
@@ -91,9 +92,9 @@
     });
 
     apartes.forEach(function (li) {
-      var porRacion = parseFloat(li.getAttribute('data-cantidad')) || 0;
+      var cantidadBase = parseFloat(li.getAttribute('data-cantidad')) || 0;
       var unidad = li.getAttribute('data-unidad') || '';
-      li.querySelector('[data-aparte-cantidad]').textContent = cantidad(porRacion * factor, unidad);
+      li.querySelector('[data-aparte-cantidad]').textContent = cantidad(cantidadBase * factor, unidad);
     });
 
     var completo = lineas.length > 0 && elegidos === lineas.length;
@@ -140,9 +141,9 @@
       if (!casilla || !casilla.checked) return;
       var id = li.getAttribute('data-variante');
       if (!id) return;
-      var porRacion = parseFloat(li.getAttribute('data-cantidad')) || 0;
+      var cantidadBase = parseFloat(li.getAttribute('data-cantidad')) || 0;
       var envase = parseFloat(li.getAttribute('data-envase')) || 0;
-      var envases = envase > 0 ? Math.ceil((porRacion * factor) / envase) : 1;
+      var envases = envase > 0 ? Math.ceil((cantidadBase * factor) / envase) : 1;
       items.push({ id: Number(id), quantity: envases });
     });
     if (!items.length) return;
