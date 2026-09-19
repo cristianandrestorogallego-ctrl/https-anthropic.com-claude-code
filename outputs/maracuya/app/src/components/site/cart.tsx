@@ -1,7 +1,6 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
-import { MessageCircle, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 
-import { enlaceWhatsapp } from "@/lib/whatsapp";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -10,6 +9,7 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet";
+import { BotonWhatsapp } from "@/components/site/boton-whatsapp";
 import { formatoPrecio, type Producto } from "@/lib/catalogo";
 
 type Linea = { producto: Producto; cantidad: number };
@@ -176,23 +176,11 @@ function CarritoPanel() {
           </Button>
           {/* Mientras el pago no esté activado, esta es la vía que sí
               funciona: el pedido llega escrito, no se pierde. */}
-          <Button
-            asChild
-            variant="outline"
-            size="lg"
-            className="w-full gap-2 border-leaf/50 text-leaf hover:bg-leaf/10 hover:text-leaf"
-            disabled={lineas.length === 0}
-          >
-            <a
-              href={enlaceWhatsapp(mensajePedido())}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-disabled={lineas.length === 0}
-            >
-              <MessageCircle className="size-4" aria-hidden="true" />
-              Pedir por WhatsApp
-            </a>
-          </Button>
+          <BotonWhatsapp
+            mensaje={mensajePedido()}
+            desactivado={lineas.length === 0}
+            className="w-full"
+          />
           <p className="text-center text-xs text-muted-foreground">
             Pago y envío se activarán al conectar la tienda.
           </p>

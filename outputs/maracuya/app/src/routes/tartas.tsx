@@ -1,15 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import {
-  AlertTriangle,
-  CakeSlice,
-  Camera,
-  Check,
-  Info,
-  MapPin,
-  MessageCircle,
-  X,
-} from "lucide-react";
+import { AlertTriangle, CakeSlice, Camera, Check, Info, MapPin, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +9,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { Reveal, stagger } from "@/components/site/reveal";
-import { enlaceWhatsapp } from "@/lib/whatsapp";
+import { BotonWhatsapp } from "@/components/site/boton-whatsapp";
 import {
   ENVIO_CONECTADO,
   codigoPorMunicipio,
@@ -78,6 +69,8 @@ function Tartas() {
     alergenos: "",
     nombre: "",
     telefono: "",
+    correo: "",
+    direccion: "",
   });
   const cambiar = (clave: keyof typeof campos) => (v: string) =>
     setCampos((c) => ({ ...c, [clave]: v }));
@@ -105,6 +98,7 @@ function Tartas() {
     "",
     municipio && `Municipio: ${municipio}`,
     cp && `Código postal: ${cp}`,
+    campos.direccion && `Dirección: ${campos.direccion}`,
     `Raciones: ${campos.raciones}`,
     campos.fecha && `Fecha deseada: ${campos.fecha}`,
     `Sabor: ${campos.sabor}`,
@@ -113,6 +107,8 @@ function Tartas() {
     campos.mensaje && `Mensaje sobre la tarta: ${campos.mensaje}`,
     campos.alergenos && `Alergias u observaciones: ${campos.alergenos}`,
     campos.nombre && `Soy ${campos.nombre}`,
+    campos.telefono && `Teléfono: ${campos.telefono}`,
+    campos.correo && `Correo: ${campos.correo}`,
     imagen && "(Te paso la foto de referencia por aquí.)",
   ]
     .filter(Boolean)
@@ -345,6 +341,21 @@ function Tartas() {
                     </p>
                   )}
 
+                  <div className="grid gap-1.5">
+                    <Label htmlFor="direccion">Dirección de entrega</Label>
+                    <Input
+                      id="direccion"
+                      name="direccion"
+                      autoComplete="street-address"
+                      placeholder="Calle, número, piso"
+                      value={campos.direccion}
+                      onChange={(e) => cambiar("direccion")(e.target.value)}
+                    />
+                    <p className="text-xs leading-relaxed text-muted-foreground">
+                      Si aún no la sabes, déjala en blanco: la pedimos al confirmar el encargo.
+                    </p>
+                  </div>
+
                   <p className="text-xs leading-relaxed text-muted-foreground">
                     ¿Tu municipio no está en la lista? Escríbenos y lo miramos.
                   </p>
@@ -534,7 +545,22 @@ function Tartas() {
                         placeholder="600 000 000"
                       />
                     </div>
+                    <div className="grid gap-1.5 sm:col-span-2">
+                      <Label htmlFor="correo">Correo electrónico</Label>
+                      <Input
+                        id="correo"
+                        name="correo"
+                        type="email"
+                        autoComplete="email"
+                        placeholder="tunombre@correo.com"
+                        value={campos.correo}
+                        onChange={(e) => cambiar("correo")(e.target.value)}
+                      />
+                    </div>
                   </div>
+                  <p className="text-xs leading-relaxed text-muted-foreground">
+                    Te respondemos por WhatsApp o por correo, como prefieras.
+                  </p>
                 </fieldset>
 
                 <div className="grid gap-3">
@@ -549,21 +575,7 @@ function Tartas() {
                     </Button>
                     {/* La vía que sí funciona hoy, mientras el formulario no
                         tenga destino: abre WhatsApp con todo ya escrito. */}
-                    <Button
-                      asChild
-                      size="lg"
-                      variant="outline"
-                      className="w-full gap-2 border-leaf/50 text-leaf hover:bg-leaf/10 hover:text-leaf sm:w-auto"
-                    >
-                      <a
-                        href={enlaceWhatsapp(mensajeWhatsapp)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        <MessageCircle className="size-4" aria-hidden="true" />
-                        Pedir por WhatsApp
-                      </a>
-                    </Button>
+                    <BotonWhatsapp mensaje={mensajeWhatsapp} className="w-full sm:w-auto" />
                   </div>
                   {!puedeEnviar && (
                     <p className="text-sm text-muted-foreground">

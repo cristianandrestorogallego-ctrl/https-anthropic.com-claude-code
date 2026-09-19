@@ -67,6 +67,10 @@
   --color-selva-foreground: var(--selva-foreground);
   --color-hoja: var(--hoja);
   --color-arena: var(--arena);
+  --color-whatsapp: var(--whatsapp);
+  --color-whatsapp-foreground: var(--whatsapp-foreground);
+  --color-whatsapp-hover: var(--whatsapp-hover);
+  --color-whatsapp-marca: var(--whatsapp-marca);
   --font-display: var(--font-display);
   --font-sans: var(--font-sans);
 }
@@ -101,6 +105,15 @@
   --selva-foreground: oklch(0.982 0.016 88);
   --hoja: oklch(0.51 0.06 155);
   --arena: oklch(0.94 0.03 82);
+
+  /* WhatsApp. El verde de marca (#25D366) es demasiado claro para llevar
+     texto blanco encima —se queda en 2:1—, así que el botón usa el mismo
+     tono bajado de luminosidad, donde el blanco llega a 4.7:1. El verde de
+     marca se reserva para el logotipo sobre fondo oscuro, como el pie. */
+  --whatsapp: oklch(0.54 0.14 150);
+  --whatsapp-foreground: oklch(0.985 0.012 150);
+  --whatsapp-hover: oklch(0.47 0.135 150);
+  --whatsapp-marca: oklch(0.76 0.2 150);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);

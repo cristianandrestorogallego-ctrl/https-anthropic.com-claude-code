@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { MessageCircle } from "lucide-react";
 
+import { IconoWhatsapp } from "@/components/site/boton-whatsapp";
 import { WHATSAPP_VISIBLE, enlaceWhatsapp } from "@/lib/whatsapp";
 
 import logoUrl from "@/assets/maracuya-logo.svg";
@@ -45,7 +45,7 @@ export function Footer() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 hover:underline"
             >
-              <MessageCircle className="size-3.5" aria-hidden="true" />
+              <IconoWhatsapp className="size-3.5 text-whatsapp-marca" />
               WhatsApp {WHATSAPP_VISIBLE}
             </a>
           </p>
