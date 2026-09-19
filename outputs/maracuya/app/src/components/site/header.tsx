@@ -152,8 +152,11 @@ export function Header() {
                             to="/tienda"
                             search={{ categoria: c.id }}
                             onClick={() => setMenu(false)}
-                            className="block rounded-lg px-3 py-2 text-sm transition-colors duration-200 hover:bg-arena hover:text-primary"
+                            className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-200 hover:bg-arena hover:text-primary"
                           >
+                            <span aria-hidden="true" className="text-base leading-none">
+                              {c.emoji}
+                            </span>
                             {c.nombre}
                           </Link>
                         </li>

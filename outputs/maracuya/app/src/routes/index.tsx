@@ -6,6 +6,8 @@ import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { ProductCard } from "@/components/site/product-card";
 import { HeroCarousel } from "@/components/site/hero-carousel";
+import { OfertasFlash } from "@/components/site/ofertas-flash";
+import { Marcas } from "@/components/site/marcas";
 import { Reveal, stagger } from "@/components/site/reveal";
 import { banderaUrl, categorias, paises, productos, recetas } from "@/lib/catalogo";
 import historiaImg from "@/assets/historia.jpg";
@@ -46,6 +48,8 @@ function Index() {
         {/* Hero: el carrusel ya existía como componente pero no estaba
             puesto en la portada. */}
         <HeroCarousel />
+
+        <OfertasFlash />
 
         {/* Ventajas */}
         <section className="border-b bg-arena/60">
@@ -97,7 +101,12 @@ function Index() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-selva/90 via-selva/20 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-5 text-selva-foreground">
-                    <h3 className="font-display text-xl">{c.nombre}</h3>
+                    <h3 className="flex items-center gap-2 font-display text-xl">
+                      <span aria-hidden="true" className="text-lg leading-none">
+                        {c.emoji}
+                      </span>
+                      {c.nombre}
+                    </h3>
                     <p className="text-sm opacity-85">{c.claim}</p>
                   </div>
                 </Link>
@@ -217,6 +226,8 @@ function Index() {
             </div>
           </div>
         </section>
+
+        <Marcas />
 
         {/* Historia */}
         <section id="historia" className="mx-auto max-w-6xl scroll-mt-24 px-4 py-20">

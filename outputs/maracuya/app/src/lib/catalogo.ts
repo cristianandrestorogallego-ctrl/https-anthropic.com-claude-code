@@ -21,17 +21,21 @@ import banderaPY from "@/assets/banderas/py.svg";
  * En producción, productos, precios, inventario y pedidos vendrán de Shopify.
  */
 
-export type Categoria = "bebidas" | "snacks" | "dulces" | "despensa" | "harinas" | "salsas";
+export type Categoria =
+  "bebidas" | "snacks" | "dulces" | "despensa" | "harinas" | "salsas" | "congelados";
 
 export const categorias: {
   id: Categoria;
   nombre: string;
   claim: string;
+  /** Se usa en los menús, donde el icono ayuda más que la etiqueta sola. */
+  emoji: string;
   imagen: string;
   subcategorias: string[];
 }[] = [
   {
     id: "bebidas",
+    emoji: "🥤",
     nombre: "Bebidas",
     claim: "Jugos tropicales, panela y refrescos",
     imagen: bebidas,
@@ -39,6 +43,7 @@ export const categorias: {
   },
   {
     id: "snacks",
+    emoji: "🍿",
     nombre: "Snacks",
     claim: "Picoteo crujiente con acento latino",
     imagen: snacks,
@@ -46,6 +51,7 @@ export const categorias: {
   },
   {
     id: "dulces",
+    emoji: "🍬",
     nombre: "Dulces",
     claim: "Antojos de media tarde",
     imagen: dulces,
@@ -53,6 +59,7 @@ export const categorias: {
   },
   {
     id: "despensa",
+    emoji: "🫘",
     nombre: "Despensa",
     claim: "Granos, conservas y la base de cada receta",
     imagen: despensa,
@@ -60,6 +67,7 @@ export const categorias: {
   },
   {
     id: "harinas",
+    emoji: "🌽",
     nombre: "Harinas",
     claim: "Para arepas, tamales y masas",
     imagen: harinas,
@@ -67,10 +75,19 @@ export const categorias: {
   },
   {
     id: "salsas",
+    emoji: "🌶️",
     nombre: "Salsas",
     claim: "El picante justo para despertar el plato",
     imagen: salsas,
     subcategorias: ["Ajíes", "Picantes", "Aderezos"],
+  },
+  {
+    id: "congelados",
+    emoji: "🧊",
+    nombre: "Congelados",
+    claim: "Yuca, pulpas y masas listas para el sartén",
+    imagen: despensa,
+    subcategorias: ["Tubérculos", "Pulpas de fruta", "Masas y rellenos"],
   },
 ];
 
@@ -111,6 +128,34 @@ const banderas: Record<string, string> = {
 
 export const banderaUrl = (codigo: string) => banderas[codigo] ?? "";
 
+/**
+ * Marcas colaboradoras: las que trabajamos, no marcas propias de MARACUYA.
+ *
+ * Son NOMBRES INVENTADOS, igual que los productos. No corresponden a
+ * empresas reales y no llevan logotipo: un logotipo dibujado sugiere que
+ * la empresa existe. Cuando haya proveedores de verdad, cada marca trae su
+ * logotipo y su permiso por escrito, y `logo` deja de estar vacío.
+ */
+export type Marca = {
+  nombre: string;
+  /** Lo que esa marca hace bien, en cuatro palabras. */
+  especialidad: string;
+  pais: PaisId;
+  /** Ruta al logotipo real, cuando lo haya. */
+  logo?: string;
+};
+
+export const marcas: Marca[] = [
+  { nombre: "Casa Tinaja", especialidad: "Harinas y masas", pais: "venezuela" },
+  { nombre: "Sol de Origen", especialidad: "Pulpas y jugos", pais: "colombia" },
+  { nombre: "Cumbre Andina", especialidad: "Granos y maíz", pais: "peru" },
+  { nombre: "Doña Rosario", especialidad: "Dulces de cuchara", pais: "argentina" },
+  { nombre: "Fuego Lento", especialidad: "Ajíes y salsas", pais: "mexico" },
+  { nombre: "Río Verde", especialidad: "Plátano y yuca", pais: "ecuador" },
+  { nombre: "Tereré", especialidad: "Yerbas e infusiones", pais: "paraguay" },
+  { nombre: "Amazonía", especialidad: "Refrescos y guaraná", pais: "brasil" },
+];
+
 export type Producto = {
   id: string;
   nombre: string;
@@ -118,6 +163,11 @@ export type Producto = {
   formato: string;
   precio: number;
   precioAnterior?: number;
+  /**
+   * Hasta cuándo dura la oferta, en ISO. La cuenta atrás de la portada lee
+   * esto: si no hay fecha, no hay reloj. Nunca un temporizador inventado.
+   */
+  ofertaHasta?: string;
   categoria: Categoria;
   subcategoria: string;
   pais: PaisId;
@@ -209,6 +259,7 @@ export const productos: Producto[] = [
     formato: "225 g",
     precio: 4.6,
     precioAnterior: 5.4,
+    ofertaHasta: "2026-09-21T22:00:00+02:00",
     categoria: "salsas",
     subcategoria: "Ajíes",
     pais: "peru",
@@ -238,6 +289,7 @@ export const productos: Producto[] = [
     formato: "150 ml",
     precio: 4.2,
     precioAnterior: 4.9,
+    ofertaHasta: "2026-09-26T22:00:00+02:00",
     categoria: "salsas",
     subcategoria: "Picantes",
     pais: "mexico",
@@ -279,12 +331,55 @@ export const productos: Producto[] = [
     marca: "Marca de demostración",
     formato: "1,5 L",
     precio: 2.75,
+    precioAnterior: 3.25,
+    ofertaHasta: "2026-09-20T22:00:00+02:00",
     categoria: "bebidas",
     subcategoria: "Refrescos",
     pais: "brasil",
     imagen: bebidas,
     disponible: true,
+    etiqueta: "Oferta flash",
     descripcion: "Burbujas dulces con el amargor justo del fruto amazónico.",
+  },
+  {
+    id: "yuca-congelada",
+    nombre: "Yuca en trozos, congelada",
+    marca: "Marca de demostración",
+    formato: "1 kg",
+    precio: 3.6,
+    categoria: "congelados",
+    subcategoria: "Tubérculos",
+    pais: "colombia",
+    imagen: despensa,
+    disponible: true,
+    descripcion: "Pelada y troceada. Del congelador a la olla sin pelar nada.",
+  },
+  {
+    id: "pulpa-lulo",
+    nombre: "Pulpa de lulo congelada",
+    marca: "Marca de demostración",
+    formato: "500 g",
+    precio: 4.9,
+    categoria: "congelados",
+    subcategoria: "Pulpas de fruta",
+    pais: "colombia",
+    imagen: bebidas,
+    disponible: true,
+    descripcion: "Para jugo, sorbete o el postre que se te ocurra.",
+  },
+  {
+    id: "tequenos",
+    nombre: "Tequeños congelados",
+    marca: "Marca de demostración",
+    formato: "12 uds.",
+    precio: 5.9,
+    categoria: "congelados",
+    subcategoria: "Masas y rellenos",
+    pais: "venezuela",
+    imagen: snacks,
+    disponible: true,
+    etiqueta: "Nuevo",
+    descripcion: "Masa fina y queso salado. Al horno o a la freidora de aire.",
   },
   {
     id: "yerba-mate",
@@ -573,3 +668,16 @@ export const recetas: Receta[] = [
 export const recetaPorSlug = (slug: string) => recetas.find((r) => r.slug === slug);
 
 export const paisPorId = (id: PaisId) => paises.find((p) => p.id === id)!;
+
+/** Productos con oferta viva: precio rebajado y fecha de fin sin pasar. */
+export function ofertasVivas(ahora = new Date()): Producto[] {
+  return productos
+    .filter((p) => p.precioAnterior && p.ofertaHasta && new Date(p.ofertaHasta) > ahora)
+    .sort((a, b) => new Date(a.ofertaHasta!).getTime() - new Date(b.ofertaHasta!).getTime());
+}
+
+/** El descuento redondeado, tal como se enseña en la insignia. */
+export function porcentajeDescuento(producto: Producto): number {
+  if (!producto.precioAnterior) return 0;
+  return Math.round((1 - producto.precio / producto.precioAnterior) * 100);
+}
