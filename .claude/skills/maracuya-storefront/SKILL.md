@@ -60,13 +60,17 @@ Shop `yw4vyu-vf.myshopify.com`, Basic plan, online store still behind its
 password. Verify with a query before repeating any of this; it is a
 snapshot, not a guarantee.
 
-- **18 demo products**, all `DRAFT`, vendor "Marca de demostración",
+- **19 demo products**, all `ACTIVE` and published on both the Online
+  Store and Headless channels so the theme preview shows a working shop.
+  They are still demonstration data — the online store's password is what
+  keeps them off the public web, not their status. Vendor
+  "Marca de demostración",
   handles equal to the ids in `app/src/lib/catalogo.ts` so recipes keep
   resolving. Tagged `demo`, `cat:<categoría>`, `pais:<país>`, plus
   `oferta` / `etiqueta:<texto>`. Every description ends saying the price,
   format and stock are examples and that ingredients, allergens and
   nutrition are pending the supplier's real data.
-- **13 smart collections**, by tag: six `cat:` and seven `pais:`.
+- **14 smart collections**, by tag: six `cat:` and eight `pais:`.
 - **Headless channel** "Mi Tienda Headless", publication
   `gid://shopify/Publication/374077882702`, `autoPublish: true`, with the
   18 products added. A catalogue publication accepts products only —
@@ -78,11 +82,19 @@ snapshot, not a guarantee.
   (resource `FILE`, there is no `THEME` resource) → POST the zip to the
   returned target → `themeCreate(source: resourceUrl, role: UNPUBLISHED)`.
 
-**The Storefront API returns nothing while the products are `DRAFT`.**
-`publishedOnPublication` reads false for every one of them, whatever the
-channel says. Flipping them to `ACTIVE` is the user's call, not yours —
-it is the switch that would expose demo prices through a public token.
-Until they ask, the app reads `catalogo.ts` and says so on screen.
+A draft product is invisible to both the Storefront API and the theme —
+`publishedOnPublication` reads false whatever the channel says. That is
+why they are active now: the user asked to see the shop working. The
+online store's password is the only thing keeping the demo catalogue off
+the public web, so do not turn it off.
+
+- **Recipes** live as metaobjects: `receta` (three published entries) and
+  `ingrediente_receta` (sixteen). The theme renders them at
+  `/recetas/<handle>` via `templates/metaobject/receta.json`, and lists
+  them at `/pages/recetas`. A recipe's `cantidad_por_racion` field is the
+  amount for its `raciones_base` servings, NOT per person — the field key
+  is a leftover and the label was corrected. The calculator multiplies by
+  `raciones / raciones_base`.
 
 The egress proxy blocks `yw4vyu-vf.myshopify.com` (403 to CONNECT), so
 the Storefront API cannot be exercised from a session. Admin GraphQL
