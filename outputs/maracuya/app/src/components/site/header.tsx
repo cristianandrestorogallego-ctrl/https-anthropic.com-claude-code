@@ -7,16 +7,21 @@ import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCarrito } from "@/components/site/cart";
 import { EstimadorEntrega } from "@/components/site/entrega";
-import { banderaUrl, categorias, paises, recetas, tiposReceta } from "@/lib/catalogo";
+import { banderaUrl, categorias, paises, productos, recetas, tiposReceta } from "@/lib/catalogo";
 import logoUrl from "@/assets/maracuya-logo.svg";
 
-type Hijo = {
+type Enlace = {
   clave: string;
   etiqueta: string;
   to: "/tienda" | "/recetas";
   search: Record<string, unknown>;
+};
+
+type Hijo = Enlace & {
   emoji?: string;
   bandera?: string;
+  /** Un nivel más: las subcategorías de una categoría. */
+  nietos?: Enlace[];
 };
 
 type Seccion = {
@@ -43,6 +48,14 @@ const SECCIONES: Seccion[] = [
       to: "/tienda" as const,
       search: { categoria: c.id },
       emoji: c.emoji,
+      nietos: c.subcategorias
+        .filter((sub) => productos.some((p) => p.categoria === c.id && p.subcategoria === sub))
+        .map((sub) => ({
+          clave: `${c.id}-${sub}`,
+          etiqueta: sub,
+          to: "/tienda" as const,
+          search: { categoria: c.id, subcategoria: sub },
+        })),
     })),
   },
   { etiqueta: "Ofertas", to: "/tienda", search: { oferta: true } },
@@ -115,12 +128,78 @@ function Desplegable({
   );
 }
 
+/**
+ * Un desplegable de la barra de escritorio.
+ *
+ * Se abre al pasar el ratón y también al pulsar, porque con el ratón basta
+ * pero con el teclado no: un menú que solo responde al hover deja fuera a
+ * quien navega tabulando. Se cierra con Escape, al salir el foco del grupo
+ * y al pulsar fuera.
+ */
+function MenuEscritorio({
+  etiqueta,
+  abierto,
+  onAbrir,
+  onCerrar,
+  ancho,
+  children,
+}: {
+  etiqueta: string;
+  abierto: boolean;
+  onAbrir: () => void;
+  onCerrar: () => void;
+  ancho: string;
+  children: React.ReactNode;
+}) {
+  const id = `menu-${etiqueta
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[^a-z]/g, "")}`;
+  return (
+    <div
+      className="static"
+      onMouseEnter={onAbrir}
+      onMouseLeave={onCerrar}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) onCerrar();
+      }}
+    >
+      <button
+        type="button"
+        aria-expanded={abierto}
+        aria-controls={id}
+        onClick={() => (abierto ? onCerrar() : onAbrir())}
+        onFocus={onAbrir}
+        className="inline-flex items-center gap-1.5 py-1 uppercase tracking-[0.07em] text-foreground/85 transition-colors duration-200 hover:text-primary aria-expanded:text-primary"
+      >
+        {etiqueta}
+        <ChevronDown
+          className={`size-3.5 transition-transform duration-300 ease-[var(--ease-out-expo)] ${
+            abierto ? "rotate-180" : ""
+          }`}
+          aria-hidden="true"
+        />
+      </button>
+
+      {abierto && (
+        <div
+          id={id}
+          className={`absolute left-1/2 top-full z-50 -translate-x-1/2 ${ancho} rounded-2xl bg-card p-5 text-left normal-case tracking-normal shadow-[var(--shadow-e3)] ring-1 ring-[var(--ring-linea)] mrc-rise`}
+        >
+          {children}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function Header() {
   const { unidades, setAbierto } = useCarrito();
   const [menu, setMenu] = useState(false);
   // Solo una abierta a la vez: el panel es estrecho y dos listas de ocho
   // obligan a hacer scroll para encontrar lo que se buscaba.
   const [seccionAbierta, setSeccionAbierta] = useState<string | null>(null);
+  const [menuEscritorio, setMenuEscritorio] = useState<string | null>(null);
   const [cp, setCp] = useState(false);
   const [busqueda, setBusqueda] = useState("");
   const navigate = useNavigate();
@@ -149,6 +228,13 @@ export function Header() {
     window.addEventListener("scroll", alScroll, { passive: true });
     return () => window.removeEventListener("scroll", alScroll);
   }, []);
+
+  useEffect(() => {
+    if (!menuEscritorio) return;
+    const esc = (e: KeyboardEvent) => e.key === "Escape" && setMenuEscritorio(null);
+    document.addEventListener("keydown", esc);
+    return () => document.removeEventListener("keydown", esc);
+  }, [menuEscritorio]);
 
   useEffect(() => {
     if (!cp) return;
@@ -357,12 +443,85 @@ export function Header() {
             un puesto de mercado. En móvil el mismo contenido está en el panel. */}
         <nav
           aria-label="Secciones de la tienda"
-          className="hidden border-t border-border/60 lg:block"
+          className="relative hidden border-t border-border/60 lg:block"
         >
           <ul className="mx-auto flex max-w-6xl items-center justify-center gap-9 px-4 py-2.5 text-sm font-medium uppercase tracking-[0.07em]">
             {SECCIONES.map((sec) => (
               <li key={sec.etiqueta}>
-                {sec.to ? (
+                {sec.hijos ? (
+                  <MenuEscritorio
+                    etiqueta={sec.etiqueta}
+                    abierto={menuEscritorio === sec.etiqueta}
+                    onAbrir={() => setMenuEscritorio(sec.etiqueta)}
+                    onCerrar={() =>
+                      setMenuEscritorio((actual) => (actual === sec.etiqueta ? null : actual))
+                    }
+                    ancho={sec.hijos.some((h) => h.nietos?.length) ? "w-[62rem]" : "w-72"}
+                  >
+                    {sec.hijos.some((h) => h.nietos?.length) ? (
+                      // Categorías en columnas, cada una con sus subcategorías.
+                      <ul className="grid grid-cols-4 gap-x-6 gap-y-6">
+                        {sec.hijos.map((h) => (
+                          <li key={h.clave}>
+                            <Link
+                              to={h.to}
+                              search={h.search}
+                              onClick={() => setMenuEscritorio(null)}
+                              className="flex items-center gap-2 font-display text-base tracking-normal transition-colors duration-200 hover:text-primary"
+                            >
+                              {h.emoji && (
+                                <span aria-hidden="true" className="text-base leading-none">
+                                  {h.emoji}
+                                </span>
+                              )}
+                              {h.etiqueta}
+                            </Link>
+                            {h.nietos && h.nietos.length > 0 && (
+                              <ul className="mt-2 grid gap-1">
+                                {h.nietos.map((n) => (
+                                  <li key={n.clave}>
+                                    <Link
+                                      to={n.to}
+                                      search={n.search}
+                                      onClick={() => setMenuEscritorio(null)}
+                                      className="block text-[0.82rem] font-normal text-muted-foreground transition-colors duration-200 hover:text-primary"
+                                    >
+                                      {n.etiqueta}
+                                    </Link>
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <ul className="grid gap-0.5">
+                        {sec.hijos.map((h) => (
+                          <li key={h.clave}>
+                            <Link
+                              to={h.to}
+                              search={h.search}
+                              onClick={() => setMenuEscritorio(null)}
+                              className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-normal tracking-normal transition-colors duration-200 hover:bg-arena hover:text-primary"
+                            >
+                              {h.bandera && (
+                                <img
+                                  src={h.bandera}
+                                  alt=""
+                                  width={20}
+                                  height={14}
+                                  className="h-3.5 w-5 shrink-0 rounded-[2px] object-cover"
+                                />
+                              )}
+                              {h.etiqueta}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </MenuEscritorio>
+                ) : sec.to ? (
                   <Link
                     to={sec.to}
                     search={sec.search ?? {}}

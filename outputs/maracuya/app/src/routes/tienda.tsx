@@ -20,6 +20,7 @@ const PAISES = paises.map((p) => p.id) as [string, ...string[]];
 const busquedaTienda = z.object({
   q: z.string().trim().min(1).optional(),
   categoria: z.enum(CATEGORIAS).optional(),
+  subcategoria: z.string().trim().min(1).optional(),
   pais: z.enum(PAISES).optional(),
   oferta: z.boolean().optional(),
   disponible: z.boolean().optional(),
@@ -54,6 +55,7 @@ function Tienda() {
   const termino = filtros.q?.toLowerCase();
   let lista = productos.filter((p) => {
     if (filtros.categoria && p.categoria !== filtros.categoria) return false;
+    if (filtros.subcategoria && p.subcategoria !== filtros.subcategoria) return false;
     if (filtros.pais && p.pais !== filtros.pais) return false;
     if (filtros.oferta && p.precioAnterior === undefined) return false;
     if (filtros.disponible && !p.disponible) return false;
@@ -70,6 +72,7 @@ function Tienda() {
   const hayFiltros =
     Boolean(filtros.q) ||
     Boolean(filtros.categoria) ||
+    Boolean(filtros.subcategoria) ||
     Boolean(filtros.pais) ||
     Boolean(filtros.oferta) ||
     Boolean(filtros.disponible);
@@ -80,7 +83,7 @@ function Tienda() {
       ? `Productos de ${paisActivo.nombre}`
       : filtros.oferta
         ? "Ofertas"
-        : (activa?.nombre ?? "El mercado completo");
+        : (filtros.subcategoria ?? activa?.nombre ?? "El mercado completo");
 
   const entradilla = filtros.q
     ? "Buscamos en el nombre, la marca, la subcategoría y la descripción."
@@ -88,8 +91,10 @@ function Tienda() {
       ? paisActivo.nota
       : filtros.oferta
         ? "Productos con precio rebajado sobre su precio anterior."
-        : (activa?.claim ??
-          "Una selección corta y honesta: solo entran los productos que usamos en nuestra propia cocina.");
+        : filtros.subcategoria && activa
+          ? `Dentro de ${activa.nombre}.`
+          : (activa?.claim ??
+            "Una selección corta y honesta: solo entran los productos que usamos en nuestra propia cocina.");
 
   /** Conserva el resto de filtros al cambiar uno solo. */
   const con = (parcial: Partial<BusquedaTienda>): BusquedaTienda => {
