@@ -1,28 +1,126 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { MapPin, Menu, Search, ShoppingBag, Truck } from "lucide-react";
+import { ChevronDown, MapPin, Menu, Search, ShoppingBag, Truck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { useCarrito } from "@/components/site/cart";
 import { EstimadorEntrega } from "@/components/site/entrega";
-import { banderaUrl, categorias, paises } from "@/lib/catalogo";
+import { banderaUrl, categorias, paises, recetas, tiposReceta } from "@/lib/catalogo";
 import logoUrl from "@/assets/maracuya-logo.svg";
 
-/** El catálogo de secciones, compartido por la barra de escritorio y el panel. */
-const SECCIONES = [
-  { etiqueta: "Productos", to: "/tienda" as const, search: {} },
-  { etiqueta: "Ofertas", to: "/tienda" as const, search: { oferta: true } },
-  { etiqueta: "Recetas", to: "/recetas" as const, search: {} },
-  { etiqueta: "Tartas", to: "/tartas" as const, search: {} },
-  { etiqueta: "Países", href: "/#paises" },
+type Hijo = {
+  clave: string;
+  etiqueta: string;
+  to: "/tienda" | "/recetas";
+  search: Record<string, unknown>;
+  emoji?: string;
+  bandera?: string;
+};
+
+type Seccion = {
+  etiqueta: string;
+  to?: "/tienda" | "/recetas" | "/tartas";
+  search?: Record<string, unknown>;
+  href?: string;
+  /** Si los trae, la entrada se despliega en vez de navegar. */
+  hijos?: Hijo[];
+};
+
+/**
+ * El catálogo de secciones, compartido por la barra de escritorio y el panel.
+ * Productos, Recetas y Países se despliegan; el resto son enlaces directos.
+ */
+const SECCIONES: Seccion[] = [
+  {
+    etiqueta: "Productos",
+    to: "/tienda",
+    search: {},
+    hijos: categorias.map((c) => ({
+      clave: c.id,
+      etiqueta: c.nombre,
+      to: "/tienda" as const,
+      search: { categoria: c.id },
+      emoji: c.emoji,
+    })),
+  },
+  { etiqueta: "Ofertas", to: "/tienda", search: { oferta: true } },
+  {
+    etiqueta: "Recetas",
+    to: "/recetas",
+    search: {},
+    hijos: [
+      { clave: "todas", etiqueta: "Todas las recetas", to: "/recetas" as const, search: {} },
+      ...tiposReceta
+        .filter((t) => recetas.some((r) => r.tipo === t))
+        .map((t) => ({
+          clave: t,
+          etiqueta: t === "Principal" ? "Platos principales" : `${t}s`,
+          to: "/recetas" as const,
+          search: { tipo: t },
+        })),
+    ],
+  },
+  { etiqueta: "Tartas", to: "/tartas", search: {} },
+  {
+    etiqueta: "Países",
+    href: "/#paises",
+    hijos: paises.map((p) => ({
+      clave: p.id,
+      etiqueta: p.nombre,
+      to: "/tienda" as const,
+      search: { pais: p.id },
+      bandera: banderaUrl(p.codigo),
+    })),
+  },
   { etiqueta: "Envíos", href: "/#envios" },
 ];
+
+/**
+ * Una entrada que se abre. El botón es un botón de verdad, con
+ * aria-expanded, para que un lector de pantalla sepa que hay algo debajo.
+ */
+function Desplegable({
+  etiqueta,
+  abierto,
+  onAlternar,
+  children,
+}: {
+  etiqueta: string;
+  abierto: boolean;
+  onAlternar: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <button
+        type="button"
+        aria-expanded={abierto}
+        onClick={onAlternar}
+        className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
+      >
+        {etiqueta}
+        <ChevronDown
+          className={`size-4 shrink-0 text-muted-foreground transition-transform duration-300 ease-[var(--ease-out-expo)] ${
+            abierto ? "rotate-180" : ""
+          }`}
+          aria-hidden="true"
+        />
+      </button>
+      {abierto && (
+        <ul className="mb-2 ml-3 grid gap-0.5 border-l border-border pl-3">{children}</ul>
+      )}
+    </>
+  );
+}
 
 export function Header() {
   const { unidades, setAbierto } = useCarrito();
   const [menu, setMenu] = useState(false);
+  // Solo una abierta a la vez: el panel es estrecho y dos listas de ocho
+  // obligan a hacer scroll para encontrar lo que se buscaba.
+  const [seccionAbierta, setSeccionAbierta] = useState<string | null>(null);
   const [cp, setCp] = useState(false);
   const [busqueda, setBusqueda] = useState("");
   const navigate = useNavigate();
@@ -119,76 +217,73 @@ export function Header() {
                     />
                   </form>
 
-                  <ul className="grid gap-0.5">
-                    {SECCIONES.map((sec) => (
-                      <li key={sec.etiqueta}>
-                        {sec.to ? (
-                          <Link
-                            to={sec.to}
-                            search={sec.search ?? {}}
-                            onClick={() => setMenu(false)}
-                            className="block rounded-lg px-3 py-2.5 font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
-                          >
-                            {sec.etiqueta}
-                          </Link>
+                  <nav aria-label="Secciones">
+                    <ul className="grid gap-0.5">
+                      {SECCIONES.map((sec) =>
+                        sec.hijos ? (
+                          <li key={sec.etiqueta}>
+                            <Desplegable
+                              etiqueta={sec.etiqueta}
+                              abierto={seccionAbierta === sec.etiqueta}
+                              onAlternar={() =>
+                                setSeccionAbierta(
+                                  seccionAbierta === sec.etiqueta ? null : sec.etiqueta,
+                                )
+                              }
+                            >
+                              {sec.hijos.map((h) => (
+                                <li key={h.clave}>
+                                  <Link
+                                    to={h.to}
+                                    search={h.search}
+                                    onClick={() => setMenu(false)}
+                                    className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-200 hover:bg-arena hover:text-primary"
+                                  >
+                                    {h.emoji && (
+                                      <span aria-hidden="true" className="text-base leading-none">
+                                        {h.emoji}
+                                      </span>
+                                    )}
+                                    {h.bandera && (
+                                      <img
+                                        src={h.bandera}
+                                        alt=""
+                                        width={20}
+                                        height={14}
+                                        className="h-3.5 w-5 shrink-0 rounded-[2px] object-cover"
+                                      />
+                                    )}
+                                    {h.etiqueta}
+                                  </Link>
+                                </li>
+                              ))}
+                            </Desplegable>
+                          </li>
                         ) : (
-                          <a
-                            href={sec.href}
-                            onClick={() => setMenu(false)}
-                            className="block rounded-lg px-3 py-2.5 font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
-                          >
-                            {sec.etiqueta}
-                          </a>
-                        )}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div>
-                    <h3 className="px-3 text-sm font-medium text-muted-foreground">Categorías</h3>
-                    <ul className="mt-2 grid gap-0.5">
-                      {categorias.map((c) => (
-                        <li key={c.id}>
-                          <Link
-                            to="/tienda"
-                            search={{ categoria: c.id }}
-                            onClick={() => setMenu(false)}
-                            className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-200 hover:bg-arena hover:text-primary"
-                          >
-                            <span aria-hidden="true" className="text-base leading-none">
-                              {c.emoji}
-                            </span>
-                            {c.nombre}
-                          </Link>
-                        </li>
-                      ))}
+                          <li key={sec.etiqueta}>
+                            {sec.to ? (
+                              <Link
+                                to={sec.to}
+                                search={sec.search ?? {}}
+                                onClick={() => setMenu(false)}
+                                className="block rounded-lg px-3 py-2.5 font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
+                              >
+                                {sec.etiqueta}
+                              </Link>
+                            ) : (
+                              <a
+                                href={sec.href}
+                                onClick={() => setMenu(false)}
+                                className="block rounded-lg px-3 py-2.5 font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
+                              >
+                                {sec.etiqueta}
+                              </a>
+                            )}
+                          </li>
+                        ),
+                      )}
                     </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="px-3 text-sm font-medium text-muted-foreground">Por país</h3>
-                    <ul className="mt-2 grid gap-0.5">
-                      {paises.map((p) => (
-                        <li key={p.id}>
-                          <Link
-                            to="/tienda"
-                            search={{ pais: p.id }}
-                            onClick={() => setMenu(false)}
-                            className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors duration-200 hover:bg-arena hover:text-primary"
-                          >
-                            <img
-                              src={banderaUrl(p.codigo)}
-                              alt=""
-                              width={20}
-                              height={14}
-                              className="h-3.5 w-5 rounded-[2px] object-cover"
-                            />
-                            {p.nombre}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  </nav>
                 </div>
               </SheetContent>
             </Sheet>

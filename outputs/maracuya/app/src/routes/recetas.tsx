@@ -1,12 +1,22 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Clock, Flame } from "lucide-react";
+import { z } from "zod";
 
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { Reveal, stagger } from "@/components/site/reveal";
-import { banderaUrl, paisPorId, recetas } from "@/lib/catalogo";
+import { banderaUrl, paisPorId, paises, recetas, tiposReceta, type PaisId } from "@/lib/catalogo";
+
+const PAISES_RECETA = paises.map((p) => p.id) as [string, ...string[]];
+
+/** Los filtros viven en la URL, como en la tienda: un enlace se comparte. */
+const busquedaRecetas = z.object({
+  tipo: z.enum(tiposReceta).optional(),
+  pais: z.enum(PAISES_RECETA).optional(),
+});
 
 export const Route = createFileRoute("/recetas")({
+  validateSearch: busquedaRecetas,
   head: () => ({
     meta: [
       { title: "Cocina con MARACUYA | Recetas latinas y sus ingredientes" },
@@ -23,6 +33,12 @@ export const Route = createFileRoute("/recetas")({
 });
 
 function Recetas() {
+  const { tipo, pais: paisBruto } = Route.useSearch();
+  // El esquema ya lo limitó a los ids de `paises`; aquí solo se nombra.
+  const pais = paisBruto as PaisId | undefined;
+  const lista = recetas.filter((r) => (!tipo || r.tipo === tipo) && (!pais || r.pais === pais));
+  const filtrado = Boolean(tipo || pais);
+
   return (
     <div className="min-h-screen bg-background">
       <Header />
@@ -35,8 +51,68 @@ function Recetas() {
           y qué pones tú de tu cocina. Sin listas de la compra a ojo.
         </p>
 
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {recetas.map((r, i) => {
+        <div className="mt-8 flex flex-wrap items-center gap-2">
+          <Link
+            to="/recetas"
+            search={{}}
+            className={`rounded-full px-3.5 py-1.5 text-sm transition-colors duration-200 ${
+              filtrado
+                ? "bg-secondary text-secondary-foreground hover:bg-arena"
+                : "bg-primary text-primary-foreground"
+            }`}
+          >
+            Todas
+          </Link>
+          {tiposReceta.map((t) => (
+            <Link
+              key={t}
+              to="/recetas"
+              search={pais ? { tipo: t, pais } : { tipo: t }}
+              className={`rounded-full px-3.5 py-1.5 text-sm transition-colors duration-200 ${
+                tipo === t
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-secondary-foreground hover:bg-arena"
+              }`}
+            >
+              {t}
+            </Link>
+          ))}
+          {pais && (
+            <Link
+              to="/recetas"
+              search={tipo ? { tipo } : {}}
+              className="inline-flex items-center gap-2 rounded-full bg-primary px-3.5 py-1.5 text-sm text-primary-foreground"
+            >
+              <img
+                src={banderaUrl(paisPorId(pais).codigo)}
+                alt=""
+                width={20}
+                height={14}
+                className="h-3.5 w-5 rounded-[2px] object-cover"
+              />
+              {paisPorId(pais).nombre}
+              <span aria-hidden="true">×</span>
+              <span className="sr-only">Quitar el filtro de país</span>
+            </Link>
+          )}
+        </div>
+
+        {lista.length === 0 ? (
+          <p className="mt-12 rounded-2xl bg-card p-8 text-center text-muted-foreground shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)]">
+            Todavía no hay recetas con ese filtro.{" "}
+            <Link
+              to="/recetas"
+              search={{}}
+              className="text-primary underline-offset-4 hover:underline"
+            >
+              Ver todas
+            </Link>
+            .
+          </p>
+        ) : null}
+
+        <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {lista.map((r, i) => {
             const pais = paisPorId(r.pais);
             return (
               <Reveal key={r.slug} delay={stagger(i)}>

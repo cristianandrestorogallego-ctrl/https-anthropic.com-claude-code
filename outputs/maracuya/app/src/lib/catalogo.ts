@@ -507,11 +507,14 @@ export type IngredienteReceta = {
   tipo: "paquete" | "aparte" | "basico";
 };
 
+/** Los tipos de plato. El menú y el filtro de /recetas leen de aquí. */
+export const tiposReceta = ["Entrante", "Principal", "Postre"] as const;
+
 export type Receta = {
   slug: string;
   nombre: string;
   pais: PaisId;
-  tipo: "Principal" | "Entrante" | "Postre";
+  tipo: (typeof tiposReceta)[number];
   minutos: number;
   dificultad: "Fácil" | "Media" | "Alta";
   racionesBase: number;
@@ -662,6 +665,44 @@ export const recetas: Receta[] = [
     utensilios: ["Sartén honda", "Rodillo o prensa"],
     consejos: ["Sella bien los bordes para que no se abran al freír."],
     alergenos: "Pendiente de la ficha del proveedor. Revisa siempre la etiqueta de cada envase.",
+  },
+  {
+    slug: "mousse-maracuya",
+    nombre: "Mousse de maracuyá",
+    pais: "colombia",
+    tipo: "Postre",
+    minutos: 20,
+    dificultad: "Fácil",
+    racionesBase: 6,
+    imagen: dulces,
+    resumen: "Ácida, fría y sin horno. Se hace en veinte minutos y reposa sola en la nevera.",
+    ingredientes: [
+      {
+        productoId: "jugo-maracuya",
+        nombre: "Jugo de maracuyá",
+        cantidadPorRacion: 200,
+        unidad: "ml",
+        contenidoEnvase: 1000,
+        tipo: "paquete",
+      },
+      { nombre: "Leche condensada", cantidadPorRacion: 370, unidad: "g", tipo: "aparte" },
+      { nombre: "Nata para montar", cantidadPorRacion: 200, unidad: "ml", tipo: "aparte" },
+      { nombre: "Galletas tipo María", cantidadPorRacion: 150, unidad: "g", tipo: "aparte" },
+    ],
+    pasos: [
+      "Tritura las galletas y forra el fondo del molde apretando bien.",
+      "Bate la leche condensada con el jugo de maracuyá hasta que espese un poco.",
+      "Monta la nata aparte y mézclala con movimientos suaves, de abajo arriba.",
+      "Vuelca sobre la base de galleta y alisa la superficie.",
+      "Nevera, mínimo cuatro horas. Mejor de un día para otro.",
+    ],
+    utensilios: ["Molde desmontable", "Varillas o batidora", "Bol amplio"],
+    consejos: [
+      "Si la quieres más ácida, reserva un poco de jugo y viértelo por encima al servir.",
+      "La nata monta mejor si el bol y las varillas están fríos.",
+    ],
+    alergenos:
+      "Lleva lácteos y las galletas suelen llevar gluten. El resto, pendiente de la ficha del proveedor: revisa la etiqueta de cada envase.",
   },
 ];
 
