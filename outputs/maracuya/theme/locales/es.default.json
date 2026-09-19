@@ -1,6 +1,8 @@
 {
   "general": {
     "skip_to_content": "Saltar al contenido",
+    "breadcrumb": "Dónde estás",
+    "home": "Inicio",
     "page": "Página {{ page }}",
     "tagged": "Etiquetado: {{ tags }}",
     "search": {
@@ -109,5 +111,36 @@
     "code_label": "Código de la tarjeta",
     "shop_link": "Ir a la tienda",
     "print": "Imprimir"
+  },
+  "recipes": {
+    "title": "Cocina con MARACUYA",
+    "intro": "Elige el plato, dinos para cuántos sois y te decimos exactamente qué envases hacen falta.",
+    "all": "Ver todas las recetas",
+    "empty": "Todavía no hay recetas publicadas.",
+    "minutes": "{{ count }} min",
+    "tradition": "Tradición de {{ country }}",
+    "steps": "Cómo se hace",
+    "tools": "Utensilios",
+    "tips": "Consejos",
+    "allergens": "Alérgenos",
+    "package": "Tu paquete",
+    "servings": "Raciones",
+    "servings_help": "Recalculamos las cantidades",
+    "servings_increase": "Una ración más",
+    "servings_decrease": "Una ración menos",
+    "uses": "La receta usa {{ amount }}",
+    "buys": "comprarás {{ packs }} × {{ size }}",
+    "leftover": "te sobran ≈{{ amount }}",
+    "you_add": "Lo pones tú",
+    "pantry": "De tu despensa",
+    "sold_out_line": "Sin existencias ahora mismo",
+    "count": "{{ count }} productos",
+    "add_full": "Añadir el paquete completo",
+    "add_partial": "Añadir la selección",
+    "partial_warning": "Selección parcial: faltan {{ missing }} de {{ total }} ingredientes.",
+    "no_substitutes": "No añadimos lo agotado ni lo sustituimos por otra cosa.",
+    "nothing_selected": "No has marcado ningún ingrediente.",
+    "added": "Añadido al carrito",
+    "add_failed": "No se pudo añadir. Inténtalo de nuevo."
   }
 }

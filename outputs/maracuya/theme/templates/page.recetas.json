@@ -1,0 +1,6 @@
+{
+  "sections": {
+    "listado": { "type": "recetas-listado", "settings": { "limite": 0 } }
+  },
+  "order": ["listado"]
+}

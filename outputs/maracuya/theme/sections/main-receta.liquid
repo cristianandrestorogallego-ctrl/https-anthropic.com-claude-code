@@ -1,0 +1,201 @@
+{%- comment -%}
+  Ficha de receta.
+
+  El servidor pinta las cantidades para las raciones de la receta y deja en
+  cada línea los datos crudos —cuánto por ración, cuánto trae el envase, qué
+  variante y a qué precio—. El navegador solo reescala y suma.
+
+  La regla que no se negocia: "paquete completo" solo se dice cuando están
+  marcados todos los ingredientes comprables y ninguno está agotado. Si falta
+  uno, el botón cambia de nombre y el aviso dice cuántos faltan. Nada se
+  sustituye por otra cosa.
+{%- endcomment -%}
+
+{%- liquid
+  assign receta = metaobject
+  assign base = receta.raciones_base.value | at_least: 1
+  assign ingredientes = receta.ingredientes.value
+-%}
+
+<article class="receta" data-receta
+         data-base="{{ base }}"
+         data-moneda="{{ cart.currency.iso_code }}"
+         data-idioma="{{ request.locale.iso_code }}">
+  <nav class="breadcrumb" aria-label="{{ 'general.breadcrumb' | t | default: 'Migas de pan' }}">
+    <a href="{{ routes.root_url }}">{{ 'general.home' | t | default: 'Inicio' }}</a>
+    <span aria-hidden="true">›</span>
+    <a href="{{ pages.recetas.url | default: '/pages/recetas' }}">{{ 'recipes.title' | t }}</a>
+    <span aria-hidden="true">›</span>
+    <span aria-current="page">{{ receta.nombre.value }}</span>
+  </nav>
+
+  {%- if receta.imagen.value != blank -%}
+    <div class="receta__foto">
+      {{ receta.imagen.value | image_url: width: 1600 | image_tag:
+         loading: 'eager', fetchpriority: 'high', sizes: '(min-width: 1100px) 1100px, 100vw',
+         widths: '600,900,1200,1600', alt: receta.nombre.value }}
+    </div>
+  {%- endif -%}
+
+  <div class="receta__cuerpo">
+    <div class="receta__texto">
+      <h1 class="receta__titulo">{{ receta.nombre.value }}</h1>
+
+      <p class="receta__meta">
+        {%- if receta.pais.value != blank -%}
+          <span>{{ 'recipes.tradition' | t: country: receta.pais.value }}</span>
+        {%- endif -%}
+        <span>{{ 'recipes.minutes' | t: count: receta.minutos.value }}</span>
+        <span>{{ receta.dificultad.value }}</span>
+        {%- if receta.tipo.value != blank -%}<span>{{ receta.tipo.value }}</span>{%- endif -%}
+      </p>
+
+      <p class="receta__resumen">{{ receta.resumen.value }}</p>
+
+      <h2 class="receta__seccion">{{ 'recipes.steps' | t }}</h2>
+      <ol class="receta__pasos">
+        {%- for paso in receta.pasos.value -%}
+          <li><span class="receta__num" aria-hidden="true">{{ forloop.index }}</span>{{ paso }}</li>
+        {%- endfor -%}
+      </ol>
+
+      <div class="receta__notas">
+        {%- if receta.utensilios.value.size > 0 -%}
+          <div>
+            <h3>{{ 'recipes.tools' | t }}</h3>
+            <ul>{%- for u in receta.utensilios.value -%}<li>{{ u }}</li>{%- endfor -%}</ul>
+          </div>
+        {%- endif -%}
+        {%- if receta.consejos.value.size > 0 -%}
+          <div>
+            <h3>{{ 'recipes.tips' | t }}</h3>
+            <ul>{%- for c in receta.consejos.value -%}<li>{{ c }}</li>{%- endfor -%}</ul>
+          </div>
+        {%- endif -%}
+      </div>
+
+      {%- if receta.alergenos.value != blank -%}
+        <p class="receta__alergenos">
+          {% render 'brand-icon', name: 'alert-triangle', size: 18 %}
+          <span><strong>{{ 'recipes.allergens' | t }}:</strong> {{ receta.alergenos.value }}</span>
+        </p>
+      {%- endif -%}
+    </div>
+
+    <aside class="paquete" aria-label="{{ 'recipes.package' | t }}">
+      <h2 class="paquete__titulo">{{ 'recipes.package' | t }}</h2>
+
+      <div class="paquete__raciones">
+        <div>
+          <strong>{{ 'recipes.servings' | t }}</strong>
+          <span>{{ 'recipes.servings_help' | t }}</span>
+        </div>
+        <div class="stepper">
+          <button type="button" data-raciones="-1" aria-label="{{ 'recipes.servings_decrease' | t }}">−</button>
+          <output data-raciones-valor>{{ base }}</output>
+          <button type="button" data-raciones="1" aria-label="{{ 'recipes.servings_increase' | t }}">+</button>
+        </div>
+      </div>
+
+      <ul class="paquete__lineas">
+        {%- for ing in ingredientes -%}
+          {%- if ing.grupo.value != 'paquete' -%}{%- continue -%}{%- endif -%}
+          {%- liquid
+            assign producto = ing.producto.value
+            assign variante = producto.selected_or_first_available_variant
+            assign agotado = false
+            if producto == blank or variante == blank or variante.available == false
+              assign agotado = true
+            endif
+          -%}
+          <li class="linea{% if agotado %} linea--agotada{% endif %}"
+              data-linea
+              data-cantidad="{{ ing.cantidad_por_racion.value }}"
+              data-envase="{{ ing.contenido_envase.value | default: 0 }}"
+              data-unidad="{{ ing.unidad.value | escape }}"
+              data-precio="{{ variante.price | default: 0 }}"
+              data-variante="{{ variante.id | default: '' }}"
+              data-agotado="{{ agotado }}">
+            <label class="linea__marca">
+              <input type="checkbox" data-incluir {% unless agotado %}checked{% endunless %} {% if agotado %}disabled{% endif %}>
+              <span class="linea__nombre">{{ ing.nombre.value }}</span>
+            </label>
+            <span class="linea__precio price" data-precio-texto>{%- if agotado -%}—{%- else -%}{{ variante.price | money }}{%- endif -%}</span>
+            <p class="linea__detalle" data-detalle>
+              {%- if agotado -%}{{ 'recipes.sold_out_line' | t }}{%- endif -%}
+            </p>
+          </li>
+        {%- endfor -%}
+      </ul>
+
+      {%- assign aparte = ingredientes | where: 'grupo.value', 'aparte' -%}
+      {%- assign basicos = ingredientes | where: 'grupo.value', 'basico' -%}
+
+      {%- if aparte.size > 0 -%}
+        <div class="paquete__extra">
+          <h3>{{ 'recipes.you_add' | t }}</h3>
+          <ul>
+            {%- for ing in aparte -%}
+              <li data-aparte data-cantidad="{{ ing.cantidad_por_racion.value }}" data-unidad="{{ ing.unidad.value | escape }}">
+                <span>{{ ing.nombre.value }}</span>
+                <span data-aparte-cantidad></span>
+              </li>
+            {%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      {%- if basicos.size > 0 -%}
+        <div class="paquete__extra">
+          <h3>{{ 'recipes.pantry' | t }}</h3>
+          <ul>
+            {%- for ing in basicos -%}<li><span>{{ ing.nombre.value }}</span></li>{%- endfor -%}
+          </ul>
+        </div>
+      {%- endif -%}
+
+      <div class="paquete__total">
+        <span data-total-cuenta></span>
+        <strong class="price" data-total-precio></strong>
+      </div>
+
+      <p class="paquete__aviso" data-aviso hidden></p>
+
+      <button class="btn btn--primary btn--block" type="button" data-anadir-paquete>
+        <span data-anadir-texto>{{ 'recipes.add_full' | t }}</span>
+      </button>
+
+      <p class="paquete__pie">{{ 'recipes.no_substitutes' | t }}</p>
+    </aside>
+  </div>
+</article>
+
+{%- comment -%}
+  Las cadenas que el navegador necesita, traducidas ya por Liquid. Van como
+  JSON para no incrustar JavaScript en la plantilla.
+{%- endcomment -%}
+<script type="application/json" id="recetas-i18n">
+{
+  "uses": {{ 'recipes.uses' | t | json }},
+  "buys": {{ 'recipes.buys' | t | json }},
+  "leftover": {{ 'recipes.leftover' | t | json }},
+  "sold_out_line": {{ 'recipes.sold_out_line' | t | json }},
+  "count": {{ 'recipes.count' | t | json }},
+  "add_full": {{ 'recipes.add_full' | t | json }},
+  "add_partial": {{ 'recipes.add_partial' | t | json }},
+  "partial_warning": {{ 'recipes.partial_warning' | t | json }},
+  "nothing_selected": {{ 'recipes.nothing_selected' | t | json }},
+  "added": {{ 'recipes.added' | t | json }},
+  "add_failed": {{ 'recipes.add_failed' | t | json }}
+}
+</script>
+
+<script src="{{ 'maracuya-receta.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Receta",
+  "tag": "section",
+  "settings": []
+}
+{% endschema %}

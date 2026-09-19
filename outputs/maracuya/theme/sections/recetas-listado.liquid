@@ -1,0 +1,69 @@
+{%- comment -%}
+  Listado de recetas. Itera sobre las entradas publicadas del metaobjeto, así
+  que el usuario añade una receta desde el panel y aparece aquí sola.
+{%- endcomment -%}
+
+<section class="section recetas-listado">
+  <div class="container">
+    <div class="section-header">
+      <div>
+      <h2>{{ section.settings.titulo | default: 'recipes.title' | t }}</h2>
+        {%- if section.settings.intro != blank -%}
+          <p class="section-subtitle">{{ section.settings.intro }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- assign recetas = shop.metaobjects.receta.values -%}
+    {%- if recetas.size == 0 -%}
+      <p class="empty-state">{{ 'recipes.empty' | t }}</p>
+    {%- else -%}
+      <ul class="recetas-rejilla">
+        {%- for receta in recetas -%}
+          {%- if section.settings.limite > 0 and forloop.index > section.settings.limite -%}
+            {%- break -%}
+          {%- endif -%}
+          <li>
+            <a class="recipe-card" href="{{ receta.system.url }}">
+              {%- if receta.imagen.value != blank -%}
+                <div class="recipe-card__foto">
+                  {{ receta.imagen.value | image_url: width: 800 | image_tag:
+                     loading: 'lazy', sizes: '(min-width: 900px) 360px, 100vw',
+                     widths: '360,540,800', alt: '' }}
+                </div>
+              {%- endif -%}
+              <div class="recipe-card__cuerpo">
+                <h3 class="recipe-card__name">{{ receta.nombre.value }}</h3>
+                <p class="recipe-card__resumen">{{ receta.resumen.value }}</p>
+                <p class="recipe-card__meta">
+                  <span>{{ 'recipes.minutes' | t: count: receta.minutos.value }}</span>
+                  <span aria-hidden="true">·</span>
+                  <span>{{ receta.dificultad.value }}</span>
+                  {%- if receta.pais.value != blank -%}
+                    <span aria-hidden="true">·</span>
+                    <span>{{ receta.pais.value }}</span>
+                  {%- endif -%}
+                </p>
+              </div>
+            </a>
+          </li>
+        {%- endfor -%}
+      </ul>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Recetas",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Cocina con MARACUYA" },
+    { "type": "textarea", "id": "intro", "label": "Entradilla",
+      "default": "Elige el plato, dinos para cuántos sois y te decimos exactamente qué envases hacen falta." },
+    { "type": "range", "id": "limite", "label": "Cuántas mostrar", "min": 0, "max": 12, "step": 1, "default": 0,
+      "info": "0 muestra todas." }
+  ],
+  "presets": [{ "name": "Recetas" }]
+}
+{% endschema %}

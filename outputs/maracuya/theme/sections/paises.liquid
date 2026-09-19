@@ -1,0 +1,95 @@
+{%- comment -%}
+  Compra por tradición y país.
+
+  Cada baldosa lleva a la colección automática de ese país. Las banderas son
+  SVG del propio tema: ninguna parte de la tienda la sirve un tercero.
+{%- endcomment -%}
+
+<section class="section section-alt paises" id="paises">
+  <div class="container">
+    <div class="section-header">
+      <div>
+      <h2>{{ section.settings.titulo }}</h2>
+        {%- if section.settings.intro != blank -%}
+          <p class="section-subtitle">{{ section.settings.intro }}</p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    <ul class="paises-rejilla">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign coleccion = collections[block.settings.coleccion]
+          assign destino = coleccion.url | default: block.settings.enlace
+        -%}
+        <li {{ block.shopify_attributes }}>
+          <a class="pais-tile" href="{{ destino | default: routes.all_products_collection_url }}">
+            {%- if block.settings.bandera != blank -%}
+              <img class="pais-tile__bandera"
+                   src="{{ block.settings.bandera | append: '.svg' | asset_url }}"
+                   width="60" height="40" loading="lazy" alt="" aria-hidden="true">
+            {%- endif -%}
+            <span class="pais-tile__nombre">{{ block.settings.nombre }}</span>
+            {%- if block.settings.nota != blank -%}
+              <span class="pais-tile__nota">{{ block.settings.nota }}</span>
+            {%- endif -%}
+          </a>
+        </li>
+      {%- endfor -%}
+    </ul>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Países",
+  "tag": "section",
+  "settings": [
+    { "type": "text", "id": "titulo", "label": "Título", "default": "Compra por tradición y país" },
+    { "type": "textarea", "id": "intro", "label": "Entradilla",
+      "default": "La tradición a la que pertenece cada producto. Cuando el país de fabricación es otro, lo decimos en su ficha." }
+  ],
+  "blocks": [
+    {
+      "type": "pais",
+      "name": "País",
+      "settings": [
+        { "type": "text", "id": "nombre", "label": "Nombre" },
+        { "type": "text", "id": "nota", "label": "Nota corta" },
+        {
+          "type": "select", "id": "bandera", "label": "Bandera", "default": "bandera-co",
+          "options": [
+            { "value": "bandera-co", "label": "Colombia" },
+            { "value": "bandera-mx", "label": "México" },
+            { "value": "bandera-pe", "label": "Perú" },
+            { "value": "bandera-ve", "label": "Venezuela" },
+            { "value": "bandera-ec", "label": "Ecuador" },
+            { "value": "bandera-br", "label": "Brasil" },
+            { "value": "bandera-ar", "label": "Argentina" },
+            { "value": "bandera-py", "label": "Paraguay" }
+          ]
+        },
+        { "type": "collection", "id": "coleccion", "label": "Colección" },
+        { "type": "url", "id": "enlace", "label": "Enlace alternativo",
+          "info": "Solo se usa si no eliges colección." }
+      ]
+    }
+  ],
+  "max_blocks": 12,
+  "presets": [
+    {
+      "name": "Países",
+      "blocks": [
+        { "type": "pais", "settings": { "nombre": "Colombia", "nota": "Arepas, panela y guayaba", "bandera": "bandera-co" } },
+        { "type": "pais", "settings": { "nombre": "México", "nota": "Chiles, maíz y salsas", "bandera": "bandera-mx" } },
+        { "type": "pais", "settings": { "nombre": "Perú", "nota": "Ají amarillo y ceviche", "bandera": "bandera-pe" } },
+        { "type": "pais", "settings": { "nombre": "Venezuela", "nota": "Harina de maíz precocida y hallacas", "bandera": "bandera-ve" } },
+        { "type": "pais", "settings": { "nombre": "Ecuador", "nota": "Plátano, ají criollo y cacao", "bandera": "bandera-ec" } },
+        { "type": "pais", "settings": { "nombre": "Brasil", "nota": "Tapioca, feijão y guaraná", "bandera": "bandera-br" } },
+        { "type": "pais", "settings": { "nombre": "Argentina", "nota": "Dulce de leche y yerba mate", "bandera": "bandera-ar" } },
+        { "type": "pais", "settings": { "nombre": "Paraguay", "nota": "Yerba mate y tereré", "bandera": "bandera-py" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -3,23 +3,106 @@
     "hero": {
       "type": "hero-offers",
       "blocks": {
-        "s1": { "type": "slide", "settings": { "tile": "dulces", "shape": "box", "badge": "Destacado", "heading": "Sabores de casa, más cerca", "body": "Productos de Latinoamérica seleccionados para el mercado español.", "cta": "Ver catálogo", "cta_secondary": "Ver categorías" } },
-        "s2": { "type": "slide", "settings": { "tile": "despensa", "shape": "bag", "badge": "Despensa", "heading": "La despensa latina completa", "body": "Café, harinas, granos y básicos para cocinar como en casa.", "cta": "Ver productos" } },
-        "s3": { "type": "slide", "settings": { "tile": "salsas", "shape": "jar", "badge": "Salsas", "heading": "Picantes, moles y aderezos", "body": "El toque que le falta a tu receta.", "cta": "Ver productos" } }
+        "s1": {
+          "type": "slide",
+          "settings": {
+            "tile": "dulces",
+            "shape": "box",
+            "badge": "Destacado",
+            "heading": "Sabores de casa, más cerca",
+            "body": "Productos de Latinoamérica seleccionados para el mercado español.",
+            "cta": "Ver catálogo",
+            "cta_secondary": "Ver categorías"
+          }
+        },
+        "s2": {
+          "type": "slide",
+          "settings": {
+            "tile": "despensa",
+            "shape": "bag",
+            "badge": "Despensa",
+            "heading": "La despensa latina completa",
+            "body": "Café, harinas, granos y básicos para cocinar como en casa.",
+            "cta": "Ver productos"
+          }
+        },
+        "s3": {
+          "type": "slide",
+          "settings": {
+            "tile": "salsas",
+            "shape": "jar",
+            "badge": "Salsas",
+            "heading": "Picantes, moles y aderezos",
+            "body": "El toque que le falta a tu receta.",
+            "cta": "Ver productos"
+          }
+        },
+        "s0": {
+          "type": "slide",
+          "settings": {
+            "tile": "harinas",
+            "shape": "box",
+            "badge": "Cocina con MARACUYA",
+            "heading": "Dinos el plato y para cuántos sois",
+            "body": "Te decimos exactamente qué envases hacen falta, cuánto sobra de cada uno y qué pones tú de tu cocina.",
+            "link": "/pages/recetas",
+            "cta": "Elegir una receta",
+            "link_secondary": "/collections/all",
+            "cta_secondary": "Ver el catálogo"
+          }
+        }
       },
-      "block_order": ["s1", "s2", "s3"],
-      "settings": { "heading": "Destacados" }
+      "block_order": [
+        "s0",
+        "s1",
+        "s2",
+        "s3"
+      ],
+      "settings": {
+        "heading": "Destacados"
+      }
     },
     "categories": {
       "type": "collection-grid",
       "blocks": {
-        "c1": { "type": "item", "settings": { "tile": "bebidas" } },
-        "c2": { "type": "item", "settings": { "tile": "snacks" } },
-        "c3": { "type": "item", "settings": { "tile": "dulces" } },
-        "c4": { "type": "item", "settings": { "tile": "despensa" } },
-        "c5": { "type": "item", "settings": { "tile": "salsas" } }
+        "c1": {
+          "type": "item",
+          "settings": {
+            "tile": "bebidas"
+          }
+        },
+        "c2": {
+          "type": "item",
+          "settings": {
+            "tile": "snacks"
+          }
+        },
+        "c3": {
+          "type": "item",
+          "settings": {
+            "tile": "dulces"
+          }
+        },
+        "c4": {
+          "type": "item",
+          "settings": {
+            "tile": "despensa"
+          }
+        },
+        "c5": {
+          "type": "item",
+          "settings": {
+            "tile": "salsas"
+          }
+        }
       },
-      "block_order": ["c1", "c2", "c3", "c4", "c5"],
+      "block_order": [
+        "c1",
+        "c2",
+        "c3",
+        "c4",
+        "c5"
+      ],
       "settings": {
         "heading": "Categorías",
         "subheading": "Todo lo que necesitas para cocinar y disfrutar.",
@@ -39,13 +122,146 @@
     "trust": {
       "type": "trust-strip",
       "blocks": {
-        "t1": { "type": "item", "settings": { "icon": "truck", "heading": "Envío a España peninsular", "body": "Los plazos y las tarifas se calculan en el momento del pago." } },
-        "t2": { "type": "item", "settings": { "icon": "headset", "heading": "Atención cercana", "body": "Escríbenos si tienes dudas sobre un producto o tu pedido." } },
-        "t3": { "type": "item", "settings": { "icon": "shield-check", "heading": "Pago seguro", "body": "El pago se procesa en el checkout seguro de Shopify." } }
+        "t1": {
+          "type": "item",
+          "settings": {
+            "icon": "truck",
+            "heading": "Envío a España peninsular",
+            "body": "Los plazos y las tarifas se calculan en el momento del pago."
+          }
+        },
+        "t2": {
+          "type": "item",
+          "settings": {
+            "icon": "headset",
+            "heading": "Atención cercana",
+            "body": "Escríbenos si tienes dudas sobre un producto o tu pedido."
+          }
+        },
+        "t3": {
+          "type": "item",
+          "settings": {
+            "icon": "shield-check",
+            "heading": "Pago seguro",
+            "body": "El pago se procesa en el checkout seguro de Shopify."
+          }
+        }
       },
-      "block_order": ["t1", "t2", "t3"],
-      "settings": { "show_payment_icons": true }
+      "block_order": [
+        "t1",
+        "t2",
+        "t3"
+      ],
+      "settings": {
+        "show_payment_icons": true
+      }
+    },
+    "recetas": {
+      "type": "recetas-listado",
+      "settings": {
+        "titulo": "Cocina con MARACUYA",
+        "intro": "Elige el plato, ajusta las raciones y te decimos qué envases necesitas comprar y qué pones tú de tu cocina.",
+        "limite": 3
+      }
+    },
+    "paises": {
+      "type": "paises",
+      "blocks": {
+        "p1": {
+          "type": "pais",
+          "settings": {
+            "nombre": "Colombia",
+            "nota": "Arepas, panela y guayaba",
+            "bandera": "bandera-co",
+            "coleccion": "pais-colombia"
+          }
+        },
+        "p2": {
+          "type": "pais",
+          "settings": {
+            "nombre": "México",
+            "nota": "Chiles, maíz y salsas",
+            "bandera": "bandera-mx",
+            "coleccion": "pais-mexico"
+          }
+        },
+        "p3": {
+          "type": "pais",
+          "settings": {
+            "nombre": "Perú",
+            "nota": "Ají amarillo y ceviche",
+            "bandera": "bandera-pe",
+            "coleccion": "pais-peru"
+          }
+        },
+        "p4": {
+          "type": "pais",
+          "settings": {
+            "nombre": "Venezuela",
+            "nota": "Harina de maíz precocida y hallacas",
+            "bandera": "bandera-ve",
+            "coleccion": "pais-venezuela"
+          }
+        },
+        "p5": {
+          "type": "pais",
+          "settings": {
+            "nombre": "Ecuador",
+            "nota": "Plátano, ají criollo y cacao",
+            "bandera": "bandera-ec",
+            "coleccion": "pais-ecuador"
+          }
+        },
+        "p6": {
+          "type": "pais",
+          "settings": {
+            "nombre": "Brasil",
+            "nota": "Tapioca, feijão y guaraná",
+            "bandera": "bandera-br",
+            "coleccion": "pais-brasil"
+          }
+        },
+        "p7": {
+          "type": "pais",
+          "settings": {
+            "nombre": "Argentina",
+            "nota": "Dulce de leche y yerba mate",
+            "bandera": "bandera-ar",
+            "coleccion": "pais-argentina"
+          }
+        },
+        "p8": {
+          "type": "pais",
+          "settings": {
+            "nombre": "Paraguay",
+            "nota": "Yerba mate y tereré",
+            "bandera": "bandera-py",
+            "coleccion": "pais-paraguay"
+          }
+        }
+      },
+      "block_order": [
+        "p1",
+        "p2",
+        "p3",
+        "p4",
+        "p5",
+        "p6",
+        "p7",
+        "p8"
+      ],
+      "settings": {
+        "titulo": "Compra por tradición y país",
+        "intro": "La tradición a la que pertenece cada producto. Cuando el país de fabricación es otro, lo decimos en su ficha."
+      }
     }
   },
-  "order": ["hero", "categories", "featured", "trust"]
+  "order": [
+    "hero",
+    "categories",
+    "recetas",
+    "featured",
+    "paises",
+    "trust"
+  ]
 }
