@@ -93,7 +93,6 @@ const slides: {
   },
 ];
 
-
 function AccionBoton({
   accion,
   variante,
