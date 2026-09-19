@@ -1,6 +1,15 @@
 import { useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { AlertTriangle, CakeSlice, Camera, Check, Info, MapPin, X } from "lucide-react";
+import {
+  AlertTriangle,
+  CakeSlice,
+  Camera,
+  Check,
+  Info,
+  MapPin,
+  MessageCircle,
+  X,
+} from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,8 +18,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { Reveal, stagger } from "@/components/site/reveal";
+import { enlaceWhatsapp } from "@/lib/whatsapp";
 import {
   ENVIO_CONECTADO,
+  codigoPorMunicipio,
+  municipioPorCodigo,
   QUE_FALTA,
   comprobarCobertura,
   coberturaPermiteEnviar,
@@ -49,10 +61,62 @@ function manana() {
 function Tartas() {
   const [municipio, setMunicipio] = useState("");
   const [cp, setCp] = useState("");
+
   const [tocadoCp, setTocadoCp] = useState(false);
   const [imagen, setImagen] = useState<{ nombre: string; url: string } | null>(null);
   const [enviado, setEnviado] = useState(false);
   const archivoRef = useRef<HTMLInputElement>(null);
+
+  // Campos controlados: el enlace de WhatsApp se arma del estado, no del DOM.
+  const [campos, setCampos] = useState({
+    raciones: "12",
+    fecha: "",
+    sabor: sabores[0],
+    relleno: rellenos[0],
+    tematica: tematicas[0],
+    mensaje: "",
+    alergenos: "",
+    nombre: "",
+    telefono: "",
+  });
+  const cambiar = (clave: keyof typeof campos) => (v: string) =>
+    setCampos((c) => ({ ...c, [clave]: v }));
+
+  /** Escribir el código elige el municipio, si ese código solo es de uno. */
+  const escribirCp = (valor: string) => {
+    const limpio = valor.replace(/\D/g, "");
+    setCp(limpio);
+    if (limpio.length === 5) {
+      const encontrado = municipioPorCodigo(limpio);
+      if (encontrado) setMunicipio(encontrado);
+    }
+  };
+
+  /** Y elegir el municipio rellena el código, si el municipio solo tiene uno. */
+  const elegirMunicipio = (valor: string) => {
+    setMunicipio(valor);
+    const unico = codigoPorMunicipio(valor);
+    if (unico) setCp(unico);
+  };
+
+  /** El mensaje que llega a WhatsApp, con lo que el cliente haya rellenado. */
+  const mensajeWhatsapp = [
+    "Hola, quiero presupuesto para una tarta personalizada.",
+    "",
+    municipio && `Municipio: ${municipio}`,
+    cp && `Código postal: ${cp}`,
+    `Raciones: ${campos.raciones}`,
+    campos.fecha && `Fecha deseada: ${campos.fecha}`,
+    `Sabor: ${campos.sabor}`,
+    `Relleno: ${campos.relleno}`,
+    `Temática: ${campos.tematica}`,
+    campos.mensaje && `Mensaje sobre la tarta: ${campos.mensaje}`,
+    campos.alergenos && `Alergias u observaciones: ${campos.alergenos}`,
+    campos.nombre && `Soy ${campos.nombre}`,
+    imagen && "(Te paso la foto de referencia por aquí.)",
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   const cobertura = useMemo(() => comprobarCobertura(cp, municipio), [cp, municipio]);
   // El aviso del código postal no espera al municipio: en cuanto sabemos que
@@ -223,7 +287,7 @@ function Tartas() {
                         maxLength={5}
                         placeholder="08001"
                         value={cp}
-                        onChange={(e) => setCp(e.target.value.replace(/\D/g, ""))}
+                        onChange={(e) => escribirCp(e.target.value)}
                         onBlur={() => setTocadoCp(true)}
                         aria-invalid={fueraDeProvincia || undefined}
                         aria-describedby={fueraDeProvincia ? "cp-aviso" : undefined}
@@ -239,7 +303,7 @@ function Tartas() {
                         required
                         className={CAMPO}
                         value={municipio}
-                        onChange={(e) => setMunicipio(e.target.value)}
+                        onChange={(e) => elegirMunicipio(e.target.value)}
                       >
                         <option value="">Elige tu municipio</option>
                         {municipiosServidos.map((m) => (
@@ -292,7 +356,13 @@ function Tartas() {
                   <div className="grid gap-4 sm:grid-cols-2">
                     <div className="grid gap-1.5">
                       <Label htmlFor="raciones">Raciones</Label>
-                      <select id="raciones" name="raciones" className={CAMPO} defaultValue="12">
+                      <select
+                        id="raciones"
+                        name="raciones"
+                        className={CAMPO}
+                        value={campos.raciones}
+                        onChange={(e) => cambiar("raciones")(e.target.value)}
+                      >
                         {raciones.map((r) => (
                           <option key={r} value={r}>
                             {r} raciones
@@ -302,11 +372,24 @@ function Tartas() {
                     </div>
                     <div className="grid gap-1.5">
                       <Label htmlFor="fecha">Fecha deseada</Label>
-                      <Input id="fecha" name="fecha" type="date" min={manana()} />
+                      <Input
+                        id="fecha"
+                        name="fecha"
+                        type="date"
+                        min={manana()}
+                        value={campos.fecha}
+                        onChange={(e) => cambiar("fecha")(e.target.value)}
+                      />
                     </div>
                     <div className="grid gap-1.5">
                       <Label htmlFor="sabor">Sabor</Label>
-                      <select id="sabor" name="sabor" className={CAMPO}>
+                      <select
+                        id="sabor"
+                        name="sabor"
+                        className={CAMPO}
+                        value={campos.sabor}
+                        onChange={(e) => cambiar("sabor")(e.target.value)}
+                      >
                         {sabores.map((s) => (
                           <option key={s}>{s}</option>
                         ))}
@@ -314,7 +397,13 @@ function Tartas() {
                     </div>
                     <div className="grid gap-1.5">
                       <Label htmlFor="relleno">Relleno</Label>
-                      <select id="relleno" name="relleno" className={CAMPO}>
+                      <select
+                        id="relleno"
+                        name="relleno"
+                        className={CAMPO}
+                        value={campos.relleno}
+                        onChange={(e) => cambiar("relleno")(e.target.value)}
+                      >
                         {rellenos.map((r) => (
                           <option key={r}>{r}</option>
                         ))}
@@ -322,7 +411,13 @@ function Tartas() {
                     </div>
                     <div className="grid gap-1.5">
                       <Label htmlFor="tematica">Temática</Label>
-                      <select id="tematica" name="tematica" className={CAMPO}>
+                      <select
+                        id="tematica"
+                        name="tematica"
+                        className={CAMPO}
+                        value={campos.tematica}
+                        onChange={(e) => cambiar("tematica")(e.target.value)}
+                      >
                         {tematicas.map((t) => (
                           <option key={t}>{t}</option>
                         ))}
@@ -335,6 +430,8 @@ function Tartas() {
                         name="mensaje"
                         maxLength={60}
                         placeholder="Felices 30, Marta"
+                        value={campos.mensaje}
+                        onChange={(e) => cambiar("mensaje")(e.target.value)}
                       />
                     </div>
                   </div>
@@ -392,6 +489,8 @@ function Tartas() {
                       name="alergenos"
                       rows={3}
                       placeholder="Por ejemplo: sin frutos secos, un comensal celíaco…"
+                      value={campos.alergenos}
+                      onChange={(e) => cambiar("alergenos")(e.target.value)}
                     />
                     <p className="text-xs leading-relaxed text-muted-foreground">
                       Lo tendremos en cuenta al responderte. No trabajamos en un obrador libre de
@@ -410,7 +509,14 @@ function Tartas() {
                       <Label htmlFor="nombre">
                         Nombre <span className="text-destructive">*</span>
                       </Label>
-                      <Input id="nombre" name="nombre" required autoComplete="name" />
+                      <Input
+                        id="nombre"
+                        name="nombre"
+                        required
+                        autoComplete="name"
+                        value={campos.nombre}
+                        onChange={(e) => cambiar("nombre")(e.target.value)}
+                      />
                     </div>
                     <div className="grid gap-1.5">
                       <Label htmlFor="telefono">
@@ -423,6 +529,8 @@ function Tartas() {
                         required
                         inputMode="tel"
                         autoComplete="tel"
+                        value={campos.telefono}
+                        onChange={(e) => cambiar("telefono")(e.target.value)}
                         placeholder="600 000 000"
                       />
                     </div>
@@ -430,14 +538,33 @@ function Tartas() {
                 </fieldset>
 
                 <div className="grid gap-3">
-                  <Button
-                    type="submit"
-                    size="lg"
-                    disabled={!puedeEnviar}
-                    className="w-full sm:w-auto"
-                  >
-                    Solicitar presupuesto
-                  </Button>
+                  <div className="grid gap-3 sm:flex sm:flex-wrap">
+                    <Button
+                      type="submit"
+                      size="lg"
+                      disabled={!puedeEnviar}
+                      className="w-full sm:w-auto"
+                    >
+                      Solicitar presupuesto
+                    </Button>
+                    {/* La vía que sí funciona hoy, mientras el formulario no
+                        tenga destino: abre WhatsApp con todo ya escrito. */}
+                    <Button
+                      asChild
+                      size="lg"
+                      variant="outline"
+                      className="w-full gap-2 border-leaf/50 text-leaf hover:bg-leaf/10 hover:text-leaf sm:w-auto"
+                    >
+                      <a
+                        href={enlaceWhatsapp(mensajeWhatsapp)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <MessageCircle className="size-4" aria-hidden="true" />
+                        Pedir por WhatsApp
+                      </a>
+                    </Button>
+                  </div>
                   {!puedeEnviar && (
                     <p className="text-sm text-muted-foreground">
                       {fueraDeProvincia

@@ -1,4 +1,7 @@
 import { Link } from "@tanstack/react-router";
+import { MessageCircle } from "lucide-react";
+
+import { WHATSAPP_VISIBLE, enlaceWhatsapp } from "@/lib/whatsapp";
 
 import logoUrl from "@/assets/maracuya-logo.svg";
 
@@ -35,6 +38,17 @@ export function Footer() {
         <div className="space-y-2 text-sm opacity-85">
           <p className="font-medium opacity-100">Ayuda</p>
           <p>Atención en español</p>
+          <p>
+            <a
+              href={enlaceWhatsapp("Hola, tengo una consulta sobre MARACUYA.")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 hover:underline"
+            >
+              <MessageCircle className="size-3.5" aria-hidden="true" />
+              WhatsApp {WHATSAPP_VISIBLE}
+            </a>
+          </p>
           <p>hola@maracuya.es</p>
           <p>Devoluciones en 14 días</p>
         </div>

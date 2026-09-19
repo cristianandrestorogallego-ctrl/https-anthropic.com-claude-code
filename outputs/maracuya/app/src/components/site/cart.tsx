@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
-import { Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
+import { MessageCircle, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 
+import { enlaceWhatsapp } from "@/lib/whatsapp";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -82,6 +83,18 @@ function CarritoPanel() {
   const { lineas, total, abierto, setAbierto, cambiar, quitar } = useCarrito();
   const falta = Math.max(0, ENVIO_GRATIS - total);
 
+  /** El pedido en texto plano, para mandarlo tal cual. */
+  const mensajePedido = () =>
+    [
+      "Hola, quiero hacer este pedido en MARACUYA:",
+      "",
+      ...lineas.map((l) => `· ${l.cantidad} × ${l.producto.nombre} (${l.producto.formato})`),
+      "",
+      `Total orientativo: ${formatoPrecio(total)}`,
+      "",
+      "¿Me confirmáis disponibilidad y envío?",
+    ].join("\n");
+
   return (
     <Sheet open={abierto} onOpenChange={setAbierto}>
       <SheetContent className="flex w-full flex-col gap-0 sm:max-w-md">
@@ -160,6 +173,25 @@ function CarritoPanel() {
           </div>
           <Button className="w-full" size="lg" disabled={lineas.length === 0}>
             Finalizar compra
+          </Button>
+          {/* Mientras el pago no esté activado, esta es la vía que sí
+              funciona: el pedido llega escrito, no se pierde. */}
+          <Button
+            asChild
+            variant="outline"
+            size="lg"
+            className="w-full gap-2 border-leaf/50 text-leaf hover:bg-leaf/10 hover:text-leaf"
+            disabled={lineas.length === 0}
+          >
+            <a
+              href={enlaceWhatsapp(mensajePedido())}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-disabled={lineas.length === 0}
+            >
+              <MessageCircle className="size-4" aria-hidden="true" />
+              Pedir por WhatsApp
+            </a>
           </Button>
           <p className="text-center text-xs text-muted-foreground">
             Pago y envío se activarán al conectar la tienda.

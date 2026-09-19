@@ -56,7 +56,11 @@ function Index() {
         <section className="border-b bg-arena/60">
           <div className="mx-auto grid max-w-6xl gap-6 px-4 py-8 sm:grid-cols-3">
             {[
-              { icon: Truck, t: "Envío 24-72 h", d: "A toda España, gratis desde 49 €" },
+              {
+                icon: Truck,
+                t: "Envío 24-72 h",
+                d: "España peninsular, gratis desde 49 €",
+              },
               { icon: PackageCheck, t: "Producto original", d: "Marcas latinas de verdad" },
               { icon: Leaf, t: "Selección corta", d: "Solo lo que cocinamos nosotros" },
             ].map(({ icon: Icon, t, d }) => (
