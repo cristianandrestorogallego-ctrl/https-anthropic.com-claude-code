@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RecetasRouteImport } from './routes/recetas'
+import { Route as TartasRouteImport } from './routes/tartas'
 import { Route as TiendaRouteImport } from './routes/tienda'
 import { Route as ProductoIdRouteImport } from './routes/producto.$id'
 import { Route as RecetaSlugRouteImport } from './routes/receta.$slug'
@@ -23,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
 const RecetasRoute = RecetasRouteImport.update({
   id: '/recetas',
   path: '/recetas',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TartasRoute = TartasRouteImport.update({
+  id: '/tartas',
+  path: '/tartas',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TiendaRoute = TiendaRouteImport.update({
@@ -44,6 +50,7 @@ const RecetaSlugRoute = RecetaSlugRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/recetas': typeof RecetasRoute
+  '/tartas': typeof TartasRoute
   '/tienda': typeof TiendaRoute
   '/producto/$id': typeof ProductoIdRoute
   '/receta/$slug': typeof RecetaSlugRoute
@@ -51,6 +58,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/recetas': typeof RecetasRoute
+  '/tartas': typeof TartasRoute
   '/tienda': typeof TiendaRoute
   '/producto/$id': typeof ProductoIdRoute
   '/receta/$slug': typeof RecetaSlugRoute
@@ -59,19 +67,23 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/recetas': typeof RecetasRoute
+  '/tartas': typeof TartasRoute
   '/tienda': typeof TiendaRoute
   '/producto/$id': typeof ProductoIdRoute
   '/receta/$slug': typeof RecetaSlugRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/recetas' | '/tienda' | '/producto/$id' | '/receta/$slug'
+  fullPaths:
+    '/' | '/recetas' | '/tartas' | '/tienda' | '/producto/$id' | '/receta/$slug'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/recetas' | '/tienda' | '/producto/$id' | '/receta/$slug'
+  to:
+    '/' | '/recetas' | '/tartas' | '/tienda' | '/producto/$id' | '/receta/$slug'
   id:
     | '__root__'
     | '/'
     | '/recetas'
+    | '/tartas'
     | '/tienda'
     | '/producto/$id'
     | '/receta/$slug'
@@ -80,6 +92,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   RecetasRoute: typeof RecetasRoute
+  TartasRoute: typeof TartasRoute
   TiendaRoute: typeof TiendaRoute
   ProductoIdRoute: typeof ProductoIdRoute
   RecetaSlugRoute: typeof RecetaSlugRoute
@@ -99,6 +112,13 @@ declare module '@tanstack/react-router' {
       path: '/recetas'
       fullPath: '/recetas'
       preLoaderRoute: typeof RecetasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tartas': {
+      id: '/tartas'
+      path: '/tartas'
+      fullPath: '/tartas'
+      preLoaderRoute: typeof TartasRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/tienda': {
@@ -128,6 +148,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   RecetasRoute: RecetasRoute,
+  TartasRoute: TartasRoute,
   TiendaRoute: TiendaRoute,
   ProductoIdRoute: ProductoIdRoute,
   RecetaSlugRoute: RecetaSlugRoute,

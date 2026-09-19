@@ -8,6 +8,7 @@ import { ProductCard } from "@/components/site/product-card";
 import { HeroCarousel } from "@/components/site/hero-carousel";
 import { OfertasFlash } from "@/components/site/ofertas-flash";
 import { Marcas } from "@/components/site/marcas";
+import { BloqueTartas } from "@/components/site/bloque-tartas";
 import { Reveal, stagger } from "@/components/site/reveal";
 import { banderaUrl, categorias, paises, productos, recetas } from "@/lib/catalogo";
 import historiaImg from "@/assets/historia.jpg";
@@ -188,6 +189,8 @@ function Index() {
             ))}
           </div>
         </section>
+
+        <BloqueTartas />
 
         {/* Compra por tradición y país */}
         <section

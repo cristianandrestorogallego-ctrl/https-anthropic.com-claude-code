@@ -15,6 +15,7 @@ const SECCIONES = [
   { etiqueta: "Productos", to: "/tienda" as const, search: {} },
   { etiqueta: "Ofertas", to: "/tienda" as const, search: { oferta: true } },
   { etiqueta: "Recetas", to: "/recetas" as const, search: {} },
+  { etiqueta: "Tartas", to: "/tartas" as const, search: {} },
   { etiqueta: "Países", href: "/#paises" },
   { etiqueta: "Envíos", href: "/#envios" },
 ];
