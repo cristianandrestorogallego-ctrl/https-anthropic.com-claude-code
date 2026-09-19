@@ -5,6 +5,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
 /**
+ * Códigos postales a los que NO se envía, por sus dos primeras cifras.
+ * Sin esto el estimador le prometía a alguien de Las Palmas una entrega en
+ * 48 horas que nadie iba a cumplir.
+ */
+const FUERA_DE_ZONA: Record<string, string> = {
+  "07": "Baleares",
+  "35": "Las Palmas",
+  "38": "Santa Cruz de Tenerife",
+  "51": "Ceuta",
+  "52": "Melilla",
+};
+
+/**
  * Estimación de entrega de DEMOSTRACIÓN.
  * Regla provisional: 1-2 días laborables de reparto, sin domingos.
  * No es una condición comercial confirmada; se configurará en Shopify.
@@ -30,6 +43,12 @@ export function EstimadorEntrega({ compacto = false }: { compacto?: boolean }) {
       setError("Introduce un código postal español de 5 cifras.");
       return;
     }
+    const provincia = FUERA_DE_ZONA[cp.slice(0, 2)];
+    if (provincia) {
+      setResultado(null);
+      setError(`Todavía no enviamos a ${provincia}. Por ahora solo España peninsular.`);
+      return;
+    }
     setError(null);
     setResultado(`Entre el ${estimar(1)} y el ${estimar(2)}`);
   };
@@ -40,7 +59,15 @@ export function EstimadorEntrega({ compacto = false }: { compacto?: boolean }) {
         <MapPin className="size-4 text-primary" />
         Introduce tu código postal para estimar la entrega
       </label>
-      <div className="flex gap-2">
+      {/* Un formulario de verdad: en un campo de una línea, Enter tiene que
+          calcular. Antes solo respondía al clic en el botón. */}
+      <form
+        className="flex gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          calcular();
+        }}
+      >
         <Input
           id={`cp-${compacto}`}
           inputMode="numeric"
@@ -48,15 +75,21 @@ export function EstimadorEntrega({ compacto = false }: { compacto?: boolean }) {
           placeholder="28001"
           value={cp}
           onChange={(e) => setCp(e.target.value.replace(/\D/g, ""))}
+          aria-describedby={error ? `cp-error-${compacto}` : undefined}
+          aria-invalid={error ? true : undefined}
           className="max-w-32"
         />
-        <Button type="button" variant="secondary" onClick={calcular}>
+        <Button type="submit" variant="secondary">
           Calcular
         </Button>
-      </div>
-      {error && <p className="text-xs text-destructive">{error}</p>}
+      </form>
+      {error && (
+        <p id={`cp-error-${compacto}`} role="alert" className="text-xs text-destructive">
+          {error}
+        </p>
+      )}
       {resultado && (
-        <p className="text-sm">
+        <p className="text-sm" role="status">
           Entrega estimada: <span className="font-medium">{resultado}</span>
         </p>
       )}

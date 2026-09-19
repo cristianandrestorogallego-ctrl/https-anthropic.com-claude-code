@@ -263,29 +263,34 @@ function Index() {
         {/* Envíos */}
         <section id="envios" className="scroll-mt-24 bg-arena/60 py-20">
           <div className="mx-auto max-w-6xl px-4">
-            <h2 className="font-display text-3xl sm:text-4xl">Envíos claros, sin sorpresas</h2>
-            <div className="mt-8 grid gap-6 sm:grid-cols-3">
+            <h2 className="font-display text-3xl tracking-[-0.02em] sm:text-4xl">
+              Envíos claros, sin sorpresas
+            </h2>
+            <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
+              Enviamos a España peninsular. Nada más, y lo decimos aquí para que nadie llegue al
+              pago y se lleve el chasco.
+            </p>
+
+            <dl className="mt-8 grid gap-6 sm:grid-cols-3">
               {[
-                {
-                  t: "Península",
-                  d: "24-72 h laborables. 4,95 € y gratis a partir de 49 €.",
-                },
-                {
-                  t: "Baleares",
-                  d: "48-96 h laborables. 7,95 € y gratis a partir de 69 €.",
-                },
-                {
-                  t: "Canarias, Ceuta y Melilla",
-                  d: "Consulta condiciones y trámites aduaneros antes de pedir.",
-                },
+                { t: "Plazo", d: "24-72 h laborables" },
+                { t: "Precio", d: "4,95 €" },
+                { t: "Envío gratis", d: "A partir de 49 €" },
               ].map((e) => (
-                <div key={e.t} className="rounded-2xl border bg-card p-6">
-                  <h3 className="font-display text-xl">{e.t}</h3>
-                  <p className="mt-2 text-sm text-muted-foreground">{e.d}</p>
+                <div
+                  key={e.t}
+                  className="rounded-2xl bg-card p-6 shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)]"
+                >
+                  <dt className="text-sm font-medium text-muted-foreground">{e.t}</dt>
+                  <dd className="mt-1 font-display text-2xl tracking-[-0.015em]">{e.d}</dd>
                 </div>
               ))}
-            </div>
-            <p className="mt-6 text-sm text-muted-foreground">
+            </dl>
+
+            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
+              <strong className="font-medium text-foreground">
+                Todavía no llegamos a Baleares, Canarias, Ceuta ni Melilla.
+              </strong>{" "}
               Los plazos y precios son una propuesta inicial: los ajustamos contigo antes de
               publicar la tienda.
             </p>

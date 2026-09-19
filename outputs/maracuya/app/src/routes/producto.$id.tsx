@@ -176,8 +176,8 @@ function DetalleProducto() {
                 Envío en 24-72 h a España peninsular
               </p>
               <p className="text-muted-foreground">
-                4,95 € y gratis a partir de 49 €. Baleares en 48-96 h. Para Canarias, Ceuta y
-                Melilla, consulta condiciones antes de pedir.
+                4,95 € y gratis a partir de 49 €. Solo España peninsular: todavía no llegamos a
+                Baleares, Canarias, Ceuta ni Melilla.
               </p>
             </div>
 
