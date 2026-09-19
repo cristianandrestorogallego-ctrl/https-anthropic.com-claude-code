@@ -7,11 +7,11 @@
  */
 
 /**
- * El número de la tienda, en formato internacional y sin signos.
+ * El número de atención de la tienda, en formato internacional y sin signos.
  *
- * OJO: este número salió de una captura donde el usuario probaba el
- * formulario. Si el número de atención de la tienda es otro, se cambia
- * aquí y en ningún sitio más.
+ * Confirmado por Cristian. Es el único sitio donde vive: el carrito, las
+ * tartas y el pie lo sacan de aquí, así que para cambiarlo basta con tocar
+ * estas dos líneas.
  */
 export const WHATSAPP_NUMERO = "34607636226";
 
