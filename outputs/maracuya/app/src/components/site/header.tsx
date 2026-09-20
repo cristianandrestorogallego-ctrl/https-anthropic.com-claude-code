@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
-import { ChevronDown, MapPin, Menu, Search, ShoppingBag, Truck } from "lucide-react";
+import { ChevronDown, MapPin, Menu, Search, ShoppingBag, Truck, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -380,6 +380,18 @@ export function Header() {
                       )}
                     </ul>
                   </nav>
+
+                  {/* La cuenta no va en SECCIONES: en escritorio vive con la
+                      cesta, no en la barra de secciones. Aquí sí hace falta,
+                      porque el panel es lo único que hay. */}
+                  <Link
+                    to="/cuenta"
+                    onClick={() => setMenu(false)}
+                    className="flex items-center gap-2.5 rounded-lg border border-border px-3 py-2.5 font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
+                  >
+                    <User className="size-5 shrink-0 text-muted-foreground" aria-hidden="true" />
+                    Tu cuenta
+                  </Link>
                 </div>
               </SheetContent>
             </Sheet>
@@ -429,6 +441,14 @@ export function Header() {
                 </div>
               )}
             </div>
+
+            <Button asChild variant="ghost" size="sm" className="gap-1.5 px-2">
+              <Link to="/cuenta">
+                <User className="size-4" aria-hidden="true" />
+                <span className="hidden xl:inline">Cuenta</span>
+                <span className="sr-only xl:hidden">Tu cuenta</span>
+              </Link>
+            </Button>
 
             <Button
               variant="outline"
