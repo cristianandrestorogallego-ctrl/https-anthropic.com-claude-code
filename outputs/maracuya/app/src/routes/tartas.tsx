@@ -174,11 +174,11 @@ function Tartas() {
             Algunas que hemos hecho
           </h2>
           <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
-            Para hacerte una idea. Ninguna es un catálogo cerrado: si traes una foto tuya, partimos
-            de ahí.
+            Tartas que han salido de aquí. Ninguna es un catálogo cerrado: si traes una foto tuya,
+            partimos de ahí.
           </p>
 
-          <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:gap-6">
             {galeria.map((t, i) => (
               <li key={t.id}>
                 <Reveal delay={stagger(i)}>
@@ -188,12 +188,12 @@ function Tartas() {
                         src={t.imagen}
                         alt={t.nombre}
                         loading="lazy"
-                        className="aspect-4/3 w-full object-cover"
+                        className="aspect-4/5 w-full object-cover"
                       />
                     ) : (
                       // Hueco a propósito. Una foto de otra cosa sería mentir
                       // sobre lo que se vende.
-                      <div className="flex aspect-4/3 w-full flex-col items-center justify-center gap-2 bg-arena text-muted-foreground">
+                      <div className="flex aspect-4/5 w-full flex-col items-center justify-center gap-2 bg-arena text-muted-foreground">
                         <CakeSlice className="size-8" aria-hidden="true" />
                         <span className="text-xs uppercase tracking-[0.1em]">Foto pendiente</span>
                       </div>
@@ -206,7 +206,7 @@ function Tartas() {
                         {t.descripcion}
                       </p>
                       <p className="mt-auto pt-3 text-sm text-muted-foreground">
-                        <span className="tabular">{t.raciones}</span> raciones orientativas
+                        {t.sabor} · relleno de {t.relleno.toLowerCase()}
                       </p>
                     </div>
                   </article>

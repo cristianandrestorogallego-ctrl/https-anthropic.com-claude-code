@@ -10,6 +10,12 @@
  * presupuesto: se pide, se estudia y se responde.
  */
 
+import comunion from "@/assets/tartas/comunion.webp";
+import galaAzul from "@/assets/tartas/gala-azul.webp";
+import mariposas from "@/assets/tartas/mariposas.webp";
+import orquideas from "@/assets/tartas/orquideas.webp";
+import rosasRojas from "@/assets/tartas/rosas-rojas.webp";
+
 /** Interruptor único. Mientras sea false, el formulario NO envía nada. */
 export const ENVIO_CONECTADO = false;
 
@@ -21,56 +27,6 @@ export const QUE_FALTA = [
   "Un destino al que mandar la solicitud: un correo, un formulario de Shopify o un pedido en borrador.",
   "Un sitio donde guardar la imagen de referencia que adjunte el cliente.",
   "El aviso de recepción: el correo automático que confirma que la solicitud ha llegado.",
-];
-
-export type Tarta = {
-  id: string;
-  nombre: string;
-  descripcion: string;
-  /** Raciones orientativas de la tarta del ejemplo. */
-  raciones: number;
-  /** Foto real. Mientras no la haya, la baldosa enseña un hueco con su nombre. */
-  imagen?: string;
-};
-
-/** Galería de ejemplo. Editable: añade, quita y reordena. */
-export const galeria: Tarta[] = [
-  {
-    id: "tres-leches",
-    nombre: "Tres leches",
-    descripcion: "Bizcocho calado y nata montada. La de toda la vida.",
-    raciones: 12,
-  },
-  {
-    id: "chocolate-arequipe",
-    nombre: "Chocolate y arequipe",
-    descripcion: "Capas de chocolate con relleno de dulce de leche.",
-    raciones: 16,
-  },
-  {
-    id: "maracuya",
-    nombre: "Maracuyá",
-    descripcion: "Mousse ácida sobre base de galleta.",
-    raciones: 10,
-  },
-  {
-    id: "infantil-tematica",
-    nombre: "Temática infantil",
-    descripcion: "Figura o dibujo sobre la tarta, a elegir.",
-    raciones: 20,
-  },
-  {
-    id: "torta-negra",
-    nombre: "Torta negra",
-    descripcion: "Frutas maceradas y especias. Para fechas señaladas.",
-    raciones: 24,
-  },
-  {
-    id: "naked-frutas",
-    nombre: "Con fruta fresca",
-    descripcion: "Bizcocho a la vista y fruta de temporada por encima.",
-    raciones: 14,
-  },
 ];
 
 /** Opciones del formulario. Editables. */
@@ -99,6 +55,76 @@ export const rellenos = [
  * "crema de café", no "otros".
  */
 export const RELLENO_OTROS = "Otros";
+
+export type Tarta = {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  /** El bizcocho. Siempre una de las opciones del formulario. */
+  sabor: (typeof sabores)[number];
+  /** El relleno. También de la lista, para que la galería y el formulario hablen igual. */
+  relleno: (typeof rellenos)[number];
+  /**
+   * Raciones, si se saben. Opcional a propósito: son tartas que se hicieron
+   * de verdad y no vamos a inventar para cuántos dieron.
+   */
+  raciones?: number;
+  /** Foto real. Mientras no la haya, la baldosa enseña un hueco con su nombre. */
+  imagen?: string;
+};
+
+/**
+ * Trabajos hechos, no un catálogo.
+ *
+ * Las fotos son de tartas que salieron del obrador, editadas para dejarlas
+ * sobre fondo neutro. Todas son de bizcocho de tres leches; el relleno de
+ * cada una está por confirmar con Cristian, que es quien las hizo.
+ *
+ * Editable: añade, quita y reordena. Para meter una nueva, la foto va en
+ * assets/tartas y se importa arriba.
+ */
+export const galeria: Tarta[] = [
+  {
+    id: "orquideas",
+    nombre: "Orquídeas",
+    descripcion: "Buttercream amarillo con relieve, perlas de chocolate blanco y orquídeas.",
+    sabor: "Tres leches",
+    relleno: "Maracuyá",
+    imagen: orquideas,
+  },
+  {
+    id: "rosas-rojas",
+    nombre: "Rosas rojas",
+    descripcion: "Acuarela coral pintada a mano, filo dorado y rosas naturales arriba.",
+    sabor: "Tres leches",
+    relleno: "Mermelada de mora",
+    imagen: rosasRojas,
+  },
+  {
+    id: "mariposas",
+    nombre: "Mariposas",
+    descripcion: "Degradado lila, perlas y mariposas caladas. Con el nombre en el topper.",
+    sabor: "Tres leches",
+    relleno: "Arequipe (dulce de leche)",
+    imagen: mariposas,
+  },
+  {
+    id: "comunion",
+    nombre: "Primera comunión",
+    descripcion: "Marfil con rosario dorado, perlas rosas y arco de flores.",
+    sabor: "Tres leches",
+    relleno: "Crema pastelera",
+    imagen: comunion,
+  },
+  {
+    id: "gala-azul",
+    nombre: "Cuatro pisos",
+    descripcion: "Rosetones, azul acuarela, pedrería y corona. Para una celebración grande.",
+    sabor: "Tres leches",
+    relleno: "Nata",
+    imagen: galaAzul,
+  },
+];
 
 export const tematicas = [
   "Cumpleaños",
