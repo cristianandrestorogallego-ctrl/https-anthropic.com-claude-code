@@ -26,6 +26,22 @@ export const QUE_FALTA_CUENTA = [
   "La política de privacidad y el aviso de tratamiento de datos, obligatorios antes de guardar a nadie.",
 ];
 
+/**
+ * Dónde vive la lista de deseos. Decidido por Cristian: en la cuenta.
+ *
+ * Es decir, en la ficha del cliente en Shopify —un metacampo con los
+ * identificadores de los productos guardados—, no en el navegador. Así le
+ * sigue al cliente del móvil al portátil, que es de lo que sirve una lista
+ * de deseos: se mira desde el sofá y se compra desde la mesa.
+ *
+ * La consecuencia, y hay que asumirla: sin iniciar sesión no se puede
+ * guardar nada. El corazón de una ficha de producto llevará a entrar, no
+ * guardará por su cuenta en este navegador. Descartada a propósito la
+ * lista de invitado, que se pierde al cambiar de aparato o al limpiar los
+ * datos del navegador y deja al cliente con la sensación de haber perdido
+ * algo suyo.
+ */
+
 export type Ventaja = {
   clave: string;
   titulo: string;
