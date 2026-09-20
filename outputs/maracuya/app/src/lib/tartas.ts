@@ -76,25 +76,29 @@ export const galeria: Tarta[] = [
 /** Opciones del formulario. Editables. */
 export const raciones = [6, 10, 12, 16, 20, 24, 30, 40] as const;
 
-export const sabores = [
-  "Vainilla",
-  "Chocolate",
-  "Tres leches",
-  "Maracuyá",
-  "Limón",
-  "Zanahoria",
-  "Red velvet",
-] as const;
+export const sabores = ["Vainilla", "Chocolate", "Tres leches"] as const;
 
 export const rellenos = [
   "Arequipe (dulce de leche)",
   "Crema pastelera",
   "Nata",
   "Chocolate",
+  "Maracuyá",
+  "Limón",
   "Mermelada de mora",
   "Fruta fresca",
   "Sin relleno",
+  "Otros",
 ] as const;
+
+/**
+ * El relleno que no está en la lista.
+ *
+ * Al elegirlo aparece un campo para escribir cuál, y es ese texto —no la
+ * palabra "Otros"— el que viaja en la solicitud: a quien la lee le sirve
+ * "crema de café", no "otros".
+ */
+export const RELLENO_OTROS = "Otros";
 
 export const tematicas = [
   "Cumpleaños",

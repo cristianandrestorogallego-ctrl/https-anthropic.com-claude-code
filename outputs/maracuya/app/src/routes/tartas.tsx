@@ -20,6 +20,7 @@ import {
   galeria,
   municipiosServidos,
   raciones,
+  RELLENO_OTROS,
   rellenos,
   sabores,
   tematicas,
@@ -63,7 +64,8 @@ function Tartas() {
     raciones: "12",
     fecha: "",
     sabor: sabores[0],
-    relleno: rellenos[0],
+    relleno: rellenos[0] as string,
+    rellenoOtro: "",
     tematica: tematicas[0],
     mensaje: "",
     alergenos: "",
@@ -92,6 +94,11 @@ function Tartas() {
     if (unico) setCp(unico);
   };
 
+  const rellenoElegido =
+    campos.relleno === RELLENO_OTROS
+      ? campos.rellenoOtro.trim() || "otro, a concretar"
+      : campos.relleno;
+
   /** El mensaje que llega a WhatsApp, con lo que el cliente haya rellenado. */
   const mensajeWhatsapp = [
     "Hola, quiero presupuesto para una tarta personalizada.",
@@ -102,7 +109,7 @@ function Tartas() {
     `Raciones: ${campos.raciones}`,
     campos.fecha && `Fecha deseada: ${campos.fecha}`,
     `Sabor: ${campos.sabor}`,
-    `Relleno: ${campos.relleno}`,
+    `Relleno: ${rellenoElegido}`,
     `Temática: ${campos.tematica}`,
     campos.mensaje && `Mensaje sobre la tarta: ${campos.mensaje}`,
     campos.alergenos && `Alergias u observaciones: ${campos.alergenos}`,
@@ -364,7 +371,10 @@ function Tartas() {
                 <fieldset className="grid gap-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)]">
                   <legend className="float-left w-full font-display text-lg">La tarta</legend>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
+                  {/* items-start: al desplegarse el campo de "Otros", la celda
+                      crece y sin esto la de al lado estira su desplegable y lo
+                      despega de su etiqueta. */}
+                  <div className="grid items-start gap-4 sm:grid-cols-2">
                     <div className="grid gap-1.5">
                       <Label htmlFor="raciones">Raciones</Label>
                       <select
@@ -419,6 +429,22 @@ function Tartas() {
                           <option key={r}>{r}</option>
                         ))}
                       </select>
+                      {campos.relleno === RELLENO_OTROS && (
+                        <>
+                          <Label htmlFor="relleno-otro" className="mt-1">
+                            ¿Qué relleno? <span className="text-destructive">*</span>
+                          </Label>
+                          <Input
+                            id="relleno-otro"
+                            name="relleno-otro"
+                            required
+                            maxLength={60}
+                            placeholder="Por ejemplo, crema de café"
+                            value={campos.rellenoOtro}
+                            onChange={(e) => cambiar("rellenoOtro")(e.target.value)}
+                          />
+                        </>
+                      )}
                     </div>
                     <div className="grid gap-1.5">
                       <Label htmlFor="tematica">Temática</Label>
