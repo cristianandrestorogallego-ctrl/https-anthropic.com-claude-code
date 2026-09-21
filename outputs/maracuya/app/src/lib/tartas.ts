@@ -59,12 +59,25 @@ export const tramos: Tramo[] = [
 /** El tamaño que se mira primero. Va resaltado en la tabla. */
 export const TRAMO_DESTACADO = 30;
 
-/** A partir de cuántas raciones entran los extras. */
+/** A partir de cuántas raciones entra la entrega sin coste. */
 export const EXTRAS_DESDE = 30;
 
-export const extrasIncluidos = [
-  "Entrega sin coste en nuestra zona de servicio",
-  "Topper personalizado incluido",
+/**
+ * Lo que va incluido y desde cuándo.
+ *
+ * Cada línea lleva su condición al lado en vez de ir agrupadas bajo un
+ * "a partir de 30": el topper entra en todas y la entrega no, y meterlos
+ * en el mismo saco haría pensar que el topper también se paga por debajo
+ * de 30 raciones.
+ */
+export type Incluido = { que: string; cuando: string };
+
+export const incluido: Incluido[] = [
+  { que: "Topper personalizado", cuando: "En todas, sea del tamaño que sea" },
+  {
+    que: "Entrega sin coste en nuestra zona",
+    cuando: `A partir de ${EXTRAS_DESDE} raciones`,
+  },
 ];
 
 /**

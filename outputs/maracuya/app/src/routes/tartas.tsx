@@ -13,9 +13,8 @@ import { BotonWhatsapp } from "@/components/site/boton-whatsapp";
 import {
   AVISO_PRECIO,
   ENVIO_CONECTADO,
-  EXTRAS_DESDE,
   euros,
-  extrasIncluidos,
+  incluido,
   precioDesde,
   RACIONES_OTRA,
   TRAMO_DESTACADO,
@@ -273,14 +272,15 @@ function Tartas() {
             </ul>
 
             <div className="mt-6 rounded-2xl bg-arena p-5">
-              <p className="font-display text-lg">
-                A partir de <span className="tabular">{EXTRAS_DESDE}</span> raciones, incluido:
-              </p>
-              <ul className="mt-3 grid gap-2">
-                {extrasIncluidos.map((e) => (
-                  <li key={e} className="flex items-start gap-2 text-sm leading-relaxed">
+              <p className="font-display text-lg">Va incluido</p>
+              <ul className="mt-3 grid gap-3">
+                {incluido.map((i) => (
+                  <li key={i.que} className="flex items-start gap-2.5">
                     <Check className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
-                    {e}
+                    <span className="leading-snug">
+                      <span className="font-medium">{i.que}</span>
+                      <span className="block text-sm text-muted-foreground">{i.cuando}</span>
+                    </span>
                   </li>
                 ))}
               </ul>
