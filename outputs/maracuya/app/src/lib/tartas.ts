@@ -10,13 +10,11 @@
  * presupuesto: se pide, se estudia y se responde.
  */
 
-import afa from "@/assets/tartas/afa.webp";
 import bobEsponja from "@/assets/tartas/bob-esponja.webp";
 import comunion from "@/assets/tartas/comunion.webp";
 import hotWheels from "@/assets/tartas/hot-wheels.webp";
 import galaAzul from "@/assets/tartas/gala-azul.webp";
 import mariposas from "@/assets/tartas/mariposas.webp";
-import minnie from "@/assets/tartas/minnie.webp";
 import orquideas from "@/assets/tartas/orquideas.webp";
 import rosasRojas from "@/assets/tartas/rosas-rojas.webp";
 
@@ -214,24 +212,6 @@ export const galeria: Tarta[] = [
     sabor: "Tres leches",
     relleno: "Nata",
     imagen: galaAzul,
-  },
-  // Las dos últimas son fotos de móvil, sin pasar por la edición que llevan
-  // las otras. Van al final del mosaico a propósito: se nota la diferencia.
-  {
-    id: "minnie",
-    nombre: "Lazos y rosetones",
-    descripcion: "Dos pisos: rosetones fucsia abajo y buttercream liso arriba.",
-    sabor: "Tres leches",
-    relleno: "Fruta fresca",
-    imagen: minnie,
-  },
-  {
-    id: "afa",
-    nombre: "Fútbol",
-    descripcion: "Buttercream azul cielo con perlas doradas y el escudo al frente.",
-    sabor: "Tres leches",
-    relleno: "Nata",
-    imagen: afa,
   },
 ];
 
