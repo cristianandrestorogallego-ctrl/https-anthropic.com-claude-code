@@ -16,6 +16,7 @@ import hotWheels from "@/assets/tartas/hot-wheels.webp";
 import galaAzul from "@/assets/tartas/gala-azul.webp";
 import mariposas from "@/assets/tartas/mariposas.webp";
 import orquideas from "@/assets/tartas/orquideas.webp";
+import tocador from "@/assets/tartas/tocador.webp";
 import rosasRojas from "@/assets/tartas/rosas-rojas.webp";
 
 /** Interruptor único. Mientras sea false, el formulario NO envía nada. */
@@ -182,12 +183,12 @@ export const galeria: Tarta[] = [
     imagen: mariposas,
   },
   {
-    id: "bob-esponja",
-    nombre: "Fondo del mar",
-    descripcion: "Buttercream amarillo, arena de galleta y algas. Los personajes, en recortes.",
+    id: "tocador",
+    nombre: "Tocador",
+    descripcion: "Rosetones rosas a manga, perlas doradas y el tocador en recortes.",
     sabor: "Tres leches",
-    relleno: "Limón",
-    imagen: bobEsponja,
+    relleno: "Fruta fresca",
+    imagen: tocador,
   },
   {
     id: "comunion",
@@ -198,20 +199,28 @@ export const galeria: Tarta[] = [
     imagen: comunion,
   },
   {
-    id: "hot-wheels",
-    nombre: "Carreras",
-    descripcion: "Dos pisos, naranja y azul, con banda de cuadros y coches de verdad arriba.",
-    sabor: "Tres leches",
-    relleno: "Chocolate",
-    imagen: hotWheels,
-  },
-  {
     id: "gala-azul",
     nombre: "Cuatro pisos",
     descripcion: "Rosetones, azul acuarela, pedrería y corona. Para una celebración grande.",
     sabor: "Tres leches",
     relleno: "Nata",
     imagen: galaAzul,
+  },
+  {
+    id: "bob-esponja",
+    nombre: "Fondo del mar",
+    descripcion: "Buttercream amarillo, arena de galleta y algas. Los personajes, en recortes.",
+    sabor: "Tres leches",
+    relleno: "Limón",
+    imagen: bobEsponja,
+  },
+  {
+    id: "hot-wheels",
+    nombre: "Carreras",
+    descripcion: "Dos pisos, naranja y azul, con banda de cuadros y coches de verdad arriba.",
+    sabor: "Tres leches",
+    relleno: "Chocolate",
+    imagen: hotWheels,
   },
 ];
 
