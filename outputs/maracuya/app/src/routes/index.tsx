@@ -91,28 +91,30 @@ function Index() {
           <div className="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
             {categorias.map((c, i) => (
               <Reveal key={c.id} delay={stagger(i)}>
+                {/* El rótulo va debajo, no encima. Las fotos de categoría
+                    están llenas de producto y un degradado con el título
+                    dentro tapaba justo la mitad que interesa ver. */}
                 <Link
                   to="/tienda"
                   search={{ categoria: c.id }}
-                  className="group relative block overflow-hidden rounded-2xl shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)] transition-[transform,box-shadow] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1 hover:shadow-[var(--shadow-e3)]"
+                  className="group flex h-full flex-col overflow-hidden rounded-2xl bg-card shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)] transition-[transform,box-shadow] duration-300 ease-[var(--ease-out-expo)] hover:-translate-y-1 hover:shadow-[var(--shadow-e3)]"
                 >
                   <img
                     src={c.imagen}
                     alt={c.nombre}
                     loading="lazy"
-                    width={912}
-                    height={1104}
-                    className="aspect-3/4 w-full object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
+                    width={1050}
+                    height={700}
+                    className="aspect-3/2 w-full object-cover transition-transform duration-700 ease-[var(--ease-out-expo)] group-hover:scale-105"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-selva/90 via-selva/20 to-transparent" />
-                  <div className="absolute inset-x-0 bottom-0 p-5 text-selva-foreground">
-                    <h3 className="flex items-center gap-2 font-display text-xl">
+                  <div className="flex flex-1 flex-col gap-1 p-5">
+                    <h3 className="flex items-center gap-2 font-display text-xl tracking-[-0.012em] transition-colors duration-200 group-hover:text-primary">
                       <span aria-hidden="true" className="text-lg leading-none">
                         {c.emoji}
                       </span>
                       {c.nombre}
                     </h3>
-                    <p className="text-sm opacity-85">{c.claim}</p>
+                    <p className="text-sm leading-relaxed text-muted-foreground">{c.claim}</p>
                   </div>
                 </Link>
               </Reveal>

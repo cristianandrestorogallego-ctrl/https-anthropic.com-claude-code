@@ -1,3 +1,4 @@
+import congelados from "@/assets/cat-congelados.webp";
 import despensa from "@/assets/cat-despensa.jpg";
 import salsas from "@/assets/cat-salsas.webp";
 import bebidas from "@/assets/cat-bebidas.webp";
@@ -86,7 +87,7 @@ export const categorias: {
     emoji: "🧊",
     nombre: "Congelados",
     claim: "Yuca, pulpas y masas listas para el sartén",
-    imagen: despensa,
+    imagen: congelados,
     subcategorias: ["Tubérculos", "Pulpas de fruta", "Masas y rellenos"],
   },
 ];
