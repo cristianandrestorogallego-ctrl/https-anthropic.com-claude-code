@@ -11,7 +11,15 @@ import { Footer } from "@/components/site/footer";
 import { Reveal, stagger } from "@/components/site/reveal";
 import { BotonWhatsapp } from "@/components/site/boton-whatsapp";
 import {
+  AVISO_PRECIO,
   ENVIO_CONECTADO,
+  EXTRAS_DESDE,
+  euros,
+  extrasIncluidos,
+  precioDesde,
+  RACIONES_OTRA,
+  TRAMO_DESTACADO,
+  tramos,
   codigoPorMunicipio,
   municipioPorCodigo,
   QUE_FALTA,
@@ -61,7 +69,8 @@ function Tartas() {
 
   // Campos controlados: el enlace de WhatsApp se arma del estado, no del DOM.
   const [campos, setCampos] = useState({
-    raciones: "12",
+    raciones: String(TRAMO_DESTACADO),
+    racionesOtra: "",
     fecha: "",
     sabor: sabores[0],
     relleno: rellenos[0] as string,
@@ -94,6 +103,20 @@ function Tartas() {
     if (unico) setCp(unico);
   };
 
+  /**
+   * El precio de partida del tamaño elegido, si lo tiene. Con "otra
+   * cantidad" no hay número: se responde con presupuesto y se dice así,
+   * en vez de estimar uno.
+   */
+  const desde = campos.raciones === RACIONES_OTRA ? null : precioDesde(Number(campos.raciones));
+
+  const racionesTexto =
+    campos.raciones === RACIONES_OTRA
+      ? campos.racionesOtra.trim()
+        ? `${campos.racionesOtra.trim()} (precio a consultar)`
+        : "a concretar"
+      : `${campos.raciones}${desde ? ` (desde ${euros(desde)})` : ""}`;
+
   const rellenoElegido =
     campos.relleno === RELLENO_OTROS
       ? campos.rellenoOtro.trim() || "otro, a concretar"
@@ -106,7 +129,7 @@ function Tartas() {
     municipio && `Municipio: ${municipio}`,
     cp && `Código postal: ${cp}`,
     campos.direccion && `Dirección: ${campos.direccion}`,
-    `Raciones: ${campos.raciones}`,
+    `Raciones: ${racionesTexto}`,
     campos.fecha && `Fecha deseada: ${campos.fecha}`,
     `Sabor: ${campos.sabor}`,
     `Relleno: ${rellenoElegido}`,
@@ -214,6 +237,60 @@ function Tartas() {
               </li>
             ))}
           </ul>
+        </section>
+
+        {/* Precios */}
+        <section id="precios" className="scroll-mt-24 border-t bg-card/60 py-16 sm:py-20">
+          <div className="mx-auto max-w-3xl px-4">
+            <h2 className="font-display text-3xl tracking-[-0.02em] sm:text-4xl">Tamaños</h2>
+            <p className="mt-3 leading-relaxed text-muted-foreground">{AVISO_PRECIO}</p>
+
+            <ul className="mt-8 grid gap-3">
+              {tramos.map((t, i) => {
+                const destacado = t.raciones === TRAMO_DESTACADO;
+                return (
+                  <li key={t.raciones}>
+                    <Reveal delay={stagger(i)}>
+                      <div
+                        className={`flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 rounded-2xl px-5 py-4 ${
+                          destacado
+                            ? "bg-maracuya/15 shadow-[var(--shadow-e1)] ring-2 ring-maracuya"
+                            : "bg-background ring-1 ring-[var(--ring-linea)]"
+                        }`}
+                      >
+                        <p className="font-display text-xl tracking-[-0.015em]">
+                          <span className="tabular">{t.raciones}</span> raciones
+                        </p>
+                        <p className="font-display text-xl tracking-[-0.015em]">
+                          desde <span className="tabular">{euros(t.desde)}</span>
+                        </p>
+                        <p className="w-full text-sm text-muted-foreground">{t.ocasion}</p>
+                      </div>
+                    </Reveal>
+                  </li>
+                );
+              })}
+            </ul>
+
+            <div className="mt-6 rounded-2xl bg-arena p-5">
+              <p className="font-display text-lg">
+                A partir de <span className="tabular">{EXTRAS_DESDE}</span> raciones, incluido:
+              </p>
+              <ul className="mt-3 grid gap-2">
+                {extrasIncluidos.map((e) => (
+                  <li key={e} className="flex items-start gap-2 text-sm leading-relaxed">
+                    <Check className="mt-0.5 size-4 shrink-0 text-primary" aria-hidden="true" />
+                    {e}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
+              ¿Necesitas otro tamaño? Elige <span className="font-medium">Otra cantidad</span> en el
+              formulario, dinos cuántas raciones y te pasamos precio.
+            </p>
+          </div>
         </section>
 
         {/* Formulario */}
@@ -389,7 +466,41 @@ function Tartas() {
                             {r} raciones
                           </option>
                         ))}
+                        <option value={RACIONES_OTRA}>Otra cantidad</option>
                       </select>
+
+                      {campos.raciones === RACIONES_OTRA ? (
+                        <>
+                          <Label htmlFor="raciones-otra" className="mt-1">
+                            ¿Cuántas? <span className="text-destructive">*</span>
+                          </Label>
+                          <Input
+                            id="raciones-otra"
+                            name="raciones-otra"
+                            required
+                            inputMode="numeric"
+                            maxLength={3}
+                            placeholder="16"
+                            value={campos.racionesOtra}
+                            onChange={(e) =>
+                              cambiar("racionesOtra")(e.target.value.replace(/\D/g, ""))
+                            }
+                          />
+                          <p className="text-sm text-muted-foreground">
+                            Precio a consultar: te lo decimos al responderte.
+                          </p>
+                        </>
+                      ) : (
+                        desde && (
+                          <p className="text-sm">
+                            Desde <span className="font-medium">{euros(desde)}</span>
+                            <span className="text-muted-foreground">
+                              {" "}
+                              · el final depende del diseño
+                            </span>
+                          </p>
+                        )
+                      )}
                     </div>
                     <div className="grid gap-1.5">
                       <Label htmlFor="fecha">Fecha deseada</Label>

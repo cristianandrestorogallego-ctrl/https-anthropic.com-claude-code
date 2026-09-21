@@ -29,8 +29,66 @@ export const QUE_FALTA = [
   "El aviso de recepción: el correo automático que confirma que la solicitud ha llegado.",
 ];
 
-/** Opciones del formulario. Editables. */
-export const raciones = [6, 10, 12, 16, 20, 24, 30, 40] as const;
+/**
+ * Los tamaños y su precio de partida.
+ *
+ * "Desde" en serio: es el suelo, no la tarifa. Lo que se cobra depende del
+ * diseño y la decoración, y sale del presupuesto que se responde a mano.
+ * Aquí no hay ningún precio calculado ni interpolado: si un tamaño no está
+ * en esta lista, no tiene precio y se dice así.
+ *
+ * La ocasión no es adorno. Casi nadie sabe traducir "30 raciones" a la
+ * fiesta que está montando, y ante la duda se queda corto; con la ocasión
+ * al lado, elige por lo que de verdad sabe.
+ */
+export type Tramo = {
+  raciones: number;
+  /** Precio de partida, en euros. */
+  desde: number;
+  ocasion: string;
+};
+
+export const tramos: Tramo[] = [
+  { raciones: 10, desde: 40, ocasion: "Una merienda en casa" },
+  { raciones: 20, desde: 75, ocasion: "El cumpleaños de los de siempre" },
+  { raciones: 30, desde: 99, ocasion: "Cumpleaños con familia y amigos" },
+  { raciones: 40, desde: 130, ocasion: "Comunión o bautizo" },
+  { raciones: 50, desde: 160, ocasion: "Bodas y celebraciones grandes" },
+];
+
+/** El tamaño que se mira primero. Va resaltado en la tabla. */
+export const TRAMO_DESTACADO = 30;
+
+/** A partir de cuántas raciones entran los extras. */
+export const EXTRAS_DESDE = 30;
+
+export const extrasIncluidos = [
+  "Entrega sin coste en nuestra zona de servicio",
+  "Topper personalizado incluido",
+];
+
+/**
+ * Va pegado a la tabla y del mismo tamaño, no en letra pequeña al pie.
+ * Quien lee "desde 99 €" tiene que leer esto en el mismo golpe de vista.
+ */
+export const AVISO_PRECIO =
+  "Son precios de partida. El final depende del diseño y la decoración, y te lo confirmamos al responder.";
+
+/** Las raciones del formulario son las mismas que las de la tabla. */
+export const raciones = tramos.map((t) => t.raciones);
+
+/** Cualquier otro tamaño: se escribe cuál y se responde con presupuesto. */
+export const RACIONES_OTRA = "otra";
+
+/** El precio de partida de un tamaño, o null si no está en la tabla. */
+export function precioDesde(cuantas: number): number | null {
+  return tramos.find((t) => t.raciones === cuantas)?.desde ?? null;
+}
+
+/** Los euros, como se escriben en España. */
+export function euros(importe: number): string {
+  return `${importe} €`;
+}
 
 export const sabores = ["Vainilla", "Chocolate", "Tres leches"] as const;
 
