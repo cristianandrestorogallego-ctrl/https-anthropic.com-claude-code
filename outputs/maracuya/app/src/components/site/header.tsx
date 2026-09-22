@@ -169,6 +169,7 @@ function MenuEscritorio({
   abierto,
   onAbrir,
   onCerrar,
+  onCerrarYa,
   ancho,
   anclaje,
   children,
@@ -177,7 +178,10 @@ function MenuEscritorio({
   destino: Destino;
   abierto: boolean;
   onAbrir: () => void;
+  /** Al salir el ratón: con pausa, para poder llegar al panel. */
   onCerrar: () => void;
+  /** Al pulsar o al salir el foco: sin pausa. */
+  onCerrarYa: () => void;
   ancho: string;
   /**
    * De qué cuelga el panel. "boton" lo centra bajo su propia etiqueta, que
@@ -195,10 +199,16 @@ function MenuEscritorio({
   return (
     <div
       className={anclaje === "barra" ? "static" : "relative"}
-      onMouseEnter={onAbrir}
+      /* Al mover el ratón, no al entrar. Parece lo mismo pero no lo es:
+         al pulsar la etiqueta se navega, la cabecera se vuelve a montar y
+         el navegador lanza un mouseenter sobre la palabra que sigue bajo
+         el cursor, así que el panel se reabría solo encima del catálogo
+         recién abierto. Un mousemove solo llega si el ratón se mueve de
+         verdad, que es justo cuando alguien quiere abrirlo. */
+      onMouseMove={() => onAbrir()}
       onMouseLeave={onCerrar}
       onBlur={(e) => {
-        if (!e.currentTarget.contains(e.relatedTarget as Node)) onCerrar();
+        if (!e.currentTarget.contains(e.relatedTarget as Node)) onCerrarYa();
       }}
     >
       {/* La palabra es un enlace y el galón un botón, por separado. Antes
@@ -213,7 +223,7 @@ function MenuEscritorio({
           <Link
             to={destino.to}
             search={destino.search ?? {}}
-            onClick={onCerrar}
+            onClick={onCerrarYa}
             className="py-1 transition-colors duration-200 hover:text-primary"
           >
             {etiqueta}
@@ -221,7 +231,7 @@ function MenuEscritorio({
         ) : (
           <a
             href={destino.href}
-            onClick={onCerrar}
+            onClick={onCerrarYa}
             className="py-1 transition-colors duration-200 hover:text-primary"
           >
             {etiqueta}
@@ -232,7 +242,7 @@ function MenuEscritorio({
           aria-expanded={abierto}
           aria-controls={id}
           aria-label={`${abierto ? "Cerrar" : "Abrir"} ${etiqueta}`}
-          onClick={() => (abierto ? onCerrar() : onAbrir())}
+          onClick={() => (abierto ? onCerrarYa() : onAbrir())}
           className="cursor-pointer p-1 transition-colors duration-200 hover:text-primary"
         >
           <ChevronDown
@@ -265,6 +275,41 @@ export function Header() {
   // obligan a hacer scroll para encontrar lo que se buscaba.
   const [seccionAbierta, setSeccionAbierta] = useState<string | null>(null);
   const [menuEscritorio, setMenuEscritorio] = useState<string | null>(null);
+  /**
+   * Cerrar el panel de escritorio con un respiro.
+   *
+   * Entre la palabra y el panel hay unos píxeles de nada, y sin esta
+   * pausa el menú se cerraba justo al bajar el ratón hacia él: se abría
+   * al pasar por encima y desaparecía antes de poder pulsar dentro.
+   * También perdona el gesto en diagonal hacia el panel ancho.
+   */
+  const cierreLento = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (cierreLento.current) clearTimeout(cierreLento.current);
+    },
+    [],
+  );
+
+  const abrirEscritorio = (etiqueta: string) => {
+    if (cierreLento.current) clearTimeout(cierreLento.current);
+    setMenuEscritorio(etiqueta);
+  };
+
+  const cerrarEscritorio = (etiqueta: string) => {
+    if (cierreLento.current) clearTimeout(cierreLento.current);
+    cierreLento.current = setTimeout(() => {
+      setMenuEscritorio((actual) => (actual === etiqueta ? null : actual));
+    }, 180);
+  };
+
+  /** Sin esperas: al pulsar un enlace, al salir el foco y con Escape. */
+  const cerrarEscritorioYa = () => {
+    if (cierreLento.current) clearTimeout(cierreLento.current);
+    setMenuEscritorio(null);
+  };
+
   const [cp, setCp] = useState(false);
   const [busqueda, setBusqueda] = useState("");
   const navigate = useNavigate();
@@ -542,10 +587,9 @@ export function Header() {
                       etiqueta={sec.etiqueta}
                       destino={sec}
                       abierto={menuEscritorio === sec.etiqueta}
-                      onAbrir={() => setMenuEscritorio(sec.etiqueta)}
-                      onCerrar={() =>
-                        setMenuEscritorio((actual) => (actual === sec.etiqueta ? null : actual))
-                      }
+                      onAbrir={() => abrirEscritorio(sec.etiqueta)}
+                      onCerrar={() => cerrarEscritorio(sec.etiqueta)}
+                      onCerrarYa={cerrarEscritorioYa}
                       ancho={enColumnas ? "w-[62rem]" : "w-72"}
                       anclaje={enColumnas ? "barra" : "boton"}
                     >
@@ -557,7 +601,7 @@ export function Header() {
                               <Link
                                 to={h.to}
                                 search={h.search}
-                                onClick={() => setMenuEscritorio(null)}
+                                onClick={cerrarEscritorioYa}
                                 className="flex items-center gap-2 font-display text-base tracking-normal transition-colors duration-200 hover:text-primary"
                               >
                                 {h.emoji && (
@@ -574,7 +618,7 @@ export function Header() {
                                       <Link
                                         to={n.to}
                                         search={n.search}
-                                        onClick={() => setMenuEscritorio(null)}
+                                        onClick={cerrarEscritorioYa}
                                         className="block text-[0.82rem] font-normal text-muted-foreground transition-colors duration-200 hover:text-primary"
                                       >
                                         {n.etiqueta}
@@ -593,7 +637,7 @@ export function Header() {
                               <Link
                                 to={h.to}
                                 search={h.search}
-                                onClick={() => setMenuEscritorio(null)}
+                                onClick={cerrarEscritorioYa}
                                 className="flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-normal tracking-normal transition-colors duration-200 hover:bg-arena hover:text-primary"
                               >
                                 {h.bandera && (
