@@ -24,6 +24,12 @@ type Hijo = Enlace & {
   nietos?: Enlace[];
 };
 
+/**
+ * A dónde lleva la etiqueta de una sección. Se pasa tal cual a los dos
+ * menús para que la palabra sea siempre un enlace y el galón, un botón.
+ */
+type Destino = Pick<Seccion, "to" | "search" | "href">;
+
 type Seccion = {
   etiqueta: string;
   to?: "/tienda" | "/recetas" | "/tartas";
@@ -96,31 +102,52 @@ const SECCIONES: Seccion[] = [
  */
 function Desplegable({
   etiqueta,
+  destino,
   abierto,
   onAlternar,
+  onNavegar,
   children,
 }: {
   etiqueta: string;
+  destino: Destino;
   abierto: boolean;
   onAlternar: () => void;
+  onNavegar: () => void;
   children: React.ReactNode;
 }) {
+  const clase =
+    "flex-1 rounded-lg px-3 py-2.5 text-left font-display text-lg transition-colors duration-200 hover:text-primary";
   return (
     <>
-      <button
-        type="button"
-        aria-expanded={abierto}
-        onClick={onAlternar}
-        className="flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-left font-display text-lg transition-colors duration-200 hover:bg-arena hover:text-primary"
-      >
-        {etiqueta}
-        <ChevronDown
-          className={`size-4 shrink-0 text-muted-foreground transition-transform duration-300 ease-[var(--ease-out-expo)] ${
-            abierto ? "rotate-180" : ""
-          }`}
-          aria-hidden="true"
-        />
-      </button>
+      {/* La palabra lleva a la sección entera y el galón abre la lista.
+          Antes todo era un botón, así que para ver todos los productos
+          había que entrar por una categoría: dos toques para algo que
+          debería ser uno. */}
+      <div className="flex items-center rounded-lg transition-colors duration-200 hover:bg-arena">
+        {destino.to ? (
+          <Link to={destino.to} search={destino.search ?? {}} onClick={onNavegar} className={clase}>
+            {etiqueta}
+          </Link>
+        ) : (
+          <a href={destino.href} onClick={onNavegar} className={clase}>
+            {etiqueta}
+          </a>
+        )}
+        <button
+          type="button"
+          aria-expanded={abierto}
+          aria-label={`${abierto ? "Cerrar" : "Abrir"} ${etiqueta}`}
+          onClick={onAlternar}
+          className="shrink-0 cursor-pointer rounded-lg px-3 py-2.5 text-muted-foreground transition-colors duration-200 hover:text-primary"
+        >
+          <ChevronDown
+            className={`size-4 shrink-0 transition-transform duration-300 ease-[var(--ease-out-expo)] ${
+              abierto ? "rotate-180" : ""
+            }`}
+            aria-hidden="true"
+          />
+        </button>
+      </div>
       {abierto && (
         <ul className="mb-2 ml-3 grid gap-0.5 border-l border-border pl-3">{children}</ul>
       )}
@@ -138,6 +165,7 @@ function Desplegable({
  */
 function MenuEscritorio({
   etiqueta,
+  destino,
   abierto,
   onAbrir,
   onCerrar,
@@ -146,6 +174,7 @@ function MenuEscritorio({
   children,
 }: {
   etiqueta: string;
+  destino: Destino;
   abierto: boolean;
   onAbrir: () => void;
   onCerrar: () => void;
@@ -172,22 +201,48 @@ function MenuEscritorio({
         if (!e.currentTarget.contains(e.relatedTarget as Node)) onCerrar();
       }}
     >
-      <button
-        type="button"
-        aria-expanded={abierto}
-        aria-controls={id}
-        onClick={() => (abierto ? onCerrar() : onAbrir())}
-        onFocus={onAbrir}
-        className="inline-flex items-center gap-1.5 py-1 uppercase tracking-[0.07em] text-foreground/85 transition-colors duration-200 hover:text-primary aria-expanded:text-primary"
+      {/* La palabra es un enlace y el galón un botón, por separado. Antes
+          todo era un botón que solo abría el panel, así que para ver todos
+          los productos había que entrar por una categoría. */}
+      <div
+        className={`inline-flex items-center gap-1 uppercase tracking-[0.07em] transition-colors duration-200 ${
+          abierto ? "text-primary" : "text-foreground/85"
+        }`}
       >
-        {etiqueta}
-        <ChevronDown
-          className={`size-3.5 transition-transform duration-300 ease-[var(--ease-out-expo)] ${
-            abierto ? "rotate-180" : ""
-          }`}
-          aria-hidden="true"
-        />
-      </button>
+        {destino.to ? (
+          <Link
+            to={destino.to}
+            search={destino.search ?? {}}
+            onClick={onCerrar}
+            className="py-1 transition-colors duration-200 hover:text-primary"
+          >
+            {etiqueta}
+          </Link>
+        ) : (
+          <a
+            href={destino.href}
+            onClick={onCerrar}
+            className="py-1 transition-colors duration-200 hover:text-primary"
+          >
+            {etiqueta}
+          </a>
+        )}
+        <button
+          type="button"
+          aria-expanded={abierto}
+          aria-controls={id}
+          aria-label={`${abierto ? "Cerrar" : "Abrir"} ${etiqueta}`}
+          onClick={() => (abierto ? onCerrar() : onAbrir())}
+          className="cursor-pointer p-1 transition-colors duration-200 hover:text-primary"
+        >
+          <ChevronDown
+            className={`size-3.5 transition-transform duration-300 ease-[var(--ease-out-expo)] ${
+              abierto ? "rotate-180" : ""
+            }`}
+            aria-hidden="true"
+          />
+        </button>
+      </div>
 
       {abierto && (
         <div
@@ -320,7 +375,9 @@ export function Header() {
                           <li key={sec.etiqueta}>
                             <Desplegable
                               etiqueta={sec.etiqueta}
+                              destino={sec}
                               abierto={seccionAbierta === sec.etiqueta}
+                              onNavegar={() => setMenu(false)}
                               onAlternar={() =>
                                 setSeccionAbierta(
                                   seccionAbierta === sec.etiqueta ? null : sec.etiqueta,
@@ -483,6 +540,7 @@ export function Header() {
                   {sec.hijos ? (
                     <MenuEscritorio
                       etiqueta={sec.etiqueta}
+                      destino={sec}
                       abierto={menuEscritorio === sec.etiqueta}
                       onAbrir={() => setMenuEscritorio(sec.etiqueta)}
                       onCerrar={() =>
