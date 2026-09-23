@@ -46,6 +46,25 @@ type Envio = {
 };
 
 /**
+ * Por qué se quejó el proveedor, dicho para quien lo tenga que arreglar.
+ *
+ * Brevo devuelve el mismo code —"unauthorized"— para dos averías que se
+ * resuelven en sitios distintos: la clave mal puesta y el remitente sin
+ * verificar. Sin esta traducción, el registro de Vercel dice 401 y hay
+ * que adivinar cuál de las dos es.
+ */
+function queHacer(estado: number, code: string, message: string): string {
+  const texto = `${code} ${message}`.toLowerCase();
+  if (texto.includes("not verified") || texto.includes("sender"))
+    return "Verifica el remitente en Brevo (Settings → Senders) o autentica el dominio.";
+  if (estado === 401 || estado === 403)
+    return "Revisa BREVO_API_KEY en Vercel: falta, está mal copiada o se ha revocado.";
+  if (estado === 402 || estado === 429) return "Se ha agotado el cupo del plan de Brevo por hoy.";
+  if (estado === 400) return "Brevo ha rechazado el contenido del correo.";
+  return "Fallo del proveedor de correo.";
+}
+
+/**
  * Una llamada al proveedor de correo. Aislada a propósito: cambiar de
  * proveedor es reescribir esta función y nada más.
  */
@@ -67,11 +86,29 @@ async function mandarCorreo(clave: string, e: Envio): Promise<void> {
     }),
   });
 
-  if (!respuesta.ok) {
-    // El cuerpo del error puede traer la clave de vuelta en algunos
-    // proveedores, así que solo se registra el código.
-    throw new Error(`El servicio de correo respondió ${respuesta.status}.`);
+  if (respuesta.ok) return;
+
+  // Del cuerpo del error solo salen estos dos campos, y recortados. Son
+  // descripciones cortas que escribe el proveedor; volcar la respuesta
+  // entera es lo que acaba escupiendo una credencial en un registro.
+  let code = "";
+  let message = "";
+  try {
+    const cuerpo: unknown = await respuesta.json();
+    if (cuerpo && typeof cuerpo === "object") {
+      const o = cuerpo as Record<string, unknown>;
+      if (typeof o["code"] === "string") code = o["code"].slice(0, 60);
+      if (typeof o["message"] === "string") message = o["message"].slice(0, 200);
+    }
+  } catch {
+    // Una respuesta que no es JSON no aporta nada: queda el código HTTP.
   }
+
+  const detalle = [code, message].filter(Boolean).join(": ");
+  throw new Error(
+    `Brevo respondió ${respuesta.status}${detalle ? ` (${detalle})` : ""}. ` +
+      queHacer(respuesta.status, code, message),
+  );
 }
 
 function adjuntosDe(s: Solicitud): Adjunto[] {
@@ -115,6 +152,10 @@ export const enviarSolicitud = createServerFn({ method: "POST" })
         para: { email: data.correo, name: data.nombre },
         asunto: cliente.asunto,
         texto: cliente.texto,
+        // El acuse invita a responder, así que la respuesta tiene que
+        // caer en un buzón que alguien lea. El remitente puede ser una
+        // dirección del dominio sin nadie detrás; este no.
+        responderA: { email: BUZON(), name: "MARACUYA mercado latino" },
       });
       return { estado: "enviada", acuse: true };
     } catch (error) {
