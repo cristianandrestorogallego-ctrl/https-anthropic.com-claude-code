@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { AlertTriangle, CakeSlice, Camera, Check, Info, MapPin, X } from "lucide-react";
+import { AlertTriangle, CakeSlice, Camera, Check, Info, Loader2, MapPin, X } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,9 +11,11 @@ import { Footer } from "@/components/site/footer";
 import { Reveal, stagger } from "@/components/site/reveal";
 import { BotonWhatsapp } from "@/components/site/boton-whatsapp";
 import { CORREO, enlaceCorreo } from "@/lib/contacto";
+import { enviarSolicitud } from "@/lib/enviar-solicitud";
+import { reducirFoto } from "@/lib/imagen";
+import type { Respuesta } from "@/lib/solicitud";
 import {
   AVISO_PRECIO,
-  ENVIO_CONECTADO,
   euros,
   incluido,
   precioDesde,
@@ -63,8 +65,20 @@ function Tartas() {
   const [cp, setCp] = useState("");
 
   const [tocadoCp, setTocadoCp] = useState(false);
-  const [imagen, setImagen] = useState<{ nombre: string; url: string } | null>(null);
-  const [enviado, setEnviado] = useState(false);
+  // El archivo se guarda entero: hace falta para reducirlo al enviar.
+  const [imagen, setImagen] = useState<{ nombre: string; url: string; archivo: File } | null>(null);
+
+  /**
+   * En qué punto está el envío. La respuesta viene del servidor, que es
+   * quien sabe si hay correo configurado; aquí no se inventa nada.
+   */
+  const [envio, setEnvio] = useState<
+    { fase: "quieto" } | { fase: "enviando" } | { fase: "hecho"; r: Respuesta }
+  >({ fase: "quieto" });
+
+  const [consiento, setConsiento] = useState(false);
+  /** La trampa para robots; una persona no ve este campo. */
+  const [web, setWeb] = useState("");
   const archivoRef = useRef<HTMLInputElement>(null);
 
   // Campos controlados: el enlace de WhatsApp se arma del estado, no del DOM.
@@ -154,7 +168,7 @@ function Tartas() {
     const f = e.target.files?.[0];
     if (!f) return;
     if (imagen) URL.revokeObjectURL(imagen.url);
-    setImagen({ nombre: f.name, url: URL.createObjectURL(f) });
+    setImagen({ nombre: f.name, url: URL.createObjectURL(f), archivo: f });
   };
 
   const quitarImagen = () => {
@@ -304,27 +318,42 @@ function Tartas() {
               Cuantos más detalles nos des, más ajustado será. Nada de esto te compromete a nada.
             </p>
 
-            {enviado ? (
+            {envio.fase === "hecho" ? (
               <div
                 role="status"
                 className="mt-8 rounded-2xl bg-card p-6 shadow-[var(--shadow-e2)] ring-1 ring-[var(--ring-linea)]"
               >
-                <h3 className="flex items-center gap-2 font-display text-xl">
-                  <Check className="size-5 text-primary" aria-hidden="true" />
-                  {ENVIO_CONECTADO ? "Solicitud recibida" : "Así se vería al enviarla"}
-                </h3>
-                {ENVIO_CONECTADO ? (
-                  <p className="mt-3 leading-relaxed text-muted-foreground">
-                    Te escribimos con el presupuesto y una fecha posible. Ni el precio ni la fecha
-                    están confirmados hasta que te respondamos.
-                  </p>
-                ) : (
+                {envio.r.estado === "enviada" && (
                   <>
+                    <h3 className="flex items-center gap-2 font-display text-xl">
+                      <Check className="size-5 text-primary" aria-hidden="true" />
+                      Solicitud recibida
+                    </h3>
+                    <p className="mt-3 leading-relaxed text-muted-foreground">
+                      Te escribimos con el presupuesto y una fecha posible. Ni el precio ni la fecha
+                      están confirmados hasta que te respondamos.
+                    </p>
+                    {envio.r.acuse && (
+                      <p className="mt-3 leading-relaxed text-muted-foreground">
+                        Te hemos mandado una copia a{" "}
+                        <span className="font-medium text-foreground">{campos.correo}</span>. Si no
+                        la ves, mira en el correo no deseado.
+                      </p>
+                    )}
+                  </>
+                )}
+
+                {envio.r.estado === "sin-configurar" && (
+                  <>
+                    <h3 className="flex items-center gap-2 font-display text-xl">
+                      <Info className="size-5 text-primary" aria-hidden="true" />
+                      Así se vería al enviarla
+                    </h3>
                     <p className="mt-3 leading-relaxed text-muted-foreground">
                       <strong className="font-medium text-foreground">
                         Esto es una demostración: la solicitud no se ha enviado a ninguna parte.
                       </strong>{" "}
-                      El formulario está entero y valida la zona, pero le falta un destino.
+                      El formulario está entero y valida la zona, pero al envío le falta esto:
                     </p>
                     <ul className="mt-4 grid gap-2 text-sm text-muted-foreground">
                       {QUE_FALTA.map((f) => (
@@ -336,7 +365,41 @@ function Tartas() {
                     </ul>
                   </>
                 )}
-                <Button variant="outline" className="mt-6" onClick={() => setEnviado(false)}>
+
+                {envio.r.estado === "error" && (
+                  <>
+                    <h3 className="flex items-center gap-2 font-display text-xl">
+                      <AlertTriangle className="size-5 text-destructive" aria-hidden="true" />
+                      No hemos podido enviarla
+                    </h3>
+                    <p className="mt-3 leading-relaxed text-muted-foreground">{envio.r.motivo}</p>
+                  </>
+                )}
+
+                {/* Si no salió, las otras dos vías siguen ahí y llevan todo
+                    escrito: nadie se va de esta pantalla con las manos
+                    vacías. */}
+                {envio.r.estado !== "enviada" && (
+                  <div className="mt-5 grid gap-3">
+                    <BotonWhatsapp mensaje={mensajeWhatsapp} className="w-full sm:w-auto" />
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      O escríbenos a{" "}
+                      <a
+                        href={enlaceCorreo("Presupuesto de tarta personalizada", mensajeWhatsapp)}
+                        className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
+                      >
+                        {CORREO}
+                      </a>
+                      , con la solicitud ya redactada.
+                    </p>
+                  </div>
+                )}
+
+                <Button
+                  variant="outline"
+                  className="mt-6"
+                  onClick={() => setEnvio({ fase: "quieto" })}
+                >
                   Volver al formulario
                 </Button>
               </div>
@@ -345,8 +408,51 @@ function Tartas() {
                 className="mt-8 grid gap-6"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (!puedeEnviar) return;
-                  setEnviado(true);
+                  if (!puedeEnviar || envio.fase === "enviando") return;
+                  void (async () => {
+                    setEnvio({ fase: "enviando" });
+                    // La foto se reduce aquí, en el móvil de quien la manda:
+                    // así el adjunto nunca pesa de más ni tarda una eternidad
+                    // con datos móviles. Si no se puede, va sin foto.
+                    const foto = imagen ? await reducirFoto(imagen.archivo) : null;
+                    try {
+                      const r = await enviarSolicitud({
+                        data: {
+                          codigoPostal: cp,
+                          municipio,
+                          direccion: campos.direccion,
+                          raciones: racionesTexto,
+                          fecha: campos.fecha,
+                          sabor: campos.sabor,
+                          relleno: rellenoElegido,
+                          tematica: campos.tematica,
+                          mensaje: campos.mensaje,
+                          alergenos: campos.alergenos,
+                          nombre: campos.nombre,
+                          telefono: campos.telefono,
+                          correo: campos.correo,
+                          ...(foto
+                            ? {
+                                foto: { nombre: foto.nombre, tipo: foto.tipo, base64: foto.base64 },
+                              }
+                            : {}),
+                          consentimiento: true,
+                          web,
+                        },
+                      });
+                      setEnvio({ fase: "hecho", r });
+                    } catch (error) {
+                      console.error("Falló el envío de la solicitud:", error);
+                      setEnvio({
+                        fase: "hecho",
+                        r: {
+                          estado: "error",
+                          motivo:
+                            "Algo ha fallado por el camino. Puede ser la conexión; inténtalo otra vez o usa WhatsApp.",
+                        },
+                      });
+                    }
+                  })();
                 }}
               >
                 {/* Zona primero: si no llegamos, mejor saberlo antes de
@@ -623,12 +729,10 @@ function Tartas() {
                       className="sr-only"
                       onChange={elegirImagen}
                     />
-                    {!ENVIO_CONECTADO && (
-                      <p className="text-xs text-muted-foreground">
-                        Ahora mismo la imagen solo se previsualiza aquí; todavía no se sube a ningún
-                        sitio.
-                      </p>
-                    )}
+                    <p className="text-xs text-muted-foreground">
+                      Se reduce en tu propio móvil antes de enviarse, así que no gasta datos ni
+                      tarda.
+                    </p>
                   </div>
 
                   <div className="grid gap-1.5">
@@ -701,15 +805,60 @@ function Tartas() {
                   </p>
                 </fieldset>
 
+                {/* Escondido para personas, visible para robots. El
+                    tabIndex y el autoComplete evitan que el teclado o el
+                    autorrelleno del navegador caigan aquí por error. */}
+                <input
+                  type="text"
+                  name="web"
+                  value={web}
+                  onChange={(e) => setWeb(e.target.value)}
+                  tabIndex={-1}
+                  autoComplete="off"
+                  aria-hidden="true"
+                  className="sr-only"
+                />
+
+                {/* Sin esto no se manda nada. Dice qué se guarda y para
+                    qué, que es lo que hay que decir antes de quedarse con
+                    el nombre y el teléfono de alguien. */}
+                <label className="flex cursor-pointer items-start gap-3 rounded-2xl bg-card p-5 text-sm leading-relaxed shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)]">
+                  <input
+                    type="checkbox"
+                    required
+                    checked={consiento}
+                    onChange={(e) => setConsiento(e.target.checked)}
+                    className="mt-0.5 size-4 shrink-0 accent-primary"
+                  />
+                  <span>
+                    Acepto que MARACUYA guarde estos datos{" "}
+                    <span className="font-medium text-foreground">
+                      solo para responder a esta solicitud
+                    </span>
+                    . No se ceden a nadie ni se usan para publicidad. Puedes pedir que los borremos
+                    escribiendo a{" "}
+                    <a
+                      href={enlaceCorreo("Baja de mis datos")}
+                      className="font-medium text-foreground underline underline-offset-2"
+                    >
+                      {CORREO}
+                    </a>
+                    . <span className="text-destructive">*</span>
+                  </span>
+                </label>
+
                 <div className="grid gap-3">
                   <div className="grid gap-3 sm:flex sm:flex-wrap">
                     <Button
                       type="submit"
                       size="lg"
-                      disabled={!puedeEnviar}
-                      className="w-full sm:w-auto"
+                      disabled={!puedeEnviar || !consiento || envio.fase === "enviando"}
+                      className="w-full gap-2 sm:w-auto"
                     >
-                      Solicitar presupuesto
+                      {envio.fase === "enviando" && (
+                        <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                      )}
+                      {envio.fase === "enviando" ? "Enviando…" : "Solicitar presupuesto"}
                     </Button>
                     {/* La vía que sí funciona hoy, mientras el formulario no
                         tenga destino: abre WhatsApp con todo ya escrito. */}
@@ -730,12 +879,18 @@ function Tartas() {
                     . Se abre tu correo con todo esto ya escrito.
                   </p>
 
-                  {!puedeEnviar && (
+                  {!puedeEnviar ? (
                     <p className="text-sm text-muted-foreground">
                       {fueraDeProvincia
                         ? "No podemos recoger la solicitud para esa zona."
                         : "Completa el código postal y el municipio para continuar."}
                     </p>
+                  ) : (
+                    !consiento && (
+                      <p className="text-sm text-muted-foreground">
+                        Marca la casilla de arriba para poder enviar.
+                      </p>
+                    )
                   )}
                   <p className="text-xs leading-relaxed text-muted-foreground">
                     Enviar la solicitud no reserva nada ni te cobra nada. El precio y la fecha se

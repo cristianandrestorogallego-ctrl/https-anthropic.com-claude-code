@@ -19,17 +19,18 @@ import orquideas from "@/assets/tartas/orquideas.webp";
 import tocador from "@/assets/tartas/tocador.webp";
 import rosasRojas from "@/assets/tartas/rosas-rojas.webp";
 
-/** Interruptor único. Mientras sea false, el formulario NO envía nada. */
-export const ENVIO_CONECTADO = false;
-
 /**
- * Qué falta para recibir solicitudes de verdad. Se enseña en pantalla, no
- * solo en un comentario: quien lo pruebe tiene que saber en qué estado está.
+ * Qué falta para recibir solicitudes de verdad.
+ *
+ * Ya no hay un interruptor a mano: lo decide el servidor según tenga o no
+ * configurada la clave del correo, y la pantalla cuenta lo que le
+ * responda. Esta lista es lo que se enseña mientras no la tenga, para que
+ * quien pruebe el formulario sepa exactamente en qué estado está.
  */
 export const QUE_FALTA = [
-  "Un destino al que mandar la solicitud: un correo, un formulario de Shopify o un pedido en borrador.",
-  "Un sitio donde guardar la imagen de referencia que adjunte el cliente.",
-  "El aviso de recepción: el correo automático que confirma que la solicitud ha llegado.",
+  "La clave del servicio de correo, configurada en Vercel como variable de entorno del servidor.",
+  "El remitente verificado en ese servicio, para que los correos salgan y no acaben en spam.",
+  "El aviso de privacidad y su política, obligatorios antes de guardar los datos de nadie.",
 ];
 
 /**

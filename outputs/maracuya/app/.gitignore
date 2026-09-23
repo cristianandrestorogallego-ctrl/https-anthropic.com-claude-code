@@ -20,6 +20,15 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Vercel. La salida del build, que se genera en cada despliegue.
+.vercel/
+
+# Secretos. La plantilla sí se versiona; cualquier .env con valores dentro,
+# no: ahí es donde acaba una clave de API en el repositorio sin querer.
+.env
+.env.*
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
