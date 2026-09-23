@@ -10,6 +10,7 @@ import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
 import { Reveal, stagger } from "@/components/site/reveal";
 import { BotonWhatsapp } from "@/components/site/boton-whatsapp";
+import { CORREO, enlaceCorreo } from "@/lib/contacto";
 import {
   AVISO_PRECIO,
   ENVIO_CONECTADO,
@@ -714,6 +715,21 @@ function Tartas() {
                         tenga destino: abre WhatsApp con todo ya escrito. */}
                     <BotonWhatsapp mensaje={mensajeWhatsapp} className="w-full sm:w-auto" />
                   </div>
+                  {/* La misma solicitud, por correo. No sustituye a nada:
+                      es para quien prefiere escribir a quien prefiere
+                      WhatsApp, y mientras el formulario no tenga destino
+                      es la otra vía que sí llega a alguien. */}
+                  <p className="text-sm leading-relaxed text-muted-foreground">
+                    ¿Prefieres escribir?{" "}
+                    <a
+                      href={enlaceCorreo("Presupuesto de tarta personalizada", mensajeWhatsapp)}
+                      className="font-medium text-foreground underline underline-offset-2 hover:text-primary"
+                    >
+                      {CORREO}
+                    </a>
+                    . Se abre tu correo con todo esto ya escrito.
+                  </p>
+
                   {!puedeEnviar && (
                     <p className="text-sm text-muted-foreground">
                       {fueraDeProvincia

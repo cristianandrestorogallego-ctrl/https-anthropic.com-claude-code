@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
+import { Mail } from "lucide-react";
 
 import { IconoWhatsapp } from "@/components/site/boton-whatsapp";
+import { CORREO, enlaceCorreo } from "@/lib/contacto";
 import { WHATSAPP_VISIBLE, enlaceWhatsapp } from "@/lib/whatsapp";
 
 import logoUrl from "@/assets/maracuya-logo.svg";
@@ -49,7 +51,15 @@ export function Footer() {
               WhatsApp {WHATSAPP_VISIBLE}
             </a>
           </p>
-          <p>hola@maracuya.es</p>
+          <p>
+            <a
+              href={enlaceCorreo("Consulta desde la web")}
+              className="inline-flex items-center gap-1.5 hover:underline"
+            >
+              <Mail className="size-3.5" aria-hidden="true" />
+              {CORREO}
+            </a>
+          </p>
           <p>Devoluciones en 14 días</p>
         </div>
         <div className="space-y-2 text-sm opacity-85">
