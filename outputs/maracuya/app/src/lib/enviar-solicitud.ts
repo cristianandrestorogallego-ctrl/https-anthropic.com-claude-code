@@ -26,9 +26,13 @@ const BUZON = () => process.env["CORREO_TIENDA"] || CORREO;
 /**
  * El remitente.
  *
- * Tiene que ser una dirección verificada en el proveedor, o los correos
- * no salen. Mientras no haya dominio propio, es el mismo Gmail de la
- * tienda verificado como remitente único.
+ * Tiene que ser una dirección de un dominio propio autenticado en Brevo.
+ * NO vale una de Gmail: desde febrero de 2024 gmail.com publica una
+ * política DMARC de cuarentena, así que un correo que sale por Brevo
+ * diciendo venir de @gmail.com falla la comprobación y acaba en spam.
+ *
+ * El valor por defecto es justo ese caso malo. Está puesto para que la
+ * función no reviente sin configurar, no porque sirva.
  */
 const REMITENTE = () => ({
   name: "MARACUYA mercado latino",
