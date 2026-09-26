@@ -116,6 +116,15 @@ type Envio = {
  */
 function queHacer(estado: number, code: string, message: string): string {
   const texto = `${code} ${message}`.toLowerCase();
+  // Primero la IP: Brevo bloquea las desconocidas por defecto en las
+  // cuentas nuevas, y en Vercel no hay una IP fija que autorizar, así que
+  // este caso no se arregla añadiendo direcciones a una lista. Con
+  // frontera de palabra, o "recipient" daría un falso positivo.
+  if (/\bip\b/.test(texto))
+    return (
+      "La IP del servidor no está autorizada en Brevo, y Vercel no tiene una fija. " +
+      "Desactiva el bloqueo por IP para la API: Settings → Security → Authorized IPs."
+    );
   if (texto.includes("not verified") || texto.includes("sender"))
     return "Verifica el remitente en Brevo (Settings → Senders) o autentica el dominio.";
   if (estado === 401 || estado === 403) {
