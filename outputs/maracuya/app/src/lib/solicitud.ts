@@ -54,14 +54,6 @@ export const esquemaSolicitud = z.object({
   }),
 
   /**
-   * Trampa para robots. El campo está escondido y una persona nunca lo
-   * ve, así que si llega con algo dentro, lo ha rellenado un programa.
-   * No frena a nadie decidido, pero se lleva por delante el spam tonto
-   * sin pedirle un captcha a quien sí quiere una tarta.
-   */
-  web: z.string().max(0).optional(),
-
-  /**
    * Pide que, si falla, la respuesta explique por qué.
    *
    * Solo lo manda la página abierta con ?diagnostico, que es como se

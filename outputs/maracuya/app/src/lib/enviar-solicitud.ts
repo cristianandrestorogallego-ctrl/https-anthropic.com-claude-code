@@ -181,11 +181,6 @@ function adjuntosDe(s: Solicitud): Adjunto[] {
 export const enviarSolicitud = createServerFn({ method: "POST" })
   .validator(esquemaSolicitud)
   .handler(async ({ data }): Promise<Respuesta> => {
-    // La trampa para robots: si trae algo, se responde que todo bien y no
-    // se manda nada. Un robot que ve un error reintenta; uno que ve un
-    // "ya está" se va.
-    if (data.web) return { estado: "enviada", acuse: false };
-
     const clave = CLAVE();
     if (!clave) return { estado: "sin-configurar" };
 

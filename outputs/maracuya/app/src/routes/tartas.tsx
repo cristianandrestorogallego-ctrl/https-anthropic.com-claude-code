@@ -102,7 +102,6 @@ function Tartas() {
 
   const [consiento, setConsiento] = useState(false);
   /** La trampa para robots; una persona no ve este campo. */
-  const [web, setWeb] = useState("");
   const archivoRef = useRef<HTMLInputElement>(null);
 
   // Campos controlados: el enlace de WhatsApp se arma del estado, no del DOM.
@@ -470,7 +469,6 @@ function Tartas() {
                               }
                             : {}),
                           consentimiento: true,
-                          web,
                           ...(diagnostico ? { diagnostico: true } : {}),
                         },
                       });
@@ -842,17 +840,6 @@ function Tartas() {
                 {/* Escondido para personas, visible para robots. El
                     tabIndex y el autoComplete evitan que el teclado o el
                     autorrelleno del navegador caigan aquí por error. */}
-                <input
-                  type="text"
-                  name="web"
-                  value={web}
-                  onChange={(e) => setWeb(e.target.value)}
-                  tabIndex={-1}
-                  autoComplete="off"
-                  aria-hidden="true"
-                  className="sr-only"
-                />
-
                 {/* Sin esto no se manda nada. Dice qué se guarda y para
                     qué, que es lo que hay que decir antes de quedarse con
                     el nombre y el teléfono de alguien. */}
