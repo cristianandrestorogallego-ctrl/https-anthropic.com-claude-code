@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Mail } from "lucide-react";
 
+import { Boletin } from "@/components/site/boletin";
 import { IconoWhatsapp } from "@/components/site/boton-whatsapp";
+import { CADENCIA } from "@/lib/boletin";
 import { CORREO, enlaceCorreo } from "@/lib/contacto";
 import { WHATSAPP_VISIBLE, enlaceWhatsapp } from "@/lib/whatsapp";
 
@@ -62,9 +64,13 @@ export function Footer() {
           </p>
           <p>Devoluciones en 14 días</p>
         </div>
-        <div className="space-y-2 text-sm opacity-85">
-          <p className="font-medium opacity-100">Recibe recetas</p>
-          <p>Ideas de cocina latina y novedades del mercado, una vez al mes.</p>
+        {/* Esta columna no lleva opacidad en el contenedor: la de CSS se
+            multiplica hacia dentro y no hay forma de recuperarla desde un
+            hijo, así que dejaba el botón del boletín en marrón apagado. */}
+        <div className="space-y-3 text-sm">
+          <p className="font-medium">Recibe recetas</p>
+          <p className="opacity-85">Ideas de cocina latina y novedades del mercado, {CADENCIA}.</p>
+          <Boletin />
         </div>
       </div>
       <div className="border-t border-white/10 px-4 py-5 text-center text-xs opacity-60">
