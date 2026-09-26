@@ -39,6 +39,52 @@ const REMITENTE = () => ({
   email: process.env["CORREO_REMITENTE"] || CORREO,
 });
 
+/**
+ * Dominios de correo gratuito.
+ *
+ * Ninguno se puede autenticar: publican políticas DMARC que hacen que un
+ * correo enviado por otro servidor en su nombre falle la comprobación. Se
+ * usa para saber si el remitente da para mandarle algo a un desconocido,
+ * o solo para avisarnos a nosotros.
+ */
+const CORREO_GRATUITO = [
+  "gmail.com",
+  "googlemail.com",
+  "hotmail.com",
+  "hotmail.es",
+  "outlook.com",
+  "outlook.es",
+  "live.com",
+  "msn.com",
+  "yahoo.com",
+  "yahoo.es",
+  "icloud.com",
+  "me.com",
+  "aol.com",
+  "gmx.com",
+  "gmx.es",
+  "proton.me",
+  "protonmail.com",
+  "terra.es",
+  "telefonica.net",
+];
+
+/**
+ * ¿El remitente aguanta un correo a un desconocido?
+ *
+ * Solo si sale de un dominio propio. Desde uno gratuito el correo llega,
+ * pero al buzón de spam, y mandar algo que sabemos que acaba ahí no
+ * ayuda a nadie: ni a quien no lo lee, ni a la reputación desde la que
+ * mandaremos cuando el dominio esté listo.
+ *
+ * En cuanto CORREO_REMITENTE apunte al dominio de la tienda, esto pasa a
+ * ser cierto solo y el acuse se enciende sin tocar nada más.
+ */
+function remitenteAutenticado(): boolean {
+  const dominio = REMITENTE().email.split("@")[1]?.toLowerCase();
+  return dominio !== undefined && !CORREO_GRATUITO.includes(dominio);
+}
+
 type Adjunto = { name: string; content: string };
 
 type Envio = {
@@ -149,6 +195,19 @@ export const enviarSolicitud = createServerFn({ method: "POST" })
 
     // El acuse es un extra: si falla, la solicitud ya está en el obrador.
     if (!data.correo) return { estado: "enviada", acuse: false };
+
+    // Desde un remitente gratuito el acuse acabaría en spam. Se calla en
+    // vez de mandarlo: la pantalla, cuando no hay acuse, tampoco promete
+    // ninguna copia. El aviso al obrador ya ha salido, que es lo que
+    // hace falta para que la tarta se responda.
+    if (!remitenteAutenticado()) {
+      console.warn(
+        `Acuse omitido: el remitente ${REMITENTE().email} es de un dominio gratuito y el ` +
+          "correo acabaría en spam. Autentica tiendamaracuya.es en Brevo y pon " +
+          "CORREO_REMITENTE a una dirección suya.",
+      );
+      return { estado: "enviada", acuse: false };
+    }
 
     const cliente = correoParaElCliente(data);
     try {
