@@ -20,6 +20,17 @@ import { esquemaSolicitud, type Respuesta, type Solicitud } from "@/lib/solicitu
 /** Sin clave configurada no hay envío, y la pantalla lo cuenta tal cual. */
 const CLAVE = () => process.env["BREVO_API_KEY"];
 
+/**
+ * ¿Lo que hay configurado es la clave de SMTP en vez de la de la API?
+ *
+ * Solo mira el prefijo, nunca el valor. Sirve para explicar un 401, no
+ * para decidir si se manda: si Brevo cambiara de prefijos, esto deja de
+ * acertar en el texto pero no impide ningún envío.
+ */
+function esClaveSmtp(): boolean {
+  return CLAVE()?.startsWith("xsmtpsib-") ?? false;
+}
+
 /** A dónde llegan las solicitudes. Por defecto, el correo de la tienda. */
 const BUZON = () => process.env["CORREO_TIENDA"] || CORREO;
 
@@ -107,8 +118,17 @@ function queHacer(estado: number, code: string, message: string): string {
   const texto = `${code} ${message}`.toLowerCase();
   if (texto.includes("not verified") || texto.includes("sender"))
     return "Verifica el remitente en Brevo (Settings → Senders) o autentica el dominio.";
-  if (estado === 401 || estado === 403)
+  if (estado === 401 || estado === 403) {
+    // Brevo reparte dos claves que se parecen y viven en la misma página.
+    // La de SMTP no vale para la API y devuelve este mismo 401, así que
+    // decirlo aquí ahorra buscar el fallo en el sitio equivocado.
+    if (esClaveSmtp())
+      return (
+        "Esa es la clave SMTP (empieza por xsmtpsib-), y la API no la acepta. " +
+        "En Brevo → Settings → SMTP & API, pestaña API keys, genera una que empiece por xkeysib-."
+      );
     return "Revisa BREVO_API_KEY en Vercel: falta, está mal copiada o se ha revocado.";
+  }
   if (estado === 402 || estado === 429) return "Se ha agotado el cupo del plan de Brevo por hoy.";
   if (estado === 400) return "Brevo ha rechazado el contenido del correo.";
   return "Fallo del proveedor de correo.";
