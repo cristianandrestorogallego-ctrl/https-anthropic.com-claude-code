@@ -35,6 +35,7 @@ import {
   sabores,
   tematicas,
 } from "@/lib/tartas";
+import { CADENCIA } from "@/lib/boletin";
 
 export const Route = createFileRoute("/tartas")({
   head: () => ({
@@ -101,6 +102,7 @@ function Tartas() {
   >({ fase: "quieto" });
 
   const [consiento, setConsiento] = useState(false);
+  const [quiereRecetas, setQuiereRecetas] = useState(false);
   /** La trampa para robots; una persona no ve este campo. */
   const archivoRef = useRef<HTMLInputElement>(null);
 
@@ -186,6 +188,8 @@ function Tartas() {
   // la provincia no es la nuestra, hay que decirlo.
   const fueraDeProvincia = /^\d{5}$/.test(cp) && !cp.startsWith("08");
   const puedeEnviar = coberturaPermiteEnviar(cobertura);
+  /** El boletín solo tiene sentido si hay una dirección a la que mandarlo. */
+  const hayCorreo = campos.correo.trim() !== "";
 
   const elegirImagen = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -468,6 +472,7 @@ function Tartas() {
                                 foto: { nombre: foto.nombre, tipo: foto.tipo, base64: foto.base64 },
                               }
                             : {}),
+                          ...(quiereRecetas && hayCorreo ? { boletin: true } : {}),
                           consentimiento: true,
                           ...(diagnostico ? { diagnostico: true } : {}),
                         },
@@ -830,6 +835,29 @@ function Tartas() {
                         value={campos.correo}
                         onChange={(e) => cambiar("correo")(e.target.value)}
                       />
+                      {/* El boletín va aquí, pegado al correo, y no al
+                          lado del consentimiento de abajo: son dos
+                          permisos distintos y no se mezclan. Sin correo no
+                          hay a dónde mandarlo, así que se desactiva y se
+                          dice por qué en vez de dejar marcar algo que no
+                          haría nada. */}
+                      <label
+                        className={`mt-1 flex items-start gap-2.5 text-sm leading-relaxed ${
+                          hayCorreo ? "cursor-pointer" : "cursor-not-allowed opacity-55"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={quiereRecetas && hayCorreo}
+                          disabled={!hayCorreo}
+                          onChange={(e) => setQuiereRecetas(e.target.checked)}
+                          className="mt-0.5 size-4 shrink-0 accent-primary"
+                        />
+                        <span className="text-muted-foreground">
+                          Quiero recibir las recetas de MARACUYA, {CADENCIA}.
+                          {hayCorreo ? "" : " Escribe tu correo arriba para poder apuntarte."}
+                        </span>
+                      </label>
                     </div>
                   </div>
                   <p className="text-xs leading-relaxed text-muted-foreground">

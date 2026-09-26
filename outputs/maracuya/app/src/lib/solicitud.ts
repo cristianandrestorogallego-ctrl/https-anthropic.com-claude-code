@@ -48,6 +48,16 @@ export const esquemaSolicitud = z.object({
     })
     .optional(),
 
+  /**
+   * ¿Quiere además las recetas de cada semana?
+   *
+   * Opcional y aparte del consentimiento de abajo, a propósito: pedir un
+   * presupuesto y aceptar publicidad son dos permisos distintos, y meter
+   * el segundo dentro del primero es justo lo que no se puede hacer. Solo
+   * significa algo si ha dejado correo.
+   */
+  boletin: z.boolean().optional(),
+
   /** Sin esto no se guarda ni se manda nada. */
   consentimiento: z.literal(true, {
     errorMap: () => ({ message: "Hay que aceptar el aviso de privacidad." }),

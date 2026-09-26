@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 
+import { altaEnBoletin } from "@/lib/alta-brevo";
 import { CORREO } from "@/lib/contacto";
 import { correoParaElCliente, correoParaLaTienda } from "@/lib/correos";
 import { esquemaSolicitud, type Respuesta, type Solicitud } from "@/lib/solicitud";
@@ -231,6 +232,20 @@ export const enviarSolicitud = createServerFn({ method: "POST" })
         // esquema: sin la marca, la respuesta no menciona el proveedor.
         ...(data.diagnostico && error instanceof FalloDeCorreo ? { pista: error.pista } : {}),
       };
+    }
+
+    // El boletín, si lo ha marcado. Va después del aviso al obrador y
+    // antes del acuse, y cualquier fallo suyo se queda en el registro: la
+    // tarta ya está pedida, y no se le va a decir a nadie que su
+    // solicitud falló porque no pudimos apuntarle a unas recetas.
+    if (data.boletin && data.correo) {
+      const r = await altaEnBoletin(data.correo);
+      if (r.estado !== "alta") {
+        console.warn(
+          `La solicitud salió, pero el alta en el boletín de ${data.correo} no: ` +
+            (r.estado === "sin-configurar" ? "falta BREVO_LISTA_RECETAS." : r.pista),
+        );
+      }
     }
 
     // El acuse es un extra: si falla, la solicitud ya está en el obrador.
