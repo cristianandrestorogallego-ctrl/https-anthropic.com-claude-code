@@ -155,10 +155,23 @@ async function mandarCorreo(clave: string, e: Envio): Promise<void> {
   }
 
   const detalle = [code, message].filter(Boolean).join(": ");
-  throw new Error(
-    `Brevo respondió ${respuesta.status}${detalle ? ` (${detalle})` : ""}. ` +
-      queHacer(respuesta.status, code, message),
+  const pista = queHacer(respuesta.status, code, message);
+  throw new FalloDeCorreo(
+    `Brevo respondió ${respuesta.status}${detalle ? ` (${detalle})` : ""}. ${pista}`,
+    `Brevo respondió ${respuesta.status}. ${pista}`,
   );
+}
+
+/** Un fallo del proveedor que ya sabe explicarse. */
+class FalloDeCorreo extends Error {
+  constructor(
+    message: string,
+    /** La versión corta y sin datos internos, para enseñar con ?diagnostico. */
+    readonly pista: string,
+  ) {
+    super(message);
+    this.name = "FalloDeCorreo";
+  }
 }
 
 function adjuntosDe(s: Solicitud): Adjunto[] {
@@ -190,6 +203,9 @@ export const enviarSolicitud = createServerFn({ method: "POST" })
       return {
         estado: "error",
         motivo: "No hemos podido enviar la solicitud. Prueba por WhatsApp o por correo.",
+        // La pista solo viaja si la han pedido. Ver `diagnostico` en el
+        // esquema: sin la marca, la respuesta no menciona el proveedor.
+        ...(data.diagnostico && error instanceof FalloDeCorreo ? { pista: error.pista } : {}),
       };
     }
 

@@ -60,6 +60,17 @@ export const esquemaSolicitud = z.object({
    * sin pedirle un captcha a quien sí quiere una tarta.
    */
   web: z.string().max(0).optional(),
+
+  /**
+   * Pide que, si falla, la respuesta explique por qué.
+   *
+   * Solo lo manda la página abierta con ?diagnostico, que es como se
+   * revisa la configuración sin entrar en los registros del servidor. Sin
+   * esta marca la respuesta no lleva ni una palabra sobre el proveedor de
+   * correo: a quien pide una tarta no le importa, y no tiene por qué
+   * enterarse de con qué está montada la tienda.
+   */
+  diagnostico: z.boolean().optional(),
 });
 
 export type Solicitud = z.infer<typeof esquemaSolicitud>;
@@ -74,7 +85,7 @@ export type Solicitud = z.infer<typeof esquemaSolicitud>;
 export type Respuesta =
   | { estado: "enviada"; acuse: boolean }
   | { estado: "sin-configurar" }
-  | { estado: "error"; motivo: string };
+  | { estado: "error"; motivo: string; pista?: string };
 
 /**
  * La solicitud en texto plano, para el cuerpo del correo.

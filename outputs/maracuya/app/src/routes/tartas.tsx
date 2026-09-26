@@ -54,6 +54,29 @@ const CAMPO =
   "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground transition-[border-color,box-shadow] duration-200 focus-visible:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/25";
 
 /** Mañana, en el formato que espera un input de fecha. */
+/**
+ * Lo que se enseña cuando la llamada al servidor ni siquiera vuelve.
+ *
+ * Tiene nombre porque el panel lo compara: un fallo de red y un fallo del
+ * proveedor de correo se arreglan en sitios distintos, y enseñar el mismo
+ * titular para los dos deja a cualquiera adivinando cuál de los dos es.
+ */
+const SIN_RESPUESTA =
+  "Algo ha fallado por el camino. Puede ser la conexión; inténtalo otra vez o usa WhatsApp.";
+
+/**
+ * ¿Han abierto la página con ?diagnostico?
+ *
+ * Es la forma de revisar la configuración del correo sin entrar en los
+ * registros del servidor. Se mira una sola vez y en el navegador: durante
+ * el renderizado del servidor no hay dirección que consultar, y el panel
+ * de resultado no existe hasta que alguien le da a enviar.
+ */
+function pidenDiagnostico(): boolean {
+  if (typeof window === "undefined") return false;
+  return new URLSearchParams(window.location.search).has("diagnostico");
+}
+
 function manana() {
   const d = new Date();
   d.setDate(d.getDate() + 1);
@@ -72,6 +95,7 @@ function Tartas() {
    * En qué punto está el envío. La respuesta viene del servidor, que es
    * quien sabe si hay correo configurado; aquí no se inventa nada.
    */
+  const [diagnostico] = useState(pidenDiagnostico);
   const [envio, setEnvio] = useState<
     { fase: "quieto" } | { fase: "enviando" } | { fase: "hecho"; r: Respuesta }
   >({ fase: "quieto" });
@@ -370,9 +394,18 @@ function Tartas() {
                   <>
                     <h3 className="flex items-center gap-2 font-display text-xl">
                       <AlertTriangle className="size-5 text-destructive" aria-hidden="true" />
-                      No hemos podido enviarla
+                      {envio.r.motivo === SIN_RESPUESTA
+                        ? "No hemos llegado al servidor"
+                        : "El servidor no ha podido enviarla"}
                     </h3>
                     <p className="mt-3 leading-relaxed text-muted-foreground">{envio.r.motivo}</p>
+                    {/* Solo con ?diagnostico en la dirección. Quien pide una
+                        tarta ve el mensaje de arriba y nada más. */}
+                    {envio.r.pista && (
+                      <p className="mt-3 rounded-lg bg-arena/60 px-3 py-2 font-mono text-xs leading-relaxed text-muted-foreground">
+                        {envio.r.pista}
+                      </p>
+                    )}
                   </>
                 )}
 
@@ -438,6 +471,7 @@ function Tartas() {
                             : {}),
                           consentimiento: true,
                           web,
+                          ...(diagnostico ? { diagnostico: true } : {}),
                         },
                       });
                       setEnvio({ fase: "hecho", r });
@@ -447,8 +481,8 @@ function Tartas() {
                         fase: "hecho",
                         r: {
                           estado: "error",
-                          motivo:
-                            "Algo ha fallado por el camino. Puede ser la conexión; inténtalo otra vez o usa WhatsApp.",
+                          motivo: SIN_RESPUESTA,
+                          ...(diagnostico ? { pista: `${String(error)}`.slice(0, 200) } : {}),
                         },
                       });
                     }
