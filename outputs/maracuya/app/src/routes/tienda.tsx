@@ -5,6 +5,7 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
+import { CabeceraPais } from "@/components/site/cabecera-pais";
 import { ProductCard } from "@/components/site/product-card";
 import { Reveal, stagger } from "@/components/site/reveal";
 import { banderaUrl, categorias, paises, productos } from "@/lib/catalogo";
@@ -110,8 +111,14 @@ function Tienda() {
     <div className="min-h-screen bg-background">
       <Header />
       <main className="mx-auto max-w-6xl px-4 py-12">
-        <h1 className="font-display text-4xl tracking-[-0.025em] sm:text-5xl">{titulo}</h1>
-        <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">{entradilla}</p>
+        {paisActivo ? (
+          <CabeceraPais pais={paisActivo} />
+        ) : (
+          <>
+            <h1 className="font-display text-4xl tracking-[-0.025em] sm:text-5xl">{titulo}</h1>
+            <p className="mt-4 max-w-xl leading-relaxed text-muted-foreground">{entradilla}</p>
+          </>
+        )}
 
         {/* Categorías */}
         <div className="mt-8 flex flex-wrap gap-2">

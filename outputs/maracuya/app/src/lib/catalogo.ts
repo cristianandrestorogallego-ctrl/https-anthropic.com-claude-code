@@ -95,20 +95,83 @@ export const categorias: {
 export type PaisId =
   "colombia" | "mexico" | "peru" | "venezuela" | "ecuador" | "brasil" | "argentina" | "paraguay";
 
-export const paises: { id: PaisId; nombre: string; codigo: string; nota: string }[] = [
-  { id: "colombia", nombre: "Colombia", codigo: "co", nota: "Arepas, panela y guayaba" },
-  { id: "mexico", nombre: "México", codigo: "mx", nota: "Chiles, maíz y salsas" },
-  { id: "peru", nombre: "Perú", codigo: "pe", nota: "Ají amarillo y ceviche" },
+export type Pais = {
+  id: PaisId;
+  nombre: string;
+  codigo: string;
+  nota: string;
+  /**
+   * Los colores de las franjas de su bandera, en orden.
+   *
+   * Están copiados de los SVG de `assets/banderas/`, que son los que se
+   * pintan al lado: si algún día se corrige una bandera, estos tienen que
+   * corregirse con ella o la cabecera dejará de pegar con su propio dibujo.
+   *
+   * El blanco no entra aunque la bandera lo lleve. Estos colores se usan
+   * teñidos sobre el fondo de la página, y el blanco no tiñe nada: dejarlo
+   * fuera es lo que hace que Perú o Argentina se reconozcan por su color y
+   * no por un hueco.
+   */
+  colores: [string, ...string[]];
+};
+
+export const paises: Pais[] = [
+  {
+    id: "colombia",
+    nombre: "Colombia",
+    codigo: "co",
+    nota: "Arepas, panela y guayaba",
+    colores: ["#FCD116", "#003893", "#CE1126"],
+  },
+  {
+    id: "mexico",
+    nombre: "México",
+    codigo: "mx",
+    nota: "Chiles, maíz y salsas",
+    colores: ["#006847", "#CE1126"],
+  },
+  {
+    id: "peru",
+    nombre: "Perú",
+    codigo: "pe",
+    nota: "Ají amarillo y ceviche",
+    colores: ["#D91023"],
+  },
   {
     id: "venezuela",
     nombre: "Venezuela",
     codigo: "ve",
     nota: "Harina de maíz precocida y hallacas",
+    colores: ["#FFCC00", "#00247D", "#CF142B"],
   },
-  { id: "ecuador", nombre: "Ecuador", codigo: "ec", nota: "Plátano, ají criollo y cacao" },
-  { id: "brasil", nombre: "Brasil", codigo: "br", nota: "Tapioca, feijão y guaraná" },
-  { id: "argentina", nombre: "Argentina", codigo: "ar", nota: "Dulce de leche y yerba mate" },
-  { id: "paraguay", nombre: "Paraguay", codigo: "py", nota: "Yerba mate y tereré" },
+  {
+    id: "ecuador",
+    nombre: "Ecuador",
+    codigo: "ec",
+    nota: "Plátano, ají criollo y cacao",
+    colores: ["#FFDD00", "#034EA2", "#ED1C24"],
+  },
+  {
+    id: "brasil",
+    nombre: "Brasil",
+    codigo: "br",
+    nota: "Tapioca, feijão y guaraná",
+    colores: ["#009739", "#FEDD00", "#012169"],
+  },
+  {
+    id: "argentina",
+    nombre: "Argentina",
+    codigo: "ar",
+    nota: "Dulce de leche y yerba mate",
+    colores: ["#74ACDF", "#F6B40E"],
+  },
+  {
+    id: "paraguay",
+    nombre: "Paraguay",
+    codigo: "py",
+    nota: "Yerba mate y tereré",
+    colores: ["#D52B1E", "#0038A8"],
+  },
 ];
 
 /**
