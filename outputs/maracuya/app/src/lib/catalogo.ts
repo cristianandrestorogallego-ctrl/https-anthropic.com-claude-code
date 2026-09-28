@@ -101,6 +101,20 @@ export type Pais = {
   codigo: string;
   nota: string;
   /**
+   * El guiño: una expresión que solo dice quien es de allí.
+   *
+   * No es un eslogan ni una descripción, y por eso va aparte de `nota`.
+   * Es la frase que hace que alguien reconozca su casa en una tienda de
+   * otro país, así que tiene que sonar a alguien de allí y no a alguien
+   * imitando a alguien de allí: nada de acentos escritos, nada de
+   * caricatura. Varias son regionales dentro de su propio país —"hágale
+   * pues" es más paisa que costeño— y eso está bien mientras se reconozca
+   * desde fuera de esa región; quien las cambie que lo haga sabiendo a
+   * quién le habla.
+   */
+  frase: string;
+
+  /**
    * Los colores de las franjas de su bandera, en orden.
    *
    * Están copiados de los SVG de `assets/banderas/`, que son los que se
@@ -121,6 +135,7 @@ export const paises: Pais[] = [
     nombre: "Colombia",
     codigo: "co",
     nota: "Arepas, panela y guayaba",
+    frase: "Hágale pues, que aquí hay de lo bueno.",
     colores: ["#FCD116", "#003893", "#CE1126"],
   },
   {
@@ -128,6 +143,7 @@ export const paises: Pais[] = [
     nombre: "México",
     codigo: "mx",
     nota: "Chiles, maíz y salsas",
+    frase: "Órale, que no falte el chile.",
     colores: ["#006847", "#CE1126"],
   },
   {
@@ -135,6 +151,7 @@ export const paises: Pais[] = [
     nombre: "Perú",
     codigo: "pe",
     nota: "Ají amarillo y ceviche",
+    frase: "Sin ají no hay sazón, causa.",
     colores: ["#D91023"],
   },
   {
@@ -142,6 +159,7 @@ export const paises: Pais[] = [
     nombre: "Venezuela",
     codigo: "ve",
     nota: "Harina de maíz precocida y hallacas",
+    frase: "Épale, pana, que la arepa no espera.",
     colores: ["#FFCC00", "#00247D", "#CF142B"],
   },
   {
@@ -149,6 +167,7 @@ export const paises: Pais[] = [
     nombre: "Ecuador",
     codigo: "ec",
     nota: "Plátano, ají criollo y cacao",
+    frase: "De ley, ñaño: esto sabe a casa.",
     colores: ["#FFDD00", "#034EA2", "#ED1C24"],
   },
   {
@@ -156,6 +175,7 @@ export const paises: Pais[] = [
     nombre: "Brasil",
     codigo: "br",
     nota: "Tapioca, feijão y guaraná",
+    frase: "Bateu a saudade? Aqui tem o gostinho de casa.",
     colores: ["#009739", "#FEDD00", "#012169"],
   },
   {
@@ -163,6 +183,7 @@ export const paises: Pais[] = [
     nombre: "Argentina",
     codigo: "ar",
     nota: "Dulce de leche y yerba mate",
+    frase: "Dale, che, que el mate no se ceba solo.",
     colores: ["#74ACDF", "#F6B40E"],
   },
   {
@@ -170,6 +191,7 @@ export const paises: Pais[] = [
     nombre: "Paraguay",
     codigo: "py",
     nota: "Yerba mate y tereré",
+    frase: "Mba'éichapa: el tereré ya está frío.",
     colores: ["#D52B1E", "#0038A8"],
   },
 ];

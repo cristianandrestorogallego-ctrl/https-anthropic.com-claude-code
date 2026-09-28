@@ -69,6 +69,21 @@ export function CabeceraPais({ pais }: { pais: Pais }) {
             Productos de {pais.nombre}
           </h1>
           <p className="mt-2 max-w-xl leading-relaxed text-muted-foreground">{pais.nota}</p>
+          {/* El guiño va debajo del qué-hay, en la tipografía de titulares
+              y en cursiva: así se lee como una voz y no como otra línea de
+              datos. El trazo delante lo ata a su bandera sin repetirla. */}
+          <p className="mt-3 flex items-start gap-2.5 font-display text-base italic sm:text-lg">
+            {/* Anclado a la primera línea, no centrado en el bloque: en
+                móvil la frase parte en dos y el trazo se quedaba flotando
+                en medio del margen. El margen superior lo baja hasta la
+                mitad de la primera línea, y ahí se queda parta o no. */}
+            <span
+              aria-hidden="true"
+              className="mt-[0.72em] h-0.5 w-7 shrink-0 rounded-full"
+              style={{ background: pais.colores[0] }}
+            />
+            {pais.frase}
+          </p>
         </div>
       </div>
       {/* Aquí el color va puro: no hay nada que leer encima. */}
