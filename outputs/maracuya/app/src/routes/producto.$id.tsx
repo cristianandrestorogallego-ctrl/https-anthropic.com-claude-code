@@ -1,7 +1,8 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { useState } from "react";
-import { ChevronRight, Minus, Plus, ShoppingBag, Truck } from "lucide-react";
+import { ChevronRight, Minus, Plus, ShoppingBag, Snowflake, Truck } from "lucide-react";
 
+import { esCongelado } from "@/lib/congelados";
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/site/header";
 import { Footer } from "@/components/site/footer";
@@ -159,26 +160,59 @@ function DetalleProducto() {
                 </Button>
               </div>
 
-              <Button
-                size="lg"
-                className="gap-2 shadow-[var(--shadow-e1)] transition-[transform,box-shadow] duration-200 hover:shadow-[var(--shadow-e2)] active:translate-y-px"
-                disabled={!producto.disponible}
-                onClick={() => agregar(producto, cantidad)}
-              >
-                <ShoppingBag className="size-4" />
-                Añadir a la cesta · {formatoPrecio(producto.precio * cantidad)}
-              </Button>
+              {/* Los congelados no van a la cesta: se piden. Ver
+                  lib/congelados.ts para el porqué. */}
+              {esCongelado(producto) ? (
+                <Button
+                  asChild
+                  size="lg"
+                  className="gap-2 shadow-[var(--shadow-e1)] transition-[transform,box-shadow] duration-200 hover:shadow-[var(--shadow-e2)] active:translate-y-px"
+                >
+                  <Link to="/congelados">
+                    <Snowflake className="size-4" />
+                    Pedir congelados
+                  </Link>
+                </Button>
+              ) : (
+                <Button
+                  size="lg"
+                  className="gap-2 shadow-[var(--shadow-e1)] transition-[transform,box-shadow] duration-200 hover:shadow-[var(--shadow-e2)] active:translate-y-px"
+                  disabled={!producto.disponible}
+                  onClick={() => agregar(producto, cantidad)}
+                >
+                  <ShoppingBag className="size-4" />
+                  Añadir a la cesta · {formatoPrecio(producto.precio * cantidad)}
+                </Button>
+              )}
             </div>
 
+            {/* El envío de un congelado no es el mismo que el del resto, y
+                enseñar aquí "24-72 h a España peninsular" sería prometer
+                algo que la paquetería no hace con producto congelado. */}
             <div className="mt-8 space-y-3 rounded-2xl bg-card p-5 text-sm shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)]">
-              <p className="flex items-center gap-2 font-medium">
-                <Truck className="size-4 text-primary" />
-                Envío en 24-72 h a España peninsular
-              </p>
-              <p className="text-muted-foreground">
-                4,95 € y gratis a partir de 49 €. Solo España peninsular: todavía no llegamos a
-                Baleares, Canarias, Ceuta ni Melilla.
-              </p>
+              {esCongelado(producto) ? (
+                <>
+                  <p className="flex items-center gap-2 font-medium">
+                    <Snowflake className="size-4 text-primary" />
+                    Este producto no se envía por paquetería
+                  </p>
+                  <p className="text-muted-foreground">
+                    Los congelados se entregan en mano en la provincia de Barcelona. Pídelo y te
+                    decimos cómo y cuándo podemos llevártelo.
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="flex items-center gap-2 font-medium">
+                    <Truck className="size-4 text-primary" />
+                    Envío en 24-72 h a España peninsular
+                  </p>
+                  <p className="text-muted-foreground">
+                    4,95 € y gratis a partir de 49 €. Solo España peninsular: todavía no llegamos a
+                    Baleares, Canarias, Ceuta ni Melilla.
+                  </p>
+                </>
+              )}
             </div>
 
             <p className="mt-4 text-xs text-muted-foreground">

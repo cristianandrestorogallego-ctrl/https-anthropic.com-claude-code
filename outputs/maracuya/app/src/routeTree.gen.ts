@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as CongeladosRouteImport } from './routes/congelados'
 import { Route as CuentaRouteImport } from './routes/cuenta'
 import { Route as RecetasRouteImport } from './routes/recetas'
 import { Route as TartasRouteImport } from './routes/tartas'
@@ -20,6 +21,11 @@ import { Route as RecetaSlugRouteImport } from './routes/receta.$slug'
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CongeladosRoute = CongeladosRouteImport.update({
+  id: '/congelados',
+  path: '/congelados',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CuentaRoute = CuentaRouteImport.update({
@@ -55,6 +61,7 @@ const RecetaSlugRoute = RecetaSlugRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/congelados': typeof CongeladosRoute
   '/cuenta': typeof CuentaRoute
   '/recetas': typeof RecetasRoute
   '/tartas': typeof TartasRoute
@@ -64,6 +71,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/congelados': typeof CongeladosRoute
   '/cuenta': typeof CuentaRoute
   '/recetas': typeof RecetasRoute
   '/tartas': typeof TartasRoute
@@ -74,6 +82,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/congelados': typeof CongeladosRoute
   '/cuenta': typeof CuentaRoute
   '/recetas': typeof RecetasRoute
   '/tartas': typeof TartasRoute
@@ -85,6 +94,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/congelados'
     | '/cuenta'
     | '/recetas'
     | '/tartas'
@@ -94,6 +104,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/congelados'
     | '/cuenta'
     | '/recetas'
     | '/tartas'
@@ -103,6 +114,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/congelados'
     | '/cuenta'
     | '/recetas'
     | '/tartas'
@@ -113,6 +125,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CongeladosRoute: typeof CongeladosRoute
   CuentaRoute: typeof CuentaRoute
   RecetasRoute: typeof RecetasRoute
   TartasRoute: typeof TartasRoute
@@ -128,6 +141,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/congelados': {
+      id: '/congelados'
+      path: '/congelados'
+      fullPath: '/congelados'
+      preLoaderRoute: typeof CongeladosRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/cuenta': {
@@ -177,6 +197,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CongeladosRoute: CongeladosRoute,
   CuentaRoute: CuentaRoute,
   RecetasRoute: RecetasRoute,
   TartasRoute: TartasRoute,

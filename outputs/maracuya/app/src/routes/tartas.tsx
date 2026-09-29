@@ -22,13 +22,8 @@ import {
   RACIONES_OTRA,
   TRAMO_DESTACADO,
   tramos,
-  codigoPorMunicipio,
-  municipioPorCodigo,
   QUE_FALTA,
-  comprobarCobertura,
-  coberturaPermiteEnviar,
   galeria,
-  municipiosServidos,
   raciones,
   RELLENO_OTROS,
   rellenos,
@@ -36,6 +31,7 @@ import {
   tematicas,
 } from "@/lib/tartas";
 import { CADENCIA } from "@/lib/boletin";
+import { CamposZona, useZona } from "@/components/site/zona";
 
 export const Route = createFileRoute("/tartas")({
   head: () => ({
@@ -85,10 +81,8 @@ function manana() {
 }
 
 function Tartas() {
-  const [municipio, setMunicipio] = useState("");
-  const [cp, setCp] = useState("");
+  const z = useZona();
 
-  const [tocadoCp, setTocadoCp] = useState(false);
   // El archivo se guarda entero: hace falta para reducirlo al enviar.
   const [imagen, setImagen] = useState<{ nombre: string; url: string; archivo: File } | null>(null);
 
@@ -125,23 +119,6 @@ function Tartas() {
   const cambiar = (clave: keyof typeof campos) => (v: string) =>
     setCampos((c) => ({ ...c, [clave]: v }));
 
-  /** Escribir el código elige el municipio, si ese código solo es de uno. */
-  const escribirCp = (valor: string) => {
-    const limpio = valor.replace(/\D/g, "");
-    setCp(limpio);
-    if (limpio.length === 5) {
-      const encontrado = municipioPorCodigo(limpio);
-      if (encontrado) setMunicipio(encontrado);
-    }
-  };
-
-  /** Y elegir el municipio rellena el código, si el municipio solo tiene uno. */
-  const elegirMunicipio = (valor: string) => {
-    setMunicipio(valor);
-    const unico = codigoPorMunicipio(valor);
-    if (unico) setCp(unico);
-  };
-
   /**
    * El precio de partida del tamaño elegido, si lo tiene. Con "otra
    * cantidad" no hay número: se responde con presupuesto y se dice así,
@@ -165,8 +142,8 @@ function Tartas() {
   const mensajeWhatsapp = [
     "Hola, quiero presupuesto para una tarta personalizada.",
     "",
-    municipio && `Municipio: ${municipio}`,
-    cp && `Código postal: ${cp}`,
+    z.municipio && `Municipio: ${z.municipio}`,
+    z.cp && `Código postal: ${z.cp}`,
     campos.direccion && `Dirección: ${campos.direccion}`,
     `Raciones: ${racionesTexto}`,
     campos.fecha && `Fecha deseada: ${campos.fecha}`,
@@ -183,11 +160,9 @@ function Tartas() {
     .filter(Boolean)
     .join("\n");
 
-  const cobertura = useMemo(() => comprobarCobertura(cp, municipio), [cp, municipio]);
   // El aviso del código postal no espera al municipio: en cuanto sabemos que
   // la provincia no es la nuestra, hay que decirlo.
-  const fueraDeProvincia = /^\d{5}$/.test(cp) && !cp.startsWith("08");
-  const puedeEnviar = coberturaPermiteEnviar(cobertura);
+
   /** El boletín solo tiene sentido si hay una dirección a la que mandarlo. */
   const hayCorreo = campos.correo.trim() !== "";
 
@@ -444,7 +419,7 @@ function Tartas() {
                 className="mt-8 grid gap-6"
                 onSubmit={(e) => {
                   e.preventDefault();
-                  if (!puedeEnviar || envio.fase === "enviando") return;
+                  if (!z.puedeEnviar || envio.fase === "enviando") return;
                   void (async () => {
                     setEnvio({ fase: "enviando" });
                     // La foto se reduce aquí, en el móvil de quien la manda:
@@ -454,8 +429,8 @@ function Tartas() {
                     try {
                       const r = await enviarSolicitud({
                         data: {
-                          codigoPostal: cp,
-                          municipio,
+                          codigoPostal: z.cp,
+                          municipio: z.municipio,
                           direccion: campos.direccion,
                           raciones: racionesTexto,
                           fecha: campos.fecha,
@@ -499,94 +474,10 @@ function Tartas() {
                     ¿Dónde la llevamos?
                   </legend>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <div className="grid gap-1.5">
-                      <Label htmlFor="cp">
-                        Código postal <span className="text-destructive">*</span>
-                      </Label>
-                      <Input
-                        id="cp"
-                        required
-                        inputMode="numeric"
-                        maxLength={5}
-                        placeholder="08001"
-                        value={cp}
-                        onChange={(e) => escribirCp(e.target.value)}
-                        onBlur={() => setTocadoCp(true)}
-                        aria-invalid={fueraDeProvincia || undefined}
-                        aria-describedby={fueraDeProvincia ? "cp-aviso" : undefined}
-                      />
-                    </div>
-
-                    <div className="grid gap-1.5">
-                      <Label htmlFor="municipio">
-                        Municipio <span className="text-destructive">*</span>
-                      </Label>
-                      <select
-                        id="municipio"
-                        required
-                        className={CAMPO}
-                        value={municipio}
-                        onChange={(e) => elegirMunicipio(e.target.value)}
-                      >
-                        <option value="">Elige tu municipio</option>
-                        {municipiosServidos.map((m) => (
-                          <option key={m.nombre} value={m.nombre}>
-                            {m.nombre}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {fueraDeProvincia && (
-                    <p
-                      id="cp-aviso"
-                      role="alert"
-                      className="flex items-start gap-2 rounded-lg bg-destructive/10 p-3 text-sm leading-relaxed text-destructive"
-                    >
-                      <AlertTriangle className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                      <span>
-                        En esa zona no disponemos de servicio a domicilio. Las tartas personalizadas
-                        solo llegan a la provincia de Barcelona.
-                      </span>
-                    </p>
-                  )}
-
-                  {cobertura.estado === "desajuste" && (
-                    <p className="flex items-start gap-2 rounded-lg bg-secondary p-3 text-sm leading-relaxed text-secondary-foreground">
-                      <Info className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
-                      <span>
-                        Ese código postal no nos consta en {cobertura.municipio}. Puedes seguir: lo
-                        comprobamos al preparar el presupuesto.
-                      </span>
-                    </p>
-                  )}
-
-                  {tocadoCp && cp === "" && (
-                    <p role="alert" className="text-sm text-destructive">
-                      El código postal es obligatorio para continuar.
-                    </p>
-                  )}
-
-                  <div className="grid gap-1.5">
-                    <Label htmlFor="direccion">Dirección de entrega</Label>
-                    <Input
-                      id="direccion"
-                      name="direccion"
-                      autoComplete="street-address"
-                      placeholder="Calle, número, piso"
-                      value={campos.direccion}
-                      onChange={(e) => cambiar("direccion")(e.target.value)}
-                    />
-                    <p className="text-xs leading-relaxed text-muted-foreground">
-                      Si aún no la sabes, déjala en blanco: la pedimos al confirmar el encargo.
-                    </p>
-                  </div>
-
-                  <p className="text-xs leading-relaxed text-muted-foreground">
-                    ¿Tu municipio no está en la lista? Escríbenos y lo miramos.
-                  </p>
+                  <CamposZona
+                    z={z}
+                    fuera="En esa zona no disponemos de servicio a domicilio. Las tartas personalizadas solo llegan a la provincia de Barcelona."
+                  />
                 </fieldset>
 
                 <fieldset className="grid gap-4 rounded-2xl bg-card p-5 shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)]">
@@ -901,7 +792,7 @@ function Tartas() {
                     <Button
                       type="submit"
                       size="lg"
-                      disabled={!puedeEnviar || !consiento || envio.fase === "enviando"}
+                      disabled={!z.puedeEnviar || !consiento || envio.fase === "enviando"}
                       className="w-full gap-2 sm:w-auto"
                     >
                       {envio.fase === "enviando" && (
@@ -928,9 +819,9 @@ function Tartas() {
                     . Se abre tu correo con todo esto ya escrito.
                   </p>
 
-                  {!puedeEnviar ? (
+                  {!z.puedeEnviar ? (
                     <p className="text-sm text-muted-foreground">
-                      {fueraDeProvincia
+                      {z.fueraDeProvincia
                         ? "No podemos recoger la solicitud para esa zona."
                         : "Completa el código postal y el municipio para continuar."}
                     </p>

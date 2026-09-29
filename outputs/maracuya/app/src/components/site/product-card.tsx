@@ -1,5 +1,7 @@
-import { Plus, Settings2 } from "lucide-react";
+import { Link } from "@tanstack/react-router";
+import { Plus, Settings2, Snowflake } from "lucide-react";
 
+import { esCongelado } from "@/lib/congelados";
 import { Button } from "@/components/ui/button";
 import { useCarrito } from "@/components/site/cart";
 import { banderaUrl, formatoPrecio, paisPorId, type Producto } from "@/lib/catalogo";
@@ -63,24 +65,37 @@ export function ProductCard({ producto }: { producto: Producto }) {
             )}
             <span className="font-display text-xl">{formatoPrecio(producto.precio)}</span>
           </div>
-          <Button
-            size="sm"
-            className="gap-1"
-            disabled={!producto.disponible}
-            onClick={() => agregar(producto)}
-          >
-            {producto.variantes ? (
-              <>
-                <Settings2 className="size-4" />
-                Elegir opciones
-              </>
-            ) : (
-              <>
-                <Plus className="size-4" />
-                Añadir
-              </>
-            )}
-          </Button>
+          {/* Un congelado no entra en el carrito. La paquetería normal no
+              lo lleva, así que un botón de "Añadir" aquí prometería un
+              envío que nadie va a hacer: lleva a pedirlo, que es como se
+              entrega de verdad. */}
+          {esCongelado(producto) ? (
+            <Button asChild size="sm" variant="secondary" className="gap-1">
+              <Link to="/congelados">
+                <Snowflake className="size-4" />
+                Pedir
+              </Link>
+            </Button>
+          ) : (
+            <Button
+              size="sm"
+              className="gap-1"
+              disabled={!producto.disponible}
+              onClick={() => agregar(producto)}
+            >
+              {producto.variantes ? (
+                <>
+                  <Settings2 className="size-4" />
+                  Elegir opciones
+                </>
+              ) : (
+                <>
+                  <Plus className="size-4" />
+                  Añadir
+                </>
+              )}
+            </Button>
+          )}
         </div>
       </div>
     </article>
