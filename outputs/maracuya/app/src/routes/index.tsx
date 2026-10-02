@@ -10,7 +10,8 @@ import { OfertasFlash } from "@/components/site/ofertas-flash";
 import { Marcas } from "@/components/site/marcas";
 import { BloqueTartas } from "@/components/site/bloque-tartas";
 import { Reveal, stagger } from "@/components/site/reveal";
-import { banderaUrl, categorias, paises, productos, recetas } from "@/lib/catalogo";
+import { banderaUrl, categorias, formatoPrecio, paises, productos, recetas } from "@/lib/catalogo";
+import { GRATIS_DESDE, PLAZO, PRECIO, ZONA, gratisDesde, umbral } from "@/lib/envio";
 import historiaImg from "@/assets/historia.jpg";
 
 export const Route = createFileRoute("/")({
@@ -19,8 +20,7 @@ export const Route = createFileRoute("/")({
       { title: "MARACUYA mercado latino | Productos latinoamericanos en España" },
       {
         name: "description",
-        content:
-          "Harinas para arepas, ajíes, jugos tropicales y dulces de América Latina. Envío a toda España en 24-72 h y gratis desde 49 €.",
+        content: `Harinas para arepas, ajíes, jugos tropicales y dulces de América Latina. Envío a ${ZONA} en ${PLAZO} y ${gratisDesde()}.`,
       },
       {
         property: "og:title",
@@ -58,8 +58,8 @@ function Index() {
             {[
               {
                 icon: Truck,
-                t: "Envío 24-72 h",
-                d: "España peninsular, gratis desde 49 €",
+                t: `Envío ${PLAZO.replace(" laborables", "")}`,
+                d: `${ZONA}, ${gratisDesde()}`,
               },
               { icon: PackageCheck, t: "Producto original", d: "Marcas latinas de verdad" },
               { icon: Leaf, t: "Selección corta", d: "Solo lo que cocinamos nosotros" },
@@ -276,15 +276,15 @@ function Index() {
               Envíos claros, sin sorpresas
             </h2>
             <p className="mt-3 max-w-xl leading-relaxed text-muted-foreground">
-              Enviamos a España peninsular. Nada más, y lo decimos aquí para que nadie llegue al
-              pago y se lleve el chasco.
+              Enviamos a {ZONA}. Nada más, y lo decimos aquí para que nadie llegue al pago y se
+              lleve el chasco.
             </p>
 
             <dl className="mt-8 grid gap-6 sm:grid-cols-3">
               {[
-                { t: "Plazo", d: "24-72 h laborables" },
-                { t: "Precio", d: "4,95 €" },
-                { t: "Envío gratis", d: "A partir de 49 €" },
+                { t: "Plazo", d: PLAZO },
+                { t: "Precio", d: formatoPrecio(PRECIO) },
+                { t: "Envío gratis", d: `A partir de ${umbral(GRATIS_DESDE)}` },
               ].map((e) => (
                 <div
                   key={e.t}

@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { BotonWhatsapp } from "@/components/site/boton-whatsapp";
 import { formatoPrecio, type Producto } from "@/lib/catalogo";
+import { GRATIS_DESDE } from "@/lib/envio";
 
 type Linea = { producto: Producto; cantidad: number };
 
@@ -32,8 +33,6 @@ export function useCarrito() {
   if (!ctx) throw new Error("useCarrito debe usarse dentro de CarritoProvider");
   return ctx;
 }
-
-const ENVIO_GRATIS = 49;
 
 export function CarritoProvider({ children }: { children: ReactNode }) {
   const [lineas, setLineas] = useState<Linea[]>([]);
@@ -81,7 +80,7 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
 
 function CarritoPanel() {
   const { lineas, total, abierto, setAbierto, cambiar, quitar } = useCarrito();
-  const falta = Math.max(0, ENVIO_GRATIS - total);
+  const falta = Math.max(0, GRATIS_DESDE - total);
 
   /** El pedido en texto plano, para mandarlo tal cual. */
   const mensajePedido = () =>

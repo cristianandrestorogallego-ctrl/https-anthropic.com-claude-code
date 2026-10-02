@@ -9,6 +9,7 @@ import { Footer } from "@/components/site/footer";
 import { ProductCard } from "@/components/site/product-card";
 import { useCarrito } from "@/components/site/cart";
 import { banderaUrl, categorias, formatoPrecio, paisPorId, productos } from "@/lib/catalogo";
+import { PLAZO, ZONA, listaFuera, precioYGratis } from "@/lib/envio";
 
 export const Route = createFileRoute("/producto/$id")({
   loader: ({ params }) => {
@@ -205,11 +206,10 @@ function DetalleProducto() {
                 <>
                   <p className="flex items-center gap-2 font-medium">
                     <Truck className="size-4 text-primary" />
-                    Envío en 24-72 h a España peninsular
+                    Envío en {PLAZO} a {ZONA}
                   </p>
                   <p className="text-muted-foreground">
-                    4,95 € y gratis a partir de 49 €. Solo España peninsular: todavía no llegamos a
-                    Baleares, Canarias, Ceuta ni Melilla.
+                    {precioYGratis()}. Todavía no llegamos a {listaFuera()}.
                   </p>
                 </>
               )}
