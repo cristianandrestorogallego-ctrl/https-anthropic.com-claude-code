@@ -1,0 +1,66 @@
+ASUNTO: Activar métodos de entrega a domicilio — el panel me remite a soporte
+
+Hola:
+
+Tengo una tienda de alimentación latinoamericana en Sant Andreu de la
+Barca (Barcelona), con Sendcloud integrado en Shopify, y estoy a punto de
+abrir. Necesito activar métodos de ENTREGA A DOMICILIO en España y el
+panel no me deja: al intentarlo me remite a soporte.
+
+LO QUE PIDO
+───────────────────────────────────────────────────────────────────────
+Que me activéis, para envíos nacionales ES → ES:
+
+  · InPost Home Delivery Domestic, todos los tramos de 2-3 kg a 10-11 kg
+  · Correos Estandar Entrega a Domicilio, todos los tramos hasta 15 kg
+
+POR QUÉ OS ESCRIBO EN LUGAR DE HACERLO YO
+───────────────────────────────────────────────────────────────────────
+Esos métodos YA aparecen en la lista de precios que exporta mi propia
+cuenta, con la columna "Plan" marcada como "free". Por ejemplo:
+
+  InPost Home Delivery Domestic 4-5kg ......... 4,88 €
+  InPost Home Delivery Domestic 7-8kg ......... 5,96 €
+  InPost Home Delivery Domestic 10-11kg ....... 7,04 €
+  Correos Estandar Entrega a Domicilio 4-5kg .. 5,01 €
+  Correos Estandar Entrega a Domicilio 5-10kg . 7,19 €
+
+O sea: el producto existe y tiene precio en mi plan. Lo que no puedo es
+encenderlo.
+
+POR QUÉ ME BLOQUEA
+───────────────────────────────────────────────────────────────────────
+Lo he comprobado por la API v3: los únicos métodos activos en mi cuenta
+son los dos de InPost Punto de Servicio Nacional C2C. Ésos llevan
+is_service_point_required = true, es decir, exigen que el cliente haya
+elegido un punto de recogida.
+
+Mi tienda está en Shopify plan Basic, que no puede mostrar el selector de
+punto de recogida en el pago. Resultado: entra un pedido sin punto
+elegido y no puedo generar la etiqueta. Hoy no puedo completar ni un solo
+envío.
+
+Mis pedidos pesan entre 4,5 y 11 kg, así que necesito domicilio en esos
+tramos.
+
+¿FALTA ALGO POR MI PARTE?
+───────────────────────────────────────────────────────────────────────
+He visto que mi dirección de remitente (id 930222) no tiene ningún número
+de identificación fiscal guardado. Si hace falta el NIF/CIF, o
+documentación de la empresa, o completar datos de facturación para poder
+activar estos métodos, decídmelo y lo aporto hoy mismo.
+
+DATOS DE LA CUENTA
+───────────────────────────────────────────────────────────────────────
+  ID de usuario .............. 844646
+  Remitente .................. id 930222 — MARACUYA,
+                               Carrer del dr Fleming 22,
+                               08740 Sant Andreu de la Barca, España
+  Integración ................ id 628503, tipo shopify_v2
+  Tienda ..................... yw4vyu-vf.myshopify.com
+  Contratos en España ........ 76283 (inpost_es-trx, predeterminado)
+                               230881 (inpost_es-trx-home)
+                               8957 (Correos)
+                               10127 (Correos Express)
+
+Gracias,
