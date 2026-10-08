@@ -251,16 +251,30 @@ function Index() {
             />
             <div>
               <h2 className="mt-2 font-display text-3xl sm:text-4xl">
-                Empezó por una arepa en un piso de Madrid
+                Nació en Barcelona y de aquí sale a toda España
               </h2>
               <p className="mt-4 text-muted-foreground">
-                MARACUYA nació de la nostalgia compartida: encontrar la harina correcta, el ají que
-                sabe a casa, el dulce de leche de la abuela. Hoy traemos ese mercado a cualquier
-                cocina de España, con productos originales y explicados en español claro.
+                MARACUYA es un mercado latino en {RECOGIDA.municipio}, en el Baix Llobregat. No es
+                un catálogo sin sitio: hay una dirección, y quien la tenga cerca puede venir a
+                recoger su pedido sin pagar envío y sin pedido mínimo.
               </p>
               <p className="mt-3 text-muted-foreground">
-                Probamos cada referencia antes de venderla. Si no la ponemos en nuestra mesa, no
-                entra en la tienda.
+                La idea no hace falta adornarla: encontrar la harina correcta, el ají que sabe a
+                casa y el dulce de leche de la abuela. Los traemos de {paises.length} países y los
+                explicamos en español claro.
+              </p>
+              {/* Esta regla no es un eslogan: es la que parte la tienda en dos.
+                  Explica por qué los congelados y las tartas tienen formulario
+                  propio en vez de botón de comprar, y por qué hay una zona de
+                  reparto. Si algún día cambia, cambian también esas páginas. */}
+              <p className="mt-3 text-muted-foreground">
+                Con una regla que nos marca el resto:{" "}
+                <strong className="font-medium text-foreground">
+                  lo que no puede viajar, no viaja
+                </strong>
+                . Los congelados y las tartas se entregan en mano aquí, en la provincia de
+                Barcelona, porque la paquetería no tiene cadena de frío. Lo demás sale por
+                mensajería a {ZONA}.
               </p>
               <Button asChild className="mt-6">
                 <Link to="/tienda">Descubrir productos</Link>

@@ -8,6 +8,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/co
 import { useCarrito } from "@/components/site/cart";
 import { EstimadorEntrega } from "@/components/site/entrega";
 import { banderaUrl, categorias, paises, productos, recetas, tiposReceta } from "@/lib/catalogo";
+import { MINIMO, PRECIO, RECOGIDA, umbral } from "@/lib/envio";
 import logoUrl from "@/assets/maracuya-logo.svg";
 
 type Enlace = {
@@ -374,7 +375,8 @@ export function Header() {
     <header className="sticky top-0 z-40">
       <div className="flex items-center justify-center gap-2 bg-primary px-4 py-2 text-center text-[0.72rem] text-primary-foreground sm:text-xs">
         <Truck className="size-3.5 shrink-0" aria-hidden="true" />
-        Mercado latino online · Envíos y condiciones se confirmarán al conectar la tienda
+        Envío {umbral(PRECIO)} desde {umbral(MINIMO)} · Recogida gratis en {RECOGIDA.municipio}, sin
+        mínimo
       </div>
 
       <div
