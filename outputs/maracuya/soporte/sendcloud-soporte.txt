@@ -1,0 +1,103 @@
+ASUNTO: Cuenta sin métodos de entrega a domicilio en España + hueco de tarifa
+         entre 5 y 7 kg
+
+Hola:
+
+Soy una tienda de alimentación latinoamericana en Sant Andreu de la Barca
+(08740, Barcelona), con Sendcloud integrado en Shopify. Estoy preparando el
+lanzamiento y me he encontrado con dos cosas que no puedo resolver desde el
+panel. He consultado los datos con la API v3, así que los detalles de abajo
+son exactos, no una lectura mía de la interfaz.
+
+────────────────────────────────────────────────────────────────────────
+PROBLEMA 1 — No tengo ningún método de entrega a domicilio
+────────────────────────────────────────────────────────────────────────
+
+Consultando opciones de envío para un paquete nacional
+(origen ES 08740 -> destino ES 28001), el único producto real que devuelve
+mi cuenta es:
+
+    inpost_es:service_point,national_c2c
+    "InPost Punto de Servicio Nacional C2C"
+    last_mile: service_point
+    is_service_point_required: true
+
+Lo he comprobado de tres formas y las tres dan el mismo resultado:
+
+  a) Filtrando por functionalities.last_mile = "home_delivery", solo
+     devuelve "sendcloud:letter" (Unstamped letter, 0,00 €, form_factor
+     mailbox). Ningún producto real a domicilio.
+
+  b) Tengo un contrato llamado inpost_es-trx-home (id 230881, carrier
+     inpost_es, país ES). Al consultar opciones pasando contract_id=230881
+     me devuelve EL MISMO producto de punto de servicio
+     (inpost_es:service_point,national_c2c), no uno a domicilio.
+
+  c) Sin filtros tampoco aparece ningún producto de Correos, aunque en la
+     cuenta figuran contratos de Correos (id 8957) y Correos Express
+     (id 10127).
+
+De los 17 contratos de la cuenta, todos aparecen con state "validating".
+El único que devuelve precios es inpost_es-trx (id 76283), que es el que
+tiene is_default_per_carrier = true.
+
+Por qué me bloquea esto: mi tienda está en Shopify plan Basic, que no
+puede mostrar el selector de punto de recogida en el pago. Mi integración
+de Sendcloud (id 628503, tipo shopify_v2, tienda yw4vyu-vf.myshopify.com)
+tiene además service_point_enabled = false y service_point_carriers vacío.
+Como el único método disponible exige is_service_point_required = true, un
+pedido entra sin punto de recogida elegido y no puedo generar la etiqueta.
+Tal como está hoy, no puedo completar ni un solo envío.
+
+MIS PREGUNTAS:
+  1. ¿Por qué el contrato inpost_es-trx-home (230881) no devuelve ningún
+     producto de entrega a domicilio?
+  2. ¿Qué hace falta exactamente para tener un método de entrega a
+     domicilio activo en España: cambiar de plan, validar un contrato,
+     aportar documentación, firmar un contrato directo con el
+     transportista? Dígame el paso concreto.
+  3. ¿Significa "validating" en todos mis contratos que están pendientes
+     de algo por mi parte?
+
+────────────────────────────────────────────────────────────────────────
+PROBLEMA 2 — Hueco de tarifa entre 5,001 kg y 7,001 kg
+────────────────────────────────────────────────────────────────────────
+
+Estos son los tramos que me devuelve la API para el mismo trayecto
+(ES 08740 -> ES 28001), con el método InPost Punto de Servicio C2C:
+
+    1,001 – 2,001 kg ........ 3,39 €
+    3,001 – 5,001 kg ........ 3,75 €
+    5,001 – 7,001 kg ........ SIN NINGUNA OPCIÓN
+    7,001 – 10,001 kg ....... 6,09 €
+    10,001 – 15,001 kg ...... 9,00 €
+
+Con un paquete de 5,5 kg o de 6 kg la consulta no devuelve ningún método
+real: a 6,0 kg devuelve una lista vacía, y a 5,5 kg solo el
+"sendcloud:letter" de 0,00 €. El método declara un máximo de 30,001 kg,
+así que no entiendo el hueco.
+
+Mis pedidos típicos pesan entre 4,5 y 11 kg, de modo que ese hueco me deja
+sin poder enviar una parte importante de ellos.
+
+MI PREGUNTA:
+  4. ¿Es un error de configuración de mi cuenta o falta ese tramo en el
+     contrato? ¿Cómo lo cubro?
+
+────────────────────────────────────────────────────────────────────────
+DATOS DE LA CUENTA, PARA QUE NO TENGAN QUE PEDÍRMELOS
+────────────────────────────────────────────────────────────────────────
+
+  Dirección de origen .......... Sant Andreu de la Barca, 08740, España
+  Integración Sendcloud ........ id 628503, tipo shopify_v2
+  Tienda ....................... yw4vyu-vf.myshopify.com
+  Contrato que sí funciona ..... id 76283, inpost_es-trx, ES
+  Contrato que no da domicilio . id 230881, inpost_es-trx-home, ES
+  Otros contratos ES ........... 8957 (Correos), 10127 (Correos Express)
+  Peso por defecto ............. 1,000 kg
+
+Lo que necesito es simple: poder entregar a domicilio en España
+peninsular, en pedidos de entre 4,5 y 11 kg, sin que el cliente tenga que
+elegir un punto de recogida.
+
+Gracias,
