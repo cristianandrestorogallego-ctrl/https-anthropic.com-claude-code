@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight, Clock, Leaf, PackageCheck, Truck } from "lucide-react";
+import { ArrowRight, Clock, Leaf, PackageCheck, Store, Truck } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Header } from "@/components/site/header";
@@ -11,7 +11,7 @@ import { Marcas } from "@/components/site/marcas";
 import { BloqueTartas } from "@/components/site/bloque-tartas";
 import { Reveal, stagger } from "@/components/site/reveal";
 import { banderaUrl, categorias, formatoPrecio, paises, productos, recetas } from "@/lib/catalogo";
-import { GRATIS_DESDE, PLAZO, PRECIO, ZONA, gratisDesde, umbral } from "@/lib/envio";
+import { MINIMO, PLAZO, PRECIO, RECOGIDA, REGALO_DESDE, ZONA, umbral } from "@/lib/envio";
 import historiaImg from "@/assets/historia.jpg";
 
 export const Route = createFileRoute("/")({
@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
       { title: "MARACUYA mercado latino | Productos latinoamericanos en España" },
       {
         name: "description",
-        content: `Harinas para arepas, ajíes, jugos tropicales y dulces de América Latina. Envío a ${ZONA} en ${PLAZO} y ${gratisDesde()}.`,
+        content: `Harinas para arepas, ajíes, jugos tropicales y dulces de América Latina. Envío a ${ZONA} en ${PLAZO} desde ${umbral(MINIMO)}, o recógelo gratis en tienda.`,
       },
       {
         property: "og:title",
@@ -59,7 +59,7 @@ function Index() {
               {
                 icon: Truck,
                 t: `Envío ${PLAZO.replace(" laborables", "")}`,
-                d: `${ZONA}, ${gratisDesde()}`,
+                d: `${ZONA}, desde ${umbral(MINIMO)}`,
               },
               { icon: PackageCheck, t: "Producto original", d: "Marcas latinas de verdad" },
               { icon: Leaf, t: "Selección corta", d: "Solo lo que cocinamos nosotros" },
@@ -280,11 +280,12 @@ function Index() {
               lleve el chasco.
             </p>
 
-            <dl className="mt-8 grid gap-6 sm:grid-cols-3">
+            <dl className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 { t: "Plazo", d: PLAZO },
-                { t: "Precio", d: formatoPrecio(PRECIO) },
-                { t: "Envío gratis", d: `A partir de ${umbral(GRATIS_DESDE)}` },
+                { t: "Envío", d: formatoPrecio(PRECIO) },
+                { t: "Pedido mínimo", d: umbral(MINIMO) },
+                { t: "Regalo", d: `Desde ${umbral(REGALO_DESDE)}` },
               ].map((e) => (
                 <div
                   key={e.t}
@@ -295,6 +296,22 @@ function Index() {
                 </div>
               ))}
             </dl>
+
+            {/* La recogida va aparte y destacada: es la única forma de no
+                pagar envío, no tiene mínimo, y a la tienda no le cuesta
+                nada. Merece más sitio que una línea en la tabla. */}
+            <div className="mt-6 flex items-start gap-4 rounded-2xl bg-maracuya/15 p-6 ring-1 ring-maracuya/30">
+              <Store className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+              <div>
+                <p className="font-display text-xl tracking-[-0.015em]">
+                  O recógelo en tienda, gratis y sin mínimo
+                </p>
+                <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                  {RECOGIDA.calle}, {RECOGIDA.municipio} ({RECOGIDA.cp}). Normalmente listo en{" "}
+                  {RECOGIDA.listoEn}: te avisamos por correo cuando lo esté.
+                </p>
+              </div>
+            </div>
 
             <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted-foreground">
               <strong className="font-medium text-foreground">

@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/sheet";
 import { BotonWhatsapp } from "@/components/site/boton-whatsapp";
 import { formatoPrecio, type Producto } from "@/lib/catalogo";
-import { GRATIS_DESDE } from "@/lib/envio";
+import { avisoCesta } from "@/lib/envio";
 
 type Linea = { producto: Producto; cantidad: number };
 
@@ -80,7 +80,7 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
 
 function CarritoPanel() {
   const { lineas, total, abierto, setAbierto, cambiar, quitar } = useCarrito();
-  const falta = Math.max(0, GRATIS_DESDE - total);
+  const aviso = avisoCesta(total);
 
   /** El pedido en texto plano, para mandarlo tal cual. */
   const mensajePedido = () =>
@@ -99,10 +99,17 @@ function CarritoPanel() {
       <SheetContent className="flex w-full flex-col gap-0 sm:max-w-md">
         <SheetHeader>
           <SheetTitle className="font-display text-2xl">Tu cesta</SheetTitle>
-          <SheetDescription>
-            {falta > 0
-              ? `Te faltan ${formatoPrecio(falta)} para el envío gratis en península.`
-              : "¡Envío gratis conseguido en península!"}
+          {/* El aviso cambia de tono según el estado: lo que falta para
+              poder enviar no es una buena noticia y lo del regalo sí, así
+              que no se pintan igual. */}
+          <SheetDescription
+            className={
+              aviso.estado === "regalo" || aviso.estado === "regalo-doble"
+                ? "font-medium text-primary"
+                : undefined
+            }
+          >
+            {aviso.texto}
           </SheetDescription>
         </SheetHeader>
 

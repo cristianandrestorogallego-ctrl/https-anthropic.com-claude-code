@@ -9,7 +9,7 @@ import { Footer } from "@/components/site/footer";
 import { ProductCard } from "@/components/site/product-card";
 import { useCarrito } from "@/components/site/cart";
 import { banderaUrl, categorias, formatoPrecio, paisPorId, productos } from "@/lib/catalogo";
-import { PLAZO, ZONA, listaFuera, precioYGratis } from "@/lib/envio";
+import { PLAZO, RECOGIDA, ZONA, listaFuera, precioYMinimo } from "@/lib/envio";
 
 export const Route = createFileRoute("/producto/$id")({
   loader: ({ params }) => {
@@ -209,7 +209,10 @@ function DetalleProducto() {
                     Envío en {PLAZO} a {ZONA}
                   </p>
                   <p className="text-muted-foreground">
-                    {precioYGratis()}. Todavía no llegamos a {listaFuera()}.
+                    {precioYMinimo()}. Todavía no llegamos a {listaFuera()}.
+                  </p>
+                  <p className="text-muted-foreground">
+                    O recógelo gratis y sin mínimo en {RECOGIDA.municipio}.
                   </p>
                 </>
               )}
