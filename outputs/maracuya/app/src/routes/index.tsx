@@ -11,7 +11,18 @@ import { Marcas } from "@/components/site/marcas";
 import { BloqueTartas } from "@/components/site/bloque-tartas";
 import { Reveal, stagger } from "@/components/site/reveal";
 import { banderaUrl, categorias, formatoPrecio, paises, productos, recetas } from "@/lib/catalogo";
-import { MINIMO, PLAZO, PRECIO, RECOGIDA, REGALO_DESDE, ZONA, umbral } from "@/lib/envio";
+import {
+  MINIMO,
+  PESO_MAXIMO,
+  PLAZO,
+  PRECIO_DESDE,
+  RECOGIDA,
+  REGALO_DESDE,
+  TRAMOS,
+  ZONA,
+  etiquetaTramo,
+  umbral,
+} from "@/lib/envio";
 import historiaImg from "@/assets/historia.jpg";
 
 export const Route = createFileRoute("/")({
@@ -297,7 +308,7 @@ function Index() {
             <dl className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 { t: "Plazo", d: PLAZO },
-                { t: "Envío", d: formatoPrecio(PRECIO) },
+                { t: "Envío", d: `Desde ${formatoPrecio(PRECIO_DESDE)}` },
                 { t: "Pedido mínimo", d: umbral(MINIMO) },
                 { t: "Regalo", d: `Desde ${umbral(REGALO_DESDE)}` },
               ].map((e) => (
@@ -310,6 +321,27 @@ function Index() {
                 </div>
               ))}
             </dl>
+
+            {/* El precio del envío depende del peso, y decir solo "desde
+                6,99 €" deja al cliente adivinando. Aquí está la tabla
+                entera: en el pago solo verá el tramo que le toque, así que
+                este es el único sitio donde puede cuadrarlo antes. */}
+            <div className="mt-6 overflow-hidden rounded-2xl bg-card shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)]">
+              <p className="border-b px-6 py-4 text-sm text-muted-foreground">
+                El envío va por peso, porque es lo que cobra el transportista. Lo verás calculado en
+                la cesta antes de pagar.
+              </p>
+              <dl className="divide-y">
+                {TRAMOS.map((tramo, i) => (
+                  <div key={tramo.hasta} className="flex items-baseline justify-between px-6 py-3">
+                    <dt className="text-sm text-muted-foreground">
+                      {etiquetaTramo(tramo, TRAMOS[i - 1])}
+                    </dt>
+                    <dd className="tabular font-display text-lg">{formatoPrecio(tramo.precio)}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
 
             {/* La recogida va aparte y destacada: es la única forma de no
                 pagar envío, no tiene mínimo, y a la tienda no le cuesta
@@ -331,8 +363,9 @@ function Index() {
               <strong className="font-medium text-foreground">
                 Todavía no llegamos a Baleares, Canarias, Ceuta ni Melilla.
               </strong>{" "}
-              Los plazos y precios son una propuesta inicial: los ajustamos contigo antes de
-              publicar la tienda.
+              Por encima de {PESO_MAXIMO} kg harían falta dos bultos y todavía no está montado:
+              escríbenos y lo resolvemos a mano. Los plazos y precios son una propuesta inicial: los
+              ajustamos contigo antes de publicar la tienda.
             </p>
           </div>
         </section>

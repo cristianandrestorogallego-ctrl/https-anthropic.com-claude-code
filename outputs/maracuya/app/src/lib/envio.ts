@@ -35,17 +35,66 @@ import { formatoPrecio } from "@/lib/catalogo";
  *   de "gratis" que no cuesta nada: ni caja, ni transportista.
  */
 
-/** Lo que cobra Shopify por un envío a península. Plano, sin tramos. */
-export const PRECIO = 6.99;
+/**
+ * Lo que cobra Shopify por un envío a península, por tramos de peso.
+ *
+ * Era una tarifa plana de 6,99 € hasta que se pudieron consultar los
+ * precios reales de Correos: a domicilio cuesta ~5 € hasta 5 kg, pero 7,19 €
+ * de 5 a 10 y 11,96 € de 20 a 30. Con 6,99 € fijos, cualquier cesta de más
+ * de 5 kg se enviaba perdiendo dinero, y en un catálogo que pesa lo que
+ * pesa este —harina, botellas, conservas— eso es media tienda.
+ *
+ * Cada tramo son unos dos euros por encima de lo que cuesta. No es el
+ * margen del pedido: es lo que cuesta la caja, el papel y el rato de
+ * prepararlo.
+ *
+ * El cliente nunca ve esta tabla al pagar: Shopify le enseña solo el tramo
+ * que le toca, como un precio y ya. Por eso la web anuncia "desde 6,99 €"
+ * y enseña la tabla entera en la página de envíos, que es donde quien
+ * quiera cuadrarlo puede hacerlo.
+ *
+ * Si cambia el recargo de combustible de Correos (ahora 11,80 %, se revisa
+ * cada mes) estos precios se quedan cortos. Hay que volver a mirarlos.
+ */
+export const TRAMOS = [
+  { hasta: 5, precio: 6.99 },
+  { hasta: 10, precio: 8.99 },
+  { hasta: 15, precio: 9.99 },
+  { hasta: 20, precio: 11.49 },
+  { hasta: 30, precio: 13.99 },
+] as const;
+
+export type Tramo = (typeof TRAMOS)[number];
 
 /**
- * Por debajo de este importe, Shopify no ofrece envío.
+ * El envío más barato, que es el que se anuncia.
  *
- * Shopify no tiene una casilla de "pedido mínimo": se hace poniéndole esta
- * condición de importe a la tarifa, y por debajo el cliente llega al pago
- * y no ve ninguna forma de envío. Sin explicación. Por eso el mínimo se
- * dice antes —en la ficha, en la cesta y en la página de envíos— y no se
- * deja que lo descubra ahí.
+ * Siempre con un "desde" delante. Decir "Envío 6,99 €" a secas sería
+ * mentira en cuanto la cesta pase de cinco kilos.
+ */
+export const PRECIO_DESDE = TRAMOS[0].precio;
+
+/**
+ * Lo que admite un bulto de Correos. Por encima no hay tarifa en Shopify, y
+ * el cliente se queda sin forma de envío: harían falta dos bultos y eso aún
+ * no está montado.
+ */
+export const PESO_MAXIMO = Math.max(...TRAMOS.map((t) => t.hasta));
+
+/**
+ * Por debajo de este importe no se envía.
+ *
+ * Ojo: esto es la política de la tienda, no una regla que aplique Shopify.
+ * Lo era —una condición de importe en la tarifa— hasta que el envío pasó a
+ * cobrarse por tramos de peso: una tarifa de Shopify admite condición de
+ * importe o de peso, pero no las dos a la vez, y los tramos valen más,
+ * porque sin ellos se perdía dinero en cada cesta grande.
+ *
+ * Bloquearlo en la cesta tampoco sirve: apagaría el botón también para
+ * quien viene a recoger en tienda, y la recogida no tiene mínimo. Así que
+ * hoy el mínimo lo sostiene lo que se dice —la cesta avisa de cuánto
+ * falta—, no un candado. Si alguna vez hace falta el candado, se monta con
+ * una función de validación de Shopify, que es una app aparte.
  */
 export const MINIMO = 24.99;
 
@@ -112,9 +161,19 @@ export const RECOGIDA = {
 export const umbral = (valor: number) =>
   `${valor.toLocaleString("es-ES", { maximumFractionDigits: 2 })} €`;
 
-/** "6,99 €, con un pedido mínimo de 24,99 €" */
+/** "Desde 6,99 € según el peso, con un pedido mínimo de 24,99 €" */
 export const precioYMinimo = () =>
-  `${formatoPrecio(PRECIO)}, con un pedido mínimo de ${umbral(MINIMO)}`;
+  `Desde ${formatoPrecio(PRECIO_DESDE)} según el peso, con un pedido mínimo de ${umbral(MINIMO)}`;
+
+/**
+ * "Hasta 5 kg", "De 5 a 10 kg". El rótulo de cada tramo de la tabla.
+ *
+ * Recibe el tramo anterior en vez de buscarlo por índice: el primero no
+ * tiene anterior, y así eso se ve en el tipo en lugar de resolverse con un
+ * caso especial dentro.
+ */
+export const etiquetaTramo = (tramo: Tramo, anterior?: Tramo) =>
+  anterior ? `De ${anterior.hasta} a ${tramo.hasta} kg` : `Hasta ${tramo.hasta} kg`;
 
 /** "Baleares, Canarias, Ceuta ni Melilla" */
 export const listaFuera = () =>
@@ -140,7 +199,7 @@ export function avisoCesta(total: number): AvisoCesta {
   if (total <= 0) {
     return {
       estado: "vacia",
-      texto: `Envío ${umbral(PRECIO)} desde ${umbral(MINIMO)}. Recogida en tienda gratis, sin mínimo.`,
+      texto: `Envío desde ${umbral(PRECIO_DESDE)} con un pedido de ${umbral(MINIMO)}. Recogida en tienda gratis, sin mínimo.`,
     };
   }
 
