@@ -36,7 +36,7 @@ import { formatoPrecio } from "@/lib/catalogo";
  */
 
 /**
- * Lo que cobra Shopify por un envío a península, por tramos de peso.
+ * Lo que cobra Shopify por mensajería a península, por tramos de peso.
  *
  * Era una tarifa plana de 6,99 € hasta que se pudieron consultar los
  * precios reales de Correos: a domicilio cuesta ~5 € hasta 5 kg, pero 7,19 €
@@ -48,8 +48,22 @@ import { formatoPrecio } from "@/lib/catalogo";
  * margen del pedido: es lo que cuesta la caja, el papel y el rato de
  * prepararlo.
  *
+ * Hay dos columnas porque hay dos maneras de que salga por mensajería, y
+ * cuestan distinto: llevarlo a casa del cliente, o dejarlo en un punto de
+ * recogida donde él pasa a por ello. Lo segundo vale menos —3,09 € a 3,75 €
+ * hasta 5 kg, frente a los ~5 € de Correos a domicilio— porque el
+ * transportista hace una entrega en el punto en vez de veinte en veinte
+ * portales. Se traslada esa diferencia al cliente en vez de quedársela:
+ * quien no vive cerca de {@link RECOGIDA} no tenía hasta ahora ninguna
+ * forma barata de que le llegara.
+ *
+ * El punto de recogida se corta a los 10 kg a propósito, y no porque no
+ * haya tarifa: a partir de ahí el cliente tendría que cargar la caja desde
+ * el punto hasta su casa, y veinte kilos de harina no se llevan a pie.
+ * Por encima de ese peso solo se ofrece domicilio.
+ *
  * El cliente nunca ve esta tabla al pagar: Shopify le enseña solo el tramo
- * que le toca, como un precio y ya. Por eso la web anuncia "desde 6,99 €"
+ * que le toca, como un precio y ya. Por eso la web anuncia "desde 4,99 €"
  * y enseña la tabla entera en la página de envíos, que es donde quien
  * quiera cuadrarlo puede hacerlo.
  *
@@ -57,22 +71,29 @@ import { formatoPrecio } from "@/lib/catalogo";
  * cada mes) estos precios se quedan cortos. Hay que volver a mirarlos.
  */
 export const TRAMOS = [
-  { hasta: 5, precio: 6.99 },
-  { hasta: 10, precio: 8.99 },
-  { hasta: 15, precio: 9.99 },
-  { hasta: 20, precio: 11.49 },
-  { hasta: 30, precio: 13.99 },
+  { hasta: 5, domicilio: 6.99, punto: 4.99 },
+  { hasta: 10, domicilio: 8.99, punto: 7.49 },
+  { hasta: 15, domicilio: 9.99 },
+  { hasta: 20, domicilio: 11.49 },
+  { hasta: 30, domicilio: 13.99 },
 ] as const;
 
 export type Tramo = (typeof TRAMOS)[number];
 
+/** Si un tramo se puede mandar a un punto de recogida. */
+export const conPunto = (tramo: Tramo): tramo is Extract<Tramo, { punto: number }> =>
+  "punto" in tramo;
+
 /**
- * El envío más barato, que es el que se anuncia.
+ * El envío más barato de todos, que es el que se anuncia.
  *
- * Siempre con un "desde" delante. Decir "Envío 6,99 €" a secas sería
+ * Siempre con un "desde" delante. Decir "Envío 4,99 €" a secas sería
  * mentira en cuanto la cesta pase de cinco kilos.
  */
-export const PRECIO_DESDE = TRAMOS[0].precio;
+export const PRECIO_DESDE = TRAMOS[0].punto;
+
+/** El más barato de los que llegan a la puerta, para poder comparar. */
+export const DOMICILIO_DESDE = TRAMOS[0].domicilio;
 
 /**
  * Lo que admite un bulto de Correos. Por encima no hay tarifa en Shopify, y
@@ -80,6 +101,9 @@ export const PRECIO_DESDE = TRAMOS[0].precio;
  * no está montado.
  */
 export const PESO_MAXIMO = Math.max(...TRAMOS.map((t) => t.hasta));
+
+/** Hasta dónde llega el punto de recogida. Ver arriba por qué se corta. */
+export const PESO_MAXIMO_PUNTO = Math.max(...TRAMOS.filter(conPunto).map((t) => t.hasta));
 
 /**
  * Por debajo de este importe no se envía.
@@ -161,9 +185,10 @@ export const RECOGIDA = {
 export const umbral = (valor: number) =>
   `${valor.toLocaleString("es-ES", { maximumFractionDigits: 2 })} €`;
 
-/** "Desde 6,99 € según el peso, con un pedido mínimo de 24,99 €" */
+/** "Desde 4,99 € a un punto de recogida o 6,99 € a domicilio, según el peso..." */
 export const precioYMinimo = () =>
-  `Desde ${formatoPrecio(PRECIO_DESDE)} según el peso, con un pedido mínimo de ${umbral(MINIMO)}`;
+  `Desde ${formatoPrecio(PRECIO_DESDE)} a un punto de recogida o ${formatoPrecio(DOMICILIO_DESDE)} ` +
+  `a domicilio, según el peso, con un pedido mínimo de ${umbral(MINIMO)}`;
 
 /**
  * "Hasta 5 kg", "De 5 a 10 kg". El rótulo de cada tramo de la tabla.

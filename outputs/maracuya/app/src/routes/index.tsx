@@ -14,12 +14,14 @@ import { banderaUrl, categorias, formatoPrecio, paises, productos, recetas } fro
 import {
   MINIMO,
   PESO_MAXIMO,
+  PESO_MAXIMO_PUNTO,
   PLAZO,
   PRECIO_DESDE,
   RECOGIDA,
   REGALO_DESDE,
   TRAMOS,
   ZONA,
+  conPunto,
   etiquetaTramo,
   umbral,
 } from "@/lib/envio";
@@ -322,25 +324,64 @@ function Index() {
               ))}
             </dl>
 
-            {/* El precio del envío depende del peso, y decir solo "desde
-                6,99 €" deja al cliente adivinando. Aquí está la tabla
-                entera: en el pago solo verá el tramo que le toque, así que
-                este es el único sitio donde puede cuadrarlo antes. */}
+            {/* El precio del envío depende del peso y de a dónde va, y
+                decir solo "desde 4,99 €" deja al cliente adivinando. Aquí
+                está la tabla entera: en el pago solo verá la línea que le
+                toque, así que este es el único sitio donde puede cuadrarlo
+                antes de comprar. */}
             <div className="mt-6 overflow-hidden rounded-2xl bg-card shadow-[var(--shadow-e1)] ring-1 ring-[var(--ring-linea)]">
-              <p className="border-b px-6 py-4 text-sm text-muted-foreground">
-                El envío va por peso, porque es lo que cobra el transportista. Lo verás calculado en
-                la cesta antes de pagar.
+              <p className="border-b px-6 py-4 text-sm leading-relaxed text-muted-foreground">
+                El envío va por peso, porque es lo que cobra el transportista. Dejarlo en un punto
+                de recogida cuesta menos que subirlo a tu casa, y esa diferencia te la pasamos a ti.
+                Lo verás calculado en la cesta antes de pagar.
               </p>
-              <dl className="divide-y">
-                {TRAMOS.map((tramo, i) => (
-                  <div key={tramo.hasta} className="flex items-baseline justify-between px-6 py-3">
-                    <dt className="text-sm text-muted-foreground">
-                      {etiquetaTramo(tramo, TRAMOS[i - 1])}
-                    </dt>
-                    <dd className="tabular font-display text-lg">{formatoPrecio(tramo.precio)}</dd>
-                  </div>
-                ))}
-              </dl>
+              <table className="w-full text-left">
+                <thead>
+                  <tr className="border-b text-[0.7rem] uppercase tracking-[0.14em] text-muted-foreground">
+                    <th scope="col" className="px-4 py-3 font-medium sm:px-6">
+                      Peso
+                    </th>
+                    <th scope="col" className="px-2 py-3 text-right font-medium sm:px-3">
+                      Punto de recogida
+                    </th>
+                    <th scope="col" className="px-4 py-3 text-right font-medium sm:px-6">
+                      A domicilio
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y">
+                  {TRAMOS.map((tramo, i) => (
+                    <tr key={tramo.hasta}>
+                      <th
+                        scope="row"
+                        className="px-4 py-3 text-sm font-normal text-muted-foreground sm:px-6"
+                      >
+                        {etiquetaTramo(tramo, TRAMOS[i - 1])}
+                      </th>
+                      {/* Por encima de los 10 kg no hay punto de recogida: el
+                          guion lo dice sin repetir el motivo en cada fila, y
+                          el pie de la tabla lo explica una vez. */}
+                      <td className="tabular px-2 py-3 text-right font-display text-lg sm:px-3">
+                        {conPunto(tramo) ? (
+                          formatoPrecio(tramo.punto)
+                        ) : (
+                          <span className="text-muted-foreground/50">
+                            <span aria-hidden="true">—</span>
+                            <span className="sr-only">No disponible</span>
+                          </span>
+                        )}
+                      </td>
+                      <td className="tabular px-4 py-3 text-right font-display text-lg sm:px-6">
+                        {formatoPrecio(tramo.domicilio)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              <p className="border-t px-6 py-4 text-sm leading-relaxed text-muted-foreground">
+                A partir de {PESO_MAXIMO_PUNTO} kg solo llevamos a domicilio: esa caja ya no se
+                lleva a pie desde el punto de recogida hasta casa.
+              </p>
             </div>
 
             {/* La recogida va aparte y destacada: es la única forma de no
@@ -350,11 +391,18 @@ function Index() {
               <Store className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
               <div>
                 <p className="font-display text-xl tracking-[-0.015em]">
-                  O recógelo en tienda, gratis y sin mínimo
+                  O recógelo en nuestra tienda, gratis y sin mínimo
                 </p>
                 <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
                   {RECOGIDA.calle}, {RECOGIDA.municipio} ({RECOGIDA.cp}). Normalmente listo en{" "}
                   {RECOGIDA.listoEn}: te avisamos por correo cuando lo esté.
+                </p>
+                {/* Dos cosas de la misma página se llaman "recogida" y no son
+                    lo mismo: el punto de la tabla lo cobra el transportista,
+                    este mostrador no cobra nada. Si no se dice, se confunden. */}
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Es nuestro mostrador, no un punto de recogida de mensajería: aquí no se paga
+                  envío.
                 </p>
               </div>
             </div>
