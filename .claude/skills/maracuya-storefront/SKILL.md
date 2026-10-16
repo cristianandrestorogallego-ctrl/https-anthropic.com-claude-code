@@ -47,10 +47,22 @@ goes to `maracuya-mercado-latino`.
 
 ### You are not the only one writing to that repo
 
-A live Lovable project is connected to `maracuya-mercado-latino` and the
-user works in it. Its `AGENTS.md` says commits on the connected branch sync
-back to the Lovable editor, and that rewriting published history breaks the
-project's history on Lovable's side. So:
+**The user runs a second Claude Code project, called "maracuya", that works
+on `maracuya-mercado-latino` too.** He said so on 16 Oct 2026, correcting a
+guess of mine that the other writer was a Lovable agent — it is not. The
+repo does carry a Lovable banner in `AGENTS.md`, and that banner's rules
+still bind: commits on the connected branch sync back to the Lovable editor,
+and rewriting published history breaks the project's history there.
+
+**That project cannot see this skill.** `maracuya-mercado-latino` has no
+`.claude/` directory (verified 16 Oct 2026), so none of this reaches it: not
+the brand invariants, not the pending checklist, not the 1-unit stock trap.
+Assume the other project is working without any of it, and that it may undo
+a decision recorded here without knowing the decision exists. `list_sessions`
+does not show that project's sessions from here either.
+
+The git rules below are what keep two writers from destroying each other's
+work:
 
 - **Never force-push, rebase, amend or squash anything already pushed**
   there. A merge commit or a fast-forward, nothing else.
