@@ -142,12 +142,21 @@ recargo de combustible del 11,80 % que revisa cada mes; InPost no.
 ## Web (`outputs/maracuya/app`)
 
 - [ ] **No es headless todavía.** Tres cosas lo demuestran, y las tres hay
-      que cambiar juntas: `src/lib/catalogo-productos.ts` es una copia
-      generada por `scripts/catalogo-desde-shopify.mjs`;
-      `src/lib/shopify.ts` (cliente Storefront) existe pero **nadie lo
-      importa**; el carrito es estado local y «Finalizar compra» no tiene
-      handler. Comprobación: `grep -rn "lib/shopify" app/src` debe
-      devolver algo distinto del propio archivo.
+      que cambiar juntas: el catálogo de la web está **escrito a mano** en
+      `src/lib/catalogo.ts` y no viene de Shopify; `src/lib/shopify.ts`
+      (cliente Storefront) existe pero **nadie lo importa** (verificado 16
+      oct 2026: `grep -rn 'lib/shopify' src` no devuelve nada fuera del
+      propio archivo); el carrito es estado local y «Finalizar compra» no
+      tiene handler, con un comentario en `cart.tsx` que lo dice.
+- [ ] **La web y Shopify no llevan el mismo catálogo.** `catalogo.ts` tiene
+      **30 productos, 7 categorías y 8 países**; Shopify tiene **172**.
+      Verificado 16 oct 2026. En este repo no existe `catalogo-productos.ts`
+      ni ningún script generador: vivían en el espejo de Lovable, que se
+      perdió al recrearse el contenedor. Comprobación: contar `nombre:` en
+      `catalogo.ts` frente a `productsCount` en Shopify.
+      **Consecuencia:** cualquier trabajo de catálogo (la caja, el color por
+      categoría, el buscador) se construye sobre 30 productos hasta que esto
+      se resuelva. Decidir qué lado manda antes de construir encima.
 - [ ] **Dominio: apunta a Vercel, nunca a Shopify.** El checkout es
       siempre el de Shopify, en un subdominio tipo `pago.tiendamaracuya.es`.
       Headless sustituye todo lo *anterior* al checkout, no el checkout.
