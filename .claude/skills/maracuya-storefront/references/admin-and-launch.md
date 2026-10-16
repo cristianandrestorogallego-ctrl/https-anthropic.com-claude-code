@@ -1,7 +1,7 @@
 # Administration and launch
 
-Load when asked about admin access, the owner's login, publishing, or what
-remains outstanding.
+Load when asked about admin access, the owner's login, or publishing. For
+what remains outstanding, the file is `references/pendientes.md`.
 
 ## How this store is administered
 
@@ -74,8 +74,10 @@ cd outputs/maracuya/theme
 zip -rq ../maracuya-theme.zip assets config layout locales sections snippets templates -x '.*'
 ```
 
-The owner installs it themselves, because the Admin API's `themeCreate`
-takes a publicly reachable zip URL and this environment has none:
+**The theme is not in the store any more** — as of 16 Oct 2026 `themes`
+returns only Horizon (`MAIN`). If it is ever wanted back, the owner
+installs it himself, because the Admin API's `themeCreate` takes a publicly
+reachable zip URL and this environment has none:
 
 1. Shopify Admin → Online Store → Themes
 2. "Add theme" → "Upload zip file" → pick `maracuya-theme.zip`
@@ -85,42 +87,35 @@ takes a publicly reachable zip URL and this environment has none:
 Never publish a theme, and never write to the MAIN theme's files, without
 the owner's explicit instruction for that specific action.
 
-## Launch checklist — status
+## Launch checklist — moved
 
-**Store — exists**
+**The live checklist is `references/pendientes.md`.** Read it there; do not
+keep a second copy here, because two copies drift and the stale one gets
+quoted. What used to sit in this spot was already wrong by October 2026: it
+said the store was named "Mi tienda", that shipping rates were still
+examples, and that the MARACUYA theme was waiting to be uploaded.
 
-- [x] Shopify store created: `yw4vyu-vf.myshopify.com`, Basic plan,
-      EUR, Spain, timezone CEST. Still named "Mi tienda"; the live theme
-      is Horizon.
+What belongs here instead is the division of labour, which has not changed:
 
-**Blocked on the owner**
+**Only the owner can do these** — they need his identity, his bank details
+or his gestor:
 
-- [ ] Rename the store to MARACUYA mercado latino
-- [ ] Domain
-- [ ] Payment methods activated and verified
-- [ ] Business, tax and invoicing details
-- [ ] Real shipping zones and rates (the prototype's are examples)
-- [ ] Policy pages: privacy, terms, returns, cookies — currently marked
-      "pendiente" in the footer on purpose
-- [ ] A real WhatsApp business number (`whatsapp.numberE164` is empty)
-- [ ] Real product data: names, brands, prices, stock, allergens,
-      ingredients, nutrition. Everything in the prototype is fictional.
-- [ ] Product photography
+- The domain, and pointing it at Vercel (never at Shopify).
+- Payment methods, with business and banking verification.
+- Business, tax and invoicing details, including whether shipping carries
+  21 % VAT in Spain. **That is a gestor's answer, not ours.**
+- The NIF/CIF on the Sendcloud sender address.
+- Real product data: prices, stock, allergens, ingredients, provenance.
+- Product photography.
+- Publishing anything.
 
-**Build work**
+**These are build work, and they are mine to do when asked**: wiring the
+Storefront API so the app stops shipping a generated catalogue copy, the
+privacy notice, the Brevo list and its Vercel variable, the frozen-goods
+data behind `QUE_FALTA_CONGELADOS`, and the unsupported "Devoluciones en
+14 días" line in the footer.
 
-- [x] The theme itself — `outputs/maracuya/theme/`, 38 files: layout,
-      config, locales, 17 sections, 4 snippets, 10 templates, brand assets
-- [x] Theme Check passing — `@shopify/theme-check-node` with
-      `extends: theme-check:all` (86 checks): 0 errors, 0 warnings, 0 info
-      across 39 files
-- [ ] Upload the zip as an unpublished theme (owner's step, above)
-- [ ] A decision on how the recipe package builder is implemented
-- [ ] Accessibility and performance pass against the rendered theme —
-      only static checks have run; nothing has been rendered by Shopify
-- [ ] Test orders end to end
-
-**Not to be claimed**
+## Not to be claimed
 
 Do not describe the store as ready, compliant, or approved. Report what was
 verified and what was not. Publishing to a live store happens only with the

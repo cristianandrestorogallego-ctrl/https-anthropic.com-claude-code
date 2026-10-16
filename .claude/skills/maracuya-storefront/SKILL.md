@@ -1,6 +1,6 @@
 ---
 name: maracuya-storefront
-description: Project skill for MARACUYA mercado latino, which lives in three codebases under outputs/maracuya — app (React + TanStack Start, the one under active development), theme (a verified Shopify Liquid theme, parked) and prototype (the original vanilla JS study). Use when editing any of them, when making visual or brand decisions, when asked which one is current or how they differ, when asked how the store is administered or what is missing before launch, or when planning work between them. Carries the architecture truth, the two competing design systems and which applies where, the brand invariants, the verification loop and the launch checklist, so none of it is re-derived or contradicted each session.
+description: Project skill for MARACUYA mercado latino, which lives in three codebases under outputs/maracuya — app (React + TanStack Start, the one under active development), theme (a verified Shopify Liquid theme, parked) and prototype (the original vanilla JS study). Use when editing any of them, when making visual or brand decisions, when asked which one is current or how they differ, when asked how the store is administered or what is missing before launch, or when planning work between them. Carries the architecture truth, the two competing design systems and which applies where, the brand invariants, the verification loop and the pending-items checklist, so none of it is re-derived or contradicted each session.
 ---
 
 # MARACUYA mercado latino — project skill
@@ -41,64 +41,77 @@ and never say the store is live. Nothing is published.
 
 ## What is actually in the user's Shopify store
 
-**Everything in that store today is a demonstration, including what is
-already there.** The user said so in as many words: the shop and the
-draft are examples; what is real is what gets loaded with them. So treat
-nothing in the store as data — not the 18 products, not their prices, not
-the delivery rates Shopify scaffolded, not the theme. Never cite any of
-it back to the user as a fact about their business, and never let it
-reach a customer's screen as though it were.
+**Everything in that store today is provisional, including what is already
+there.** The user said so in as many words: the shop and the draft are
+examples; what is real is what gets loaded with them. So treat nothing in
+the store as data — not the prices, not the stock figures, not the
+metaobjects. Never cite any of it back to the user as a fact about their
+business, and never let it reach a customer's screen as though it were.
 
-The demo catalogue is built to be thrown away: every product carries the
-`demo` tag, so the whole lot deletes in one query when the real one
-arrives. Keep the `cat:<categoría>` and `pais:<país>` tagging convention
-for real products too — the 13 collections are smart collections keyed on
-those tags, so they populate themselves and survive the swap.
+The pending items, each with the check that settles it, live in
+`references/pendientes.md`. **Read that file before saying anything is
+done, pending, or fixed** — and before answering "what is left".
 
+Shop `yw4vyu-vf.myshopify.com`, Basic plan, EUR, Spain. Verified by Admin
+API on 16 Oct 2026; it is a snapshot, so re-query before repeating it.
 
-Shop `yw4vyu-vf.myshopify.com`, Basic plan, online store still behind its
-password. Verify with a query before repeating any of this; it is a
-snapshot, not a guarantee.
-
-- **19 demo products**, all `ACTIVE` and published on both the Online
-  Store and Headless channels so the theme preview shows a working shop.
-  They are still demonstration data — the online store's password is what
-  keeps them off the public web, not their status. Vendor
-  "Marca de demostración",
-  handles equal to the ids in `app/src/lib/catalogo.ts` so recipes keep
-  resolving. Tagged `demo`, `cat:<categoría>`, `pais:<país>`, plus
-  `oferta` / `etiqueta:<texto>`. Every description ends saying the price,
-  format and stock are examples and that ingredients, allergens and
-  nutrition are pending the supplier's real data.
-- **14 smart collections**, by tag: six `cat:` and eight `pais:`.
+- **Name: "MARACUYA mercado latino".** Renamed. The old "Mi tienda" and
+  "Tienda Macondo" are both dead; never use either.
+- **172 products, all `ACTIVE`** — but every variant sits at **1 unit of
+  stock**, `tracksInventory: true`, `inventoryPolicy: DENY`, priced
+  **1,99 €** and tagged `precio-provisional`. That single unit is the trap
+  documented at the top of `pendientes.md`: a test purchase consumes it and
+  the product goes out of stock. Any test order ends by cancelling with
+  restock ticked.
+- **Shipping is done**: zone "España peninsular", 7 active rates
+  conditioned on weight — 5 home bands (6,99 / 8,99 / 9,99 / 11,49 /
+  13,99) and 2 pickup-point bands (4,99 ≤5 kg, 7,49 5–10 kg). Shopify
+  refuses mixed conditions on one method definition (`total_weight` and
+  `total_price` cannot coexist), which is why the 24,99 € minimum is store
+  policy written in `app/src/lib/envio.ts` and not a Shopify rule.
+- **No payment method works.** PayPal reads "Configuración incompleta".
+  A test purchase needs a manual method (Depósito bancario).
+- **Checkout branding is set** — logo PNG at 180 px, purple palette,
+  `#FEF9ED` backgrounds, Fraunces + Outfit. The user did it himself,
+  guided step by step; the thank-you page confirms it renders right.
+  There is no checkout-branding mutation in the Admin API, and no
+  `shopUpdate` — brand changes are panel work, so guide, don't attempt.
+- **Theme: Horizon, role `MAIN`, and it is the only theme in the store.**
+  The MARACUYA Liquid theme is **not** there any more. The zip is still at
+  `outputs/maracuya/maracuya-theme.zip` if it is ever wanted back.
+- **No custom domain**: `primaryDomain` is still the myshopify host.
 - **Headless channel** "Mi Tienda Headless", publication
-  `gid://shopify/Publication/374077882702`, `autoPublish: true`, with the
-  18 products added. A catalogue publication accepts products only —
-  adding a collection fails with "Una publicación de catálogo solo puede
-  contener productos."
-- **Theme** `gid://shopify/OnlineStoreTheme/204680560974`, "MARACUYA
-  mercado latino (sin publicar)", role `UNPUBLISHED`, 46 files. Horizon
-  is still `MAIN`. Uploading needs a public URL: `stagedUploadsCreate`
-  (resource `FILE`, there is no `THEME` resource) → POST the zip to the
-  returned target → `themeCreate(source: resourceUrl, role: UNPUBLISHED)`.
-
-A draft product is invisible to both the Storefront API and the theme —
-`publishedOnPublication` reads false whatever the channel says. That is
-why they are active now: the user asked to see the shop working. The
-online store's password is the only thing keeping the demo catalogue off
-the public web, so do not turn it off.
-
-- **Recipes** live as metaobjects: `receta` (three published entries) and
-  `ingrediente_receta` (sixteen). The theme renders them at
-  `/recetas/<handle>` via `templates/metaobject/receta.json`, and lists
-  them at `/pages/recetas`. A recipe's `cantidad_por_racion` field is the
-  amount for its `raciones_base` servings, NOT per person — the field key
-  is a leftover and the label was corrected. The calculator multiplies by
+  `gid://shopify/Publication/374077882702`. A catalogue publication accepts
+  products only — adding a collection fails with "Una publicación de
+  catálogo solo puede contener productos."
+- **Metaobjects** `receta` and `ingrediente_receta` hold **one demo entry
+  each**. A recipe's `cantidad_por_racion` is the amount for its
+  `raciones_base` servings, NOT per person — the field key is a leftover
+  and the label was corrected. The calculator multiplies by
   `raciones / raciones_base`.
 
-The egress proxy blocks `yw4vyu-vf.myshopify.com` (403 to CONNECT), so
-the Storefront API cannot be exercised from a session. Admin GraphQL
-through the Shopify MCP server works fine. Do not retry the proxy denial.
+A draft product is invisible to both the Storefront API and the theme —
+`publishedOnPublication` reads false whatever the channel says. That is why
+they are active.
+
+The egress proxy blocks `yw4vyu-vf.myshopify.com` (403 to CONNECT), so the
+Storefront API cannot be exercised from a session. Admin GraphQL through
+the Shopify MCP server works fine. Do not retry the proxy denial.
+
+### Sendcloud
+
+Account connected; the sender address is 930222 (Sant Andreu de la Barca,
+08740). Two things to carry between sessions:
+
+- **`calculate_quotes: false` on `shipping-options` is the authoritative
+  "what is enabled" test.** The panel's method list is a wider catalogue
+  than what is actually contracted, which is why InPost Home Delivery
+  looks selectable there while the API has never returned it. I got this
+  wrong once and the user was right; check the API, and say which one you
+  checked.
+- **The free plan permits 0 active shipping rules** ("at most 0 active
+  shipping rules are permitted"). Routing is done with
+  `shipping_defaults_update` (`ship_with`), not a rule.
 
 ## Brand invariants — these fire on every visual change
 
@@ -212,6 +225,12 @@ Before calling any visual change done:
   Liquid theme, what has to change, and what cannot carry over.
   **Load when the task involves Shopify, Liquid, theme structure, or
   "getting this live".**
+- `references/pendientes.md` — the live pending-items checklist: the
+  1-unit stock trap, the provisional Shopify data, Sendcloud, checkout,
+  the headless gap, and the test-purchase procedure. Each item carries
+  the check that settles it. **Load before claiming anything is done or
+  pending, before answering "what is left", and whenever the user says
+  "hagamos check".** Never tick an item from memory — run its check.
 - `references/admin-and-launch.md` — how the store is administered, what
   the owner manages where, and what is still missing before launch.
   **Load when asked about admin access, the owner's login, publishing, or
