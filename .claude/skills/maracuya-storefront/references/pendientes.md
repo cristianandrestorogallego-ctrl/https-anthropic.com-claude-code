@@ -148,15 +148,25 @@ recargo de combustible del 11,80 % que revisa cada mes; InPost no.
       oct 2026: `grep -rn 'lib/shopify' src` no devuelve nada fuera del
       propio archivo); el carrito es estado local y «Finalizar compra» no
       tiene handler, con un comentario en `cart.tsx` que lo dice.
-- [ ] **La web y Shopify no llevan el mismo catálogo.** `catalogo.ts` tiene
-      **30 productos, 7 categorías y 8 países**; Shopify tiene **172**.
-      Verificado 16 oct 2026. En este repo no existe `catalogo-productos.ts`
-      ni ningún script generador: vivían en el espejo de Lovable, que se
-      perdió al recrearse el contenedor. Comprobación: contar `nombre:` en
-      `catalogo.ts` frente a `productsCount` en Shopify.
-      **Consecuencia:** cualquier trabajo de catálogo (la caja, el color por
-      categoría, el buscador) se construye sobre 30 productos hasta que esto
-      se resuelva. Decidir qué lado manda antes de construir encima.
+- [ ] **Hay DOS copias de la web y solo una es la de verdad.** Verificado
+      16 oct 2026 clonando las dos.
+
+      | Dónde | Productos | Categorías | Países |
+      |---|---|---|---|
+      | Shopify (admin) | **172** | — | — |
+      | `maracuya-mercado-latino`, rama `main` — **la web real** | **172** | 10 | 15 |
+      | `outputs/maracuya/app` en este repo | 30 | 7 | 8 |
+
+      La web real toma sus 172 productos de `src/lib/catalogo-productos.ts`,
+      generado por `scripts/catalogo-desde-shopify.mjs`. Ninguno de esos dos
+      archivos existe en `outputs/maracuya/app`: ahí el catálogo está escrito
+      a mano y se quedó en 30. Las dos copias **sí** coinciden en `envio.ts`
+      (tramos por peso idénticos) y las dos tienen la barra lateral de
+      filtros, así que la divergencia es solo el catálogo.
+      **Consecuencia:** el trabajo de catálogo y de diseño va a
+      `maracuya-mercado-latino`. Lo que se escriba en `outputs/maracuya/app`
+      no llega a la web que el usuario mira. Se marca cuando las dos copias
+      lleven el mismo catálogo, o cuando se decida retirar una.
 - [ ] **Dominio: apunta a Vercel, nunca a Shopify.** El checkout es
       siempre el de Shopify, en un subdominio tipo `pago.tiendamaracuya.es`.
       Headless sustituye todo lo *anterior* al checkout, no el checkout.
